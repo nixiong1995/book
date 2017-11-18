@@ -1,0 +1,76 @@
+<?php
+?>
+<p><a href="<?=\yii\helpers\Url::to(['user/index'])?>" class="btn btn-primary btn-lg active" role="button">返回用户列表</a></p>
+<h2>用户详细信息</h2>
+<div>
+    <table class="table">
+        <tr>
+            <td>ID:</td>
+            <td><?=$model->user_id?></td>
+        </tr>
+        <tr>
+            <td>账号:</td>
+            <td><?=$model->user->uid?></td>
+        </tr>
+        <tr>
+            <td>头像:</td>
+            <td><?=yii\bootstrap\Html::img('http://upload.book.com/'.$model->head,['class'=>'img-cricle','style'=>'width:70px;border-radius:50%'])?></td>
+        </tr>
+        <tr>
+            <td>生日:</td>
+            <td><?=$model->birthday?></td>
+        </tr>
+        <tr>
+            <td>性别:</td>
+            <td><?=$model->sex?'男':'女'?></td>
+        </tr>
+        <tr>
+            <td>邮箱:</td>
+            <td><?=$model->user->email?></td>
+        </tr>
+        <tr>
+            <td>电话:</td>
+            <td><?=$model->user->tel?></td>
+        </tr>
+        <tr>
+            <td>地域:</td>
+            <td><?=$model->user->address?></td>
+        </tr>
+        <tr>
+            <td>来源:</td>
+            <td><?=$model->user->source?></td>
+        </tr>
+        <tr>
+            <td>是否VIP:</td>
+            <td><?=$model->vip?'是':'否'?></td>
+        </tr>
+        <tr>
+            <td>累计阅读时间:</td>
+            <td><?=$model->time?></td>
+        </tr>
+        <tr>
+            <td>喜欢的作者:</td>
+            <td><?=$AuthorName?></td>
+        </tr>
+        <tr>
+            <td>喜欢书类型:</td>
+            <td><?=$TypeName?></td>
+        </tr>
+        <tr>
+            <td>读过的书:</td>
+            <td><?=$BookName?></td>
+        </tr>
+        <tr>
+            <td>阅票余额:</td>
+            <td><?=$model->ticket?></td>
+        </tr>
+        <tr>
+            <td>书卷余额:</td>
+            <td><?=$model->voucher?></td>
+        </tr>
+        <tr>
+            <td>注册时间:</td>
+            <td><?=date("Y-m-d H:i:s",$model->user->created_at)?></td>
+        </tr>
+    </table>
+</div>
