@@ -32,13 +32,13 @@ class AuthorController extends Controller{
         if ($request->isPost) {
             $model->load($request->post());
             $model->file = UploadedFile::getInstance($model, 'file');
-            $dir =  'D:/WWW/yii2book/uploads/' . date("Ymd");
-            if (!is_dir($dir)) {
-                mkdir($dir);
-            }
             if ($model->validate()) {//验证规则
                 if($model->file){
-                    $fileName = date("HiiHsHis") . $model->file->baseName . '.' . $model->file->extension;
+                    $dir =  UPLOAD_PATH . date("Ymd");
+                    if (!is_dir($dir)) {
+                        mkdir($dir);
+                    }
+                    $fileName = date("HiiHsHis") .'.'.$model->file->extension;
                     $dir = $dir . "/" . $fileName;
                     //移动文件
                     $model->file->saveAs($dir, false);
@@ -66,17 +66,19 @@ class AuthorController extends Controller{
             $model->load($request->post());
             //处理上传文件
             $model->file = UploadedFile::getInstance($model, 'file');
-            $dir = \Yii::getAlias('@webroot') . '/uploads/' . date("Ymd");
-            if (!is_dir($dir)) {
-                mkdir($dir);
-            }
             if ($model->validate()) {//验证规则
-                $fileName = date("HiiHsHis") . $model->file->baseName . '.' . $model->file->extension;
-                $dir = $dir . "/" . $fileName;
-                //移动文件
-                $model->file->saveAs($dir, false);
-                $uploadSuccessPath = "/uploads/" . date("Ymd") . "/" . $fileName;
-                $model->image = $uploadSuccessPath;
+                if($model->file){
+                    $dir =UPLOAD_PATH . date("Ymd");
+                    if (!is_dir($dir)) {
+                        mkdir($dir);
+                    }
+                    $fileName = date("HiiHsHis") . '.' . $model->file->extension;
+                    $dir = $dir . "/" . $fileName;
+                    //移动文件
+                    $model->file->saveAs($dir, false);
+                    $uploadSuccessPath = date("Ymd") . "/" . $fileName;
+                    $model->image = $uploadSuccessPath;
+                }
                 //保存所有数据
                 $model->save();
                 \Yii::$app->session->setFlash('success', '修改成功');
@@ -96,7 +98,9 @@ class AuthorController extends Controller{
             $category->status=0;
             $category->save();
             return 'success';
-        }else{}
-        return 'error';
+        }else{
+            return 'error';
+        }
+
     }
 }

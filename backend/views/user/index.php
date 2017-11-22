@@ -24,17 +24,18 @@
         <th>操作</th>
     </tr>
     <?php foreach ($models as $model):?>
-        <tr>
+        <tr data-id="<?=$model->id?>">
             <td><?=$model->id?></td>
             <td><?=$model->uid?></td>
             <td><?=$model->tel?></td>
             <td><?=$model->email?></td>
             <td><?=$model->address?></td>
             <td><?=$model->source?></td>
-            <td><?=$model->status?'正常':'禁用'?></td>
+            <td class="txt"><?=$model->status?'正常':'禁用'?></td>
             <td><?=date("Y-m-d",$model->created_at)?></td>
             <td>
                 <a href="<?=\yii\helpers\Url::to(['user/detail','id'=>$model->id])?>"><span class="glyphicon glyphicon-file btn btn-default btn-sm"></a>
+                <?php if($model->status){echo '<a href="javascript:;" class="ban"><span class="glyphicon glyphicon-remove btn btn-danger btn-sm"></a>';}?>
             </td>
         </tr>
     <?php endforeach;?>
@@ -44,6 +45,32 @@
 echo \yii\widgets\LinkPager::widget([
     'pagination'=>$pager,
 ]);
+/**
+ * @var $this \yii\web\View
+ */
+$url_del=\yii\helpers\Url::to(['user/ban']);
+$this->registerJs(new \yii\web\JsExpression(
+    <<<JS
+$('.ban').on('click',function() {
+    if(confirm('你确定要封禁该用户吗?')){
+        var tr=$(this).closest('tr');
+        var id=tr.attr('data-id');
+        $.post("$url_del",{id:id},function(data) {
+            if(data=='success'){
+                alert('封禁成功');
+                $('.txt').text('禁用');
+                $('.ban').remove();
+            }else if(data=='error'){
+                alert('封禁失败');
+            }
+        })
+    }
+  
+})
+JS
+
+));
+
 
 
 

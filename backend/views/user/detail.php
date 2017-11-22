@@ -61,6 +61,10 @@
             <td><?=$BookName?></td>
         </tr>
         <tr>
+            <td>购买的书:</td>
+            <td><?=$BookName2?></td>
+        </tr>
+        <tr>
             <td>阅票余额:</td>
             <td><?=$model->ticket?></td>
         </tr>

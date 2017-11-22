@@ -7,6 +7,7 @@ use backend\models\Category;
 use backend\models\Reading;
 use backend\models\User;
 use backend\models\UserDetails;
+use frontend\models\SmsDemo;
 use yii\db\Exception;
 use yii\web\Controller;
 use yii\web\Response;
@@ -77,6 +78,7 @@ class UserController extends Controller {
         $result = [
             'code'=>400,
             'msg'=>'',//错误信息,如果有
+            'data'=>[],
         ];
         if(\Yii::$app->request->isPost){
             //验证接口
@@ -121,6 +123,7 @@ class UserController extends Controller {
                             $model->save();
                             $result['code']=200;
                             $result['msg']='注册成功';
+                            $result['data']=['user_id'=>$model->user_id];
                         }
                         $transaction->commit();
                     }catch ( Exception $e){
@@ -151,7 +154,7 @@ class UserController extends Controller {
 
                 $tel=\Yii::$app->request->post('tel');
                 $password=\Yii::$app->request->post('password');
-                $User=User::findOne(['tel'=>$tel]);
+                $User=User::findOne(['tel'=>$tel,'status'=>1]);
                 if($User){
                     //查到用户
                     if(\Yii::$app->security->validatePassword($password,$User->password_hash)){
@@ -177,7 +180,7 @@ class UserController extends Controller {
                             foreach ($author_ids as $author_id){
                                 $author=Author::findBySql("SELECT id,name FROM author where id=$author_id ")->one();
                                 //var_dump($author);exit;
-                                $names[$author['id']]=$author['name'];
+                                $names[$author->id]=$author['name'];
                             }
                             $AuthorName=implode('|',$names);
                         }else{
@@ -195,17 +198,18 @@ class UserController extends Controller {
                         $BookName=implode('|',$books);//分割数组成字符串
                         $result['code']=200;
                         $result['msg']='登录成功';
-                        $result['data']=['uid'=>$User->uid,'tel'=>$User->tel,'email'=>$User->email,
+                        $result['data']=['user_id'=>$User->id,'uid'=>$User->uid,'tel'=>$User->tel,'email'=>$User->email,
                             'status'=>$User->status,'created_at'=>$User->created_at,'birthday'=>$model->birthday,
                             'sex'=>$model->sex,'head'=>$model->head,'time'=>$model->time,'author'=> $AuthorName,
-                            'Rbook'=>$BookName,'type'=>$TypeName,'ticket'=>$model->ticket,'voucher'=>$model->voucher];
+                            'Rbook'=>$BookName,'type'=>$TypeName,'ticket'=>$model->ticket,'voucher'=>$model->voucher,
+                            'address'=>$User->address,'source'=>$User->source,'vip'=>$model->vip];
                     }else{
                         $result['msg']='密码错误';
                     }
 
                 }else{
                     //未查到用户
-                    $result['msg']='该手机未注册';
+                    $result['msg']='该手机未注册或者账号被封停状态';
                 }
             }
         }else{
@@ -214,9 +218,50 @@ class UserController extends Controller {
         return $result;
     }
 
+    //用户修改密码
+    public function actionModifyPassword(){
+        $result = [
+            'code'=>400,//状态
+            'msg'=>'',//错误信息,如果有
+        ];
+        if(\Yii::$app->request->isPost){
+            //验证接口
+            $res=$this->check();
+            if($res){
+                //接口验证不通过
+                $result['msg']= $res;
+            }else{
+                //接口验证通过
+                //接收数据
+                $user_id=\Yii::$app->request->post('user_id');
+                $old_password=\Yii::$app->request->post('old_password');
+                $new_password=\Yii::$app->request->post('new_password');
+                //根据用户id查找到该用户
+                $model=User::findOne(['id'=>$user_id]);
+                if(\Yii::$app->security->validatePassword($old_password,$model->password_hash)){
+                    $model->password_hash=\Yii::$app->security->generatePasswordHash($new_password);
+                    if($model->save()){
+                        $result['code']=200;
+                        $result['msg']='修改密码成功';
+                    }else{
+                        $result['msg']='修改密码失败';
+                    };
+
+                }else{
+                    $result['msg']='旧密码错误';
+                }
+            }
+
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
+
+    }
+
     public function actionSign(){
         //var_dump(time());exit;
-        $p = ['tel'=>13895512039,'time'=>1511010420,'password'=>123456];
+        $p = ['tel'=>13895512039,'password'=>123456,'time'=>1511163066];
         //1.对key做升序排列 //['a'=>'','b'=>'','c'=>'','time'=>'']
         ksort($p);
         //2. 将参数拼接成字符串 a=4&b=123&c=77&time=12312312
@@ -226,5 +271,55 @@ class UserController extends Controller {
         var_dump($sign);
     }
 
+    //发送手机短信
+    public function actionSms($tel){
+        //判断当前是否能发送短信验证码
+        $redis=new \Redis();
+        $redis->connect('127.0.0.1');
+        $time=$redis->get('time');//上次发送短信的时间
+        if($time && (time()-$time<60)){
+            //不能发送短信
+            echo '一分钟之内只允许发送一条短信';
+            exit;
+        };
+        //一天只能发送20条
+        //检查上次发送短信时间是不是今天
+        if(date("Ymd",$time)<date('Ymd',time())){
+            $redis->set('count',0);
+        }
+        $count=$redis->get('count');
+        if($count && $count>=20){
+            echo '一天只能发送20条短信';
+            exit;
+        }
 
+        $captcha=rand(100000,999999);
+        //$redis=new \Redis();
+        //$redis->connect('127.0.0.1');
+        $redis->set("tel","$tel");
+        $redis->set("captcha","$captcha");
+        $redis->set("time",time());//保存当前发送短信时间
+        $redis->set('count',++$count);
+        $demo = new SmsDemo(
+            "LTAIblu8cPZ3ZQjj",
+            "60pn0FHB5M9sv4Q1Aya8gzpJTJZ20u"
+        );
+        echo "SmsDemo::sendSms\n";
+        $response = $demo->sendSms(
+            "yiishop购物商城", // 短信签名
+            "SMS_97935005", // 短信模板编号
+            "13880646145", // 短信接收者
+            Array(  // 短信模板中字段的值
+                "code"=>$captcha,
+                //"product"=>"dsd"
+            )
+        );
+        $data=['tel'=>$tel,'captcha'=>$captcha,'success'=>'验证码发送成功'];
+        if($response->Message=='OK'){
+            return json_encode($data);
+        }else{
+            return '验证码发送失败';
+        }
+        //print_r($response->Message);
+    }
 }
