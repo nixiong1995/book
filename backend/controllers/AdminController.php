@@ -1,5 +1,6 @@
 <?php
 namespace backend\controllers;
+use backend\filters\RbacFilter;
 use backend\models\Admin;
 use backend\models\LoginForm;
 use yii\data\Pagination;
@@ -30,7 +31,21 @@ class AdminController extends Controller
         if($request->isPost){
             $model->load($request->post());
             if($model->validate()){
+                /*$model->password_hash=\Yii::$app->security->generatePasswordHash($model->password);
+                $model->created_at=time();
+                $model->auth_key=\Yii::$app->security->generateRandomString();*/
+                //给用户分配角色
+                //var_dump($model->roles);exit;
+                //var_dump(111);exit;
                 $model->save();
+                $auth=\Yii::$app->authManager;
+                if($model->roles){
+                    foreach ($model->roles as $roleName){
+                        $role=\Yii::$app->authManager->getRole($roleName);
+                        //var_dump($role);exit;
+                        $auth->assign($role,$model->id);
+                    }
+                }
                 \Yii::$app->session->setFlash('success','添加成功');
                 return $this->redirect(['admin/index']);
             }
@@ -41,10 +56,28 @@ class AdminController extends Controller
     //修改管理员
     public function actionEdit($id){
         $model=Admin::findOne(['id'=>$id]);
+        $role=\Yii::$app->authManager->getRolesByUser($id);
+        $model->roles=array_keys($role);
+        if($model==null){
+            throw new NotFoundHttpException('用户不存在');
+        }
         $request=\Yii::$app->request;
         if($request->isPost){
             $model->load($request->post());
+            //var_dump($model->roles);exit;
             if($model->validate()){
+                /*$model->password_hash=\Yii::$app->security->generatePasswordHash($model->password_hash);
+                $model->updated_at=time();
+                $model->auth_key=\Yii::$app->security->generateRandomString();*/
+                $auth=\Yii::$app->authManager;
+                //var_dump($role);exit;
+                $auth->revokeAll($id);
+                //var_dump(111);exit;
+                foreach ($model->roles as $roleName ){
+                    $role=\Yii::$app->authManager->getRole($roleName);
+                    $auth->assign($role,$id);
+                }
+                //var_dump($role);exit;
                 $model->save();
                 \Yii::$app->session->setFlash('success','修改成功');
                 return $this->redirect(['admin/index']);
@@ -56,6 +89,8 @@ class AdminController extends Controller
     //删除管理员
     public function actionDel(){
         $id=\Yii::$app->request->post('id');
+        $auth=\Yii::$app->authManager;
+        $auth->revokeAll($id);
         $model=Admin::findOne(['id'=>$id])->delete();
         if($model){
             return 'success';
@@ -103,5 +138,13 @@ class AdminController extends Controller
         ];
     }
 
-
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+                'except'=>['login','logout','captcha','error'],
+            ]
+        ];
+    }
 }

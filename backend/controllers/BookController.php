@@ -1,5 +1,6 @@
 <?php
 namespace backend\controllers;
+use backend\filters\RbacFilter;
 use backend\models\Book;
 use libs\Read;
 use yii\web\Controller;
@@ -9,6 +10,9 @@ class BookController extends Controller{
 
     //图书列表
     public function actionIndex(){
+        /*var_dump(\Yii::$app->user->isGuest);
+        var_dump(\Yii::$app->user->id);
+        var_dump(\Yii::$app->user->identity);exit;*/
         $models=Book::findAll(['status'=>1]);
         return $this->render('index',['models'=>$models]);
 
@@ -138,5 +142,13 @@ class BookController extends Controller{
         $read->smartReadFile($file,$mimeType);
     }
 
-
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+                'except'=>['login','logout','captcha','error'],
+            ]
+        ];
+    }
 }

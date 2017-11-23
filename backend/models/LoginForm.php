@@ -27,7 +27,7 @@ class LoginForm extends Model
             'username'=>'用户名',
             'password'=>'密码',
             'code'=>'验证码',
-            'remember'=>'记住密码',
+            'remember'=>'自动登录',
 
         ];
     }

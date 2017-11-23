@@ -1,5 +1,6 @@
 <?php
 namespace backend\controllers;
+use backend\filters\RbacFilter;
 use backend\models\Author;
 use backend\models\Book;
 use backend\models\Category;
@@ -132,6 +133,15 @@ class UserController extends Controller{
         }else{
             return 'error';
         }
+    }
 
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+                'except'=>['login','logout','captcha','error'],
+            ]
+        ];
     }
 }

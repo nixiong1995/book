@@ -1,5 +1,6 @@
 <?php
 namespace backend\controllers;
+use backend\filters\RbacFilter;
 use backend\models\Author;
 use yii\data\Pagination;
 use yii\web\Controller;
@@ -101,6 +102,15 @@ class AuthorController extends Controller{
         }else{
             return 'error';
         }
+    }
 
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+                'except'=>['login','logout','captcha','error'],
+            ]
+        ];
     }
 }
