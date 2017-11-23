@@ -73,6 +73,19 @@ class UserController extends Controller{
             $TypeName=null;
         }
 
+        //遍历查询书名
+        if($model->collect){
+            $collects=explode('|',$model->collect);//分割收藏的书为数组
+            $books2=[];
+            foreach ($collects as $collect) {
+                $Books= Book::findBySql("SELECT id,name FROM book where id=$collect limit 5")->one();
+                $books2[$Books->id]= $Books->name;//将书名装入数组中
+            }
+            $BookName3=implode('|',$books2);//收藏的书
+        }else{
+            $BookName3=null;
+        }
+
         if($model->f_author){
             //通过作者id遍历查询作者名
             $author_ids=explode('|',$model->f_author);//分割喜欢的作者为数组
@@ -97,7 +110,7 @@ class UserController extends Controller{
                 $book= Book::findBySql("SELECT id,name FROM book where id=$book_id->book_id")->one();
                 $books[$book->id]=$book->name;//将书名装入数组中
             }
-            $BookName=implode('|',$books);//分割数组成字符串
+            $BookName=implode('|',$books);//分割数组成字符串(读过的书)
         }else{
             $BookName=null;
         }
@@ -113,12 +126,12 @@ class UserController extends Controller{
                 $book2=Book::findBySql("SELECT id,name FROM book where id=$purchased->book_id")->one();
                 $bookdata[$book2->id]=$book2->name;
             }
-            $BookName2=implode('|',$bookdata);
+            $BookName2=implode('|',$bookdata);//购买的书
             //var_dump($bookdata);exit;
         }else{
             $BookName2=null;
         }
-        return $this->render('detail', ['model' => $model,'BookName'=>$BookName,'TypeName'=>$TypeName,'AuthorName'=>$AuthorName,'BookName2'=>$BookName2]);
+        return $this->render('detail', ['model' => $model,'BookName'=>$BookName,'TypeName'=>$TypeName,'AuthorName'=>$AuthorName,'BookName2'=>$BookName2,'BookName3'=>$BookName3]);
     }
 
     //封禁用户

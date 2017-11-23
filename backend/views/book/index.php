@@ -24,7 +24,7 @@
                 <td><?=$model->author->name?></td>
                 <td><?=$model->category->name?></td>
                 <td><?=yii\bootstrap\Html::img('http://upload.book.com/'.$model->image,['class'=>'img-cricle','style'=>'width:70px'])?></td>
-                <td><?=$model->is_free?'收费':'免费'?></td>
+                <td><?php if($model->is_free==1){echo 'vip专属';}elseif($model->is_free==2){echo '收费';}else{echo '免费';}?></td>
                 <td><?=$model->size?></td>
                 <td><?=$model->type?></td>
                 <td><?=$model->clicks?></td>

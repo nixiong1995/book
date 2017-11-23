@@ -20,7 +20,7 @@ echo $form->field($model, 'category_id')->widget(Select2::classname(), [
     'options' => ['placeholder' => '请选择 ...'],
 ]);
 echo $form->field($model,'intro')->textarea(['rows'=>5]);
-echo $form->field($model,'is_free')->radioList(['免费','收费']);
+echo $form->field($model,'is_free',['inline'=>true])->radioList(['免费','VIP专属','收费']);
 echo $form->field($model,'clicks')->textInput();
 echo $form->field($model,'no')->textInput();
 echo $form->field($model,'score')->textInput();

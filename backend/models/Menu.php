@@ -72,6 +72,5 @@ class Menu extends  ActiveRecord
 
         }
         return $menuItems;
-
     }
 }

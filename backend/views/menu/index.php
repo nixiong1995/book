@@ -9,15 +9,15 @@
         <th>操作</th>
     </tr>
     <?php foreach ($models as $model):?>
-    <tr data-id="<?=$model->id?>">
-        <td><?=$model->parent_id?'---':'',$model->name?></td>
-        <td><?=$model->route?></td>
-        <td><?=$model->sort?></td>
-        <td>
-            <a href="<?=\yii\helpers\Url::to(['menu/edit','id'=>$model->id])?>"><span class="glyphicon glyphicon-pencil btn btn-default btn-sm"></a>
-            <a href="javascript:;" class="delete"><span class="glyphicon glyphicon-trash btn btn-danger btn-sm" ></a>
-        </td>
-    </tr>
+        <tr data-id="<?=$model->id?>">
+            <td><?=$model->parent_id?'---':'',$model->name?></td>
+            <td><?=$model->route?></td>
+            <td><?=$model->sort?></td>
+            <td>
+                <a href="<?=\yii\helpers\Url::to(['menu/edit','id'=>$model->id])?>"><span class="glyphicon glyphicon-pencil btn btn-default btn-sm"></a>
+                <a href="javascript:;" class="delete"><span class="glyphicon glyphicon-trash btn btn-danger btn-sm" ></a>
+            </td>
+        </tr>
     <?php endforeach;?>
 </table>
 <div class="text-muted">合计<?=$pager->totalCount?>条</div>

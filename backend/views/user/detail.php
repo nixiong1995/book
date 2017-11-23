@@ -61,6 +61,10 @@
             <td><?=$BookName?></td>
         </tr>
         <tr>
+            <td>收藏的书:</td>
+            <td><?=$BookName3?></td>
+        </tr>
+        <tr>
             <td>购买的书:</td>
             <td><?=$BookName2?></td>
         </tr>
