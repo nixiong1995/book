@@ -21,7 +21,7 @@
             <td><?=$model->id;?></td>
             <td><?=$model->name;?></td>
             <td><?=$model->intro;?></td>
-            <td><?=yii\bootstrap\Html::img('http://upload.book.com/'.$model->image,['class'=>'img-cricle','style'=>'width:70px'])?></td>
+            <td><?=yii\bootstrap\Html::img(HTTP_PATH.$model->image,['class'=>'img-cricle','style'=>'width:70px'])?></td>
             <td><?=$model->popularity?></td>
             <td>
                 <a href="<?=\yii\helpers\Url::to(['author/edit','id'=>$model->id])?>"><span class="glyphicon glyphicon-pencil btn btn-default btn-sm"></a>
