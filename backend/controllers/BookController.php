@@ -26,32 +26,17 @@ class BookController extends Controller{
         if($request->isPost){
             $model->load($request->post());
             $model->file=UploadedFile::getInstance($model,'file');
-            $model->book=UploadedFile::getInstance($model,'book');
             if ($model->validate()) {//验证规则
-                    $dir =UPLOAD_PATH .date("Ymd");
+                    $dir =UPLOAD_PATH .date("Y").'/'.date("m").'/'.date("d").'/';
                     if (!is_dir($dir)) {
-                        mkdir($dir);
+                        mkdir($dir,0777,true);
                     }
                     $fileName = date("HiiHsHis") . '.' . $model->file->extension;
                     $dir = $dir . "/" . $fileName;
                     //移动文件
                     $model->file->saveAs($dir, false);
-                    $uploadSuccessPath = date("Ymd") . "/" . $fileName;
+                    $uploadSuccessPath = date("Y").'/'.date("m").'/'.date("d").'/' . $fileName;
                     $model->image = $uploadSuccessPath;
-                    $pin = new \libs\Pin();
-                    $name=$pin->Pinyin($model->name,'UTF8');//将书名转成拼音
-                    $path=BOOK_PATH.date("Ymd");
-                    if (!is_dir( $path)) {
-                        mkdir( $path);
-                    }
-                    $fileName2=$name.'.'.$model->book->extension;
-                    $path=$path.'/'.$fileName2;
-                    $model->book->saveAs($path,false);
-                    $bookPath=date("Ymd").'/'.$fileName2;
-                    $model->path=$bookPath;
-                    $type=substr(strrchr($model->book->name, '.'), 1);
-                    $model->size=$model->book->size;
-                    $model->type=$type;
                     $model->status=1;
                     $model->create_time=time();
                     //保存所有数据
@@ -73,10 +58,9 @@ class BookController extends Controller{
         if ($request->isPost) {
             $model->load($request->post());
             $model->file = UploadedFile::getInstance($model, 'file');
-            $model->book=UploadedFile::getInstance($model,'book');
             if ($model->validate()) {//验证规则
                 if($model->file){
-                    $dir = UPLOAD_PATH . date("Ymd");
+                    $dir = UPLOAD_PATH .date("Y").'/'.date("m").'/'.date("d").'/';
                     if (!is_dir($dir)) {
                         mkdir($dir);
                     }
@@ -84,30 +68,14 @@ class BookController extends Controller{
                     $dir = $dir . "/" . $fileName;
                     //移动文件
                     $model->file->saveAs($dir, false);
-                    $uploadSuccessPath = date("Ymd") . "/" . $fileName;
+                    $uploadSuccessPath = date("Y").'/'.date("m").'/'.date("d").'/' . $fileName;
                     $model->image = $uploadSuccessPath;
                 }
-                if($model->book){
-                    $pin = new \libs\Pin();
-                    $name=$pin->Pinyin($model->name,'UTF8');//将书名转成拼音
-                    $path=BOOK_PATH.date("Ymd");
-                    if (!is_dir( $path)) {
-                        mkdir( $path);
-                    }
-                    $fileName2=$name.'.'.$model->book->extension;
-                    $path=$path.'/'.$fileName2;
-                    $model->book->saveAs($path,false);
-                    $bookPath=date("Ymd").'/'.$fileName2;
-                    $model->path=$bookPath;
-                    $type=substr(strrchr($model->book->name, '.'), 1);
-                    $model->size=$model->book->size;
-                    $model->type=$type;
-                }
-                //保存所有数据
-                $model->save();
-                \Yii::$app->session->setFlash('success', '修改成功');
-                //跳转
-                return $this->redirect(['book/index']);
+                    //保存所有数据
+                    $model->save();
+                    \Yii::$app->session->setFlash('success', '修改成功');
+                    //跳转
+                    return $this->redirect(['book/index']);
             }
         }
         return $this->render('add', ['model' => $model]);

@@ -1,0 +1,38 @@
+项目安排：http://note.youdao.com/share/?id=b92b75620dc24b08afc527a1612c84c7&type=note#/
+
+代码仓库:https://github.com/flyok666/0516PHPyiishop.git
+
+13550576202 四川乐山 刘娇
+
+Bt-Panel: http://116.255.168.11:8888
+username: admin
+password: 999dab25
+mysql:yueku
+password:3dxyZebE3t
+
+
+mysql:yiishop 密:P8rnSk2KiM
+mysql:twothink 密:CFN4NRsBnX
+
+public function downloads($name){ 
+$name_tmp = explode("_",$name); 
+$type = $name_tmp[0]; 
+$file_time = explode(".",$name_tmp[3]); 
+$file_time = $file_time[0]; 
+$file_date = date("Y/md",$file_time); 
+$file_dir = SITE_PATH."/data/uploads/$type/$file_date/"; 
+
+if (!file_exists($file_dir.$name)){ 
+header("Content-type: text/html; charset=utf-8"); 
+echo "File not found!"; 
+exit; 
+} else { 
+$file = fopen($file_dir.$name,"r"); 
+Header("Content-type: application/octet-stream"); 
+Header("Accept-Ranges: bytes"); 
+Header("Accept-Length: ".filesize($file_dir . $name)); 
+Header("Content-Disposition: attachment; filename=".$name); 
+echo fread($file, filesize($file_dir.$name)); 
+fclose($file); 
+} 
+} 

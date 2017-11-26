@@ -35,15 +35,15 @@ class AuthorController extends Controller{
             $model->file = UploadedFile::getInstance($model, 'file');
             if ($model->validate()) {//验证规则
                 if($model->file){
-                    $dir =  UPLOAD_PATH . date("Ymd");
+                    $dir =  UPLOAD_PATH . date("Y").'/'.date("m").'/'.date("d").'/';
                     if (!is_dir($dir)) {
-                        mkdir($dir);
+                        mkdir($dir,0777,true);
                     }
                     $fileName = date("HiiHsHis") .'.'.$model->file->extension;
                     $dir = $dir . "/" . $fileName;
                     //移动文件
                     $model->file->saveAs($dir, false);
-                    $uploadSuccessPath =date("Ymd") . "/" . $fileName;
+                    $uploadSuccessPath =date("Y").'/'.date("m").'/'.date("d").'/'. $fileName;
                     $model->image = $uploadSuccessPath;
                 }
                 $model->status=1;
@@ -61,6 +61,7 @@ class AuthorController extends Controller{
     {
         $model = Author::findOne(['id' => $id]);
         $model->file = $model->image;
+        $old_path=UPLOAD_PATH.$model->file;
         $request = \Yii::$app->request;
         if ($request->isPost) {
             //模型加载数据
@@ -69,6 +70,7 @@ class AuthorController extends Controller{
             $model->file = UploadedFile::getInstance($model, 'file');
             if ($model->validate()) {//验证规则
                 if($model->file){
+                    unlink($old_path);//删除原文件
                     $dir =UPLOAD_PATH . date("Ymd");
                     if (!is_dir($dir)) {
                         mkdir($dir);
