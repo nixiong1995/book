@@ -38,6 +38,7 @@ class ChapterController extends Controller{
             $model->load($request->post());
             $model->file=UploadedFile::getInstance($model,'file');
             if($model->validate()){
+
                 $dir=BOOK_PATH.date("Y").'/'.date('m').'/'.date('d').'/';
                 if (!is_dir($dir)) {
                     mkdir($dir,0777,true);
@@ -57,6 +58,7 @@ class ChapterController extends Controller{
                     $redis->connect('127.0.0.1');
                     $redis->set($model->book_id,$model->file->size);
                     $book->size=$book->size+$model->file->size;
+                    $book->is_end=$model->is_end;
                     $book->save();
                     $transaction->commit();
                 }catch ( Exception $e){
@@ -104,6 +106,7 @@ class ChapterController extends Controller{
                     $old_size=$redis->get($model->book_id);
                     $book->size=($book->size-$old_size)+$model->file->size;
                     $redis->set($model->book_id,$model->file->size);
+                    $book->is_end=$model->is_end;
                     $book->save();
                     $transaction->commit();
 

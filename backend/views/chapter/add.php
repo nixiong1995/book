@@ -10,7 +10,8 @@ echo $form->field($model,'no')->textInput();
 echo $form->field($model,'chapter_name')->textInput();
 echo $form->field($model,'file')->fileInput();
 echo "<h2 class=\"filename\" data-name='$model->chapter_name'></h2>";
-echo $form->field($model,'is_free')->radioList(['免费','收费']);
+echo $form->field($model,'is_free',['inline'=>true])->radioList(['免费','收费']);
+echo $form->field($model,'is_end')->checkbox();
 echo '<button type="submit" class="btn btn-info">提交</button>';
 \yii\bootstrap\ActiveForm::end();
 /**
