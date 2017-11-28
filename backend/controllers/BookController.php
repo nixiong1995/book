@@ -95,6 +95,21 @@ class BookController extends Controller{
         }
     }
 
+    //加入今日必读
+    public function actionTodayRead(){
+        $id=\Yii::$app->request->post('id');
+        $book=Book::findOne(['id'=>$id]);
+        if($book){
+            $book->groom=1;
+            $book->groom_time=time();
+            $book->save();
+            return 'success';
+        }else{
+            return 'error';
+        }
+
+    }
+
     public function actionRead(){
         $file = BOOK_PATH.'20171121/wandaojianzun.txt';
         $exts = get_loaded_extensions();
@@ -109,6 +124,8 @@ class BookController extends Controller{
         $read=new Read();
         $read->smartReadFile($file,$mimeType);
     }
+
+
 
     public function behaviors()
     {

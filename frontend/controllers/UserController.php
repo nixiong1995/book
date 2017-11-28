@@ -4,19 +4,22 @@ namespace frontend\controllers;
 use backend\models\Author;
 use backend\models\Book;
 use backend\models\Category;
+use backend\models\Purchased;
 use backend\models\Reading;
 use backend\models\User;
 use backend\models\UserDetails;
 use frontend\models\SmsDemo;
+use libs\Check;
+use libs\Verification;
 use yii\db\Exception;
 use yii\web\Controller;
 use yii\web\Response;
-use yii\web\UploadedFile;
+
 
 class UserController extends Controller {
 
     public $enableCsrfValidation=false;
-    public $token = 'yueku';
+    public $token = 'yuekukuyue666888';
 
     public function init()
     {
@@ -24,43 +27,6 @@ class UserController extends Controller {
         parent::init();
     }
 
-    //验证接口
-    public function check(){
-        if (\Yii::$app->request->isPost){
-            $data = \Yii::$app->request->post();
-        }else{
-            $data = \Yii::$app->request->get();
-        }
-        //时间戳验证
-        $time = isset($data['time'])?$data['time']:0;
-        if($time){
-            //请求有效期是1分钟
-            if(time()-$time>4000 || $time > time()){
-                $error = '请求已过期';
-                return $error;
-            }
-        }else{
-            $error='缺少参数';
-            return $error;
-        }
-        //验证签名
-        $sign = isset($data['sign'])?$data['sign']:'';
-        if($sign){
-            unset($data['sign']);
-            ksort($data);
-            $str = http_build_query($data);
-            $s = strtoupper(md5($this->token.$str));
-            if($sign == $s){
-            }else{
-                $error='签名错误';
-                return $error;
-            }
-
-        }else{
-            $error='缺少参数';
-            return $error;
-        }
-    }
 
     //生成用户账号
     function getuid() {
@@ -82,7 +48,8 @@ class UserController extends Controller {
         ];
         if(\Yii::$app->request->isPost){
             //验证接口
-            $res=$this->check();
+            $obj=new Verification();
+            $res=$obj->check();
             if($res){
                 $result['msg']= $res;
             }else{
@@ -90,8 +57,24 @@ class UserController extends Controller {
                 $request=\Yii::$app->request;
                 $data=$request->post();
                 $tel=$data['tel'];
-                $email=$data['password'];
-                $tel=$data['tel'];
+                $captcha=$data['captcha'];
+                $redis=new \Redis();
+                $redis->connect('127.0.0.1');
+                $phone=$redis->get('tel'.$tel);
+                $sms=$redis->get('captcha');
+                $time=$redis->get('time'.$tel);
+                if(!$phone){
+                    $result['msg']='请先发送验证嘛';
+                    return $result;
+                }
+                if($phone!=$tel && $captcha!=$sms){
+                    $result['msg']='验证码与手机号不匹配';
+                    return $result;
+                }
+                if($time&&(time()-$time>180)){
+                    $result['msg']='验证码已过期';
+                    return $result;
+                }
                 //验证电话唯一性
                 $tel=User::findOne(['tel'=>$tel]);
                 if($tel){
@@ -147,7 +130,8 @@ class UserController extends Controller {
         ];
         if(\Yii::$app->request->isPost){
             //验证接口
-            $res=$this->check();
+            $obj=new Verification();
+            $res=$obj->check();
             if($res){
                 $result['msg']= $res;
             }else{
@@ -187,22 +171,54 @@ class UserController extends Controller {
                             $AuthorName=null;
                         }
 
+                        //查询用户已购买的书
+                        $purchaseds=Purchased::find(['user_id'=>$User->id])->all();
+                        if($purchaseds){
+                            $bookdata=[];
+                            foreach ($purchaseds as $purchased){
+                                $book2=Book::findBySql("SELECT id,name FROM book where id=$purchased->book_id")->one();
+                                $bookdata[$book2->id]=$book2->name;
+                            }
+                            $BookName2=implode('|',$bookdata);//购买的书
+                            //var_dump($bookdata);exit;
+                        }else{
+                            $BookName2=null;
+                        }
+
+                        //遍历查询书名
+                        if($model->collect){
+                            $collects=explode('|',$model->collect);//分割收藏的书为数组
+                            $books2=[];
+                            foreach ($collects as $collect) {
+                                $Books= Book::findBySql("SELECT id,name FROM book where id=$collect limit 5")->one();
+                                $books2[$Books->id]= $Books->name;//将书名装入数组中
+                            }
+                            $BookName3=implode('|',$books2);//收藏的书
+                        }else{
+                            $BookName3=null;
+                        }
+
                         //根据用户id到reading查询该用户读过的书id,再根据书id到book表查询书名
                         $book_ids = Reading::findBySql("SELECT book_id FROM reading where user_id=$User->id ORDER BY `create_time` DESC ")->all();
-                        $books =[];//定义空数组装书名
-                        //遍历查询书名
-                        foreach ($book_ids as $book_id) {
-                            $book= Book::findBySql("SELECT id,name FROM book where id=$book_id->book_id")->one();
-                            $books[$book->id]=$book->name;//将书名装入数组中
+                        if($book_ids){
+                            $books =[];//定义空数组装书名
+                            //遍历查询书名
+                            foreach ($book_ids as $book_id) {
+                                $book= Book::findBySql("SELECT id,name FROM book where id=$book_id->book_id")->one();
+                                $books[$book->id]=$book->name;//将书名装入数组中
+                            }
+                            $BookName=implode('|',$books);//分割数组成字符串
+                        }else{
+                            $BookName=null;
                         }
-                        $BookName=implode('|',$books);//分割数组成字符串
+
                         $result['code']=200;
                         $result['msg']='登录成功';
                         $result['data']=['user_id'=>$User->id,'uid'=>$User->uid,'tel'=>$User->tel,'email'=>$User->email,
                             'status'=>$User->status,'created_at'=>$User->created_at,'birthday'=>$model->birthday,
                             'sex'=>$model->sex,'head'=>$model->head,'time'=>$model->time,'author'=> $AuthorName,
                             'Rbook'=>$BookName,'type'=>$TypeName,'ticket'=>$model->ticket,'voucher'=>$model->voucher,
-                            'address'=>$User->address,'source'=>$User->source,'vip'=>$model->vip];
+                            'address'=>$User->address,'source'=>$User->source,'vip'=>$model->vip,'collect_book'=>$BookName3,'purchased_book'=>$BookName2];
                     }else{
                         $result['msg']='密码错误';
                     }
@@ -226,7 +242,8 @@ class UserController extends Controller {
         ];
         if(\Yii::$app->request->isPost){
             //验证接口
-            $res=$this->check();
+            $obj=new Verification();
+            $res=$obj->check();
             if($res){
                 //接口验证不通过
                 $result['msg']= $res;
@@ -256,12 +273,64 @@ class UserController extends Controller {
             $result['msg']='请求方式错误';
         }
         return $result;
+    }
 
+    //用户找回密码
+    public function actionForgotPassword(){
+        $result = [
+            'code'=>400,//状态
+            'msg'=>'',//错误信息,如果有
+        ];
+        if(\Yii::$app->request->isPost){
+            $obj=new Verification();
+            $res=$obj->check();
+            if($res){
+                //接口验证不通过
+                $result['msg']= $res;
+            }else{
+                $tel=\Yii::$app->request->post('tel');
+                $captcha=\Yii::$app->request->post('captcha');
+                $password=\Yii::$app->request->post('password');
+                $model=User::findOne(['tel'=>$tel]);
+                if($model){
+                    $redis=new \Redis();
+                    $redis->connect('127.0.0.1');
+                    $phone=$redis->get('tel'.$tel);
+                    $sms=$redis->get('captcha');
+                    $time=$redis->get('time'.$tel);
+                    if(!$phone){
+                        $result['msg']='请先发送验证嘛';
+                        return $result;
+                    }
+                    if($phone!=$tel && $captcha!=$sms){
+                        $result['msg']='验证码与手机号不匹配';
+                        return $result;
+                    }
+                    if($time&&(time()-$time>5000)){
+                        $result['msg']='验证码已过期';
+                        return $result;
+                    }
+                    $model->password_hash=\Yii::$app->security->generatePasswordHash($password);
+                    $model->auth_key=\Yii::$app->security->generateRandomString();
+                    if($model->save()){
+                        $result['code']=200;
+                        $result['msg']='找回密码成功';
+                    }else{
+                        $result['msg']='找回密码失败';
+                    }
+                }else{
+                    $result['msg']='没有该用户';
+                }
+            }
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
     }
 
     public function actionSign(){
         //var_dump(time());exit;
-        $p = ['tel'=>13895512039,'password'=>123456,'time'=>1511163066];
+        $p = ['tel'=>13880646145,'password'=>123456,'time'=>1511853883,'captcha'=>828256];
         //1.对key做升序排列 //['a'=>'','b'=>'','c'=>'','time'=>'']
         ksort($p);
         //2. 将参数拼接成字符串 a=4&b=123&c=77&time=12312312
@@ -273,52 +342,61 @@ class UserController extends Controller {
 
     //发送手机短信
     public function actionSms($tel){
+        $result = [
+            'code'=>400,//状态
+            'msg'=>'',//错误信息,如果有
+            'data'=>[],
+        ];
+
         //判断当前是否能发送短信验证码
         $redis=new \Redis();
         $redis->connect('127.0.0.1');
-        $time=$redis->get('time');//上次发送短信的时间
+        $time=$redis->get('time'.$tel);//上次发送短信的时间
         if($time && (time()-$time<60)){
             //不能发送短信
-            echo '一分钟之内只允许发送一条短信';
-            exit;
+            $result['msg']='一分钟之内只允许发送一条短信';
+            return $result;
         };
         //一天只能发送20条
         //检查上次发送短信时间是不是今天
         if(date("Ymd",$time)<date('Ymd',time())){
-            $redis->set('count',0);
+            $redis->set('count'.$tel,0);
         }
-        $count=$redis->get('count');
+        $count=$redis->get('count'.$tel);
         if($count && $count>=20){
-            echo '一天只能发送20条短信';
-            exit;
+            $result['msg']='一天只能发送20条短信';
+            return $result;
         }
-
         $captcha=rand(100000,999999);
-        //$redis=new \Redis();
-        //$redis->connect('127.0.0.1');
-        $redis->set("tel","$tel");
-        $redis->set("captcha","$captcha");
-        $redis->set("time",time());//保存当前发送短信时间
-        $redis->set('count',++$count);
+        $redis=new \Redis();
+        $redis->connect('127.0.0.1');
+        $redis->set("tel".$tel,"$tel");
+        $redis->set("captcha".$tel,"$captcha");
+        $redis->set("time".$tel,time());//保存当前发送短信时间
+        $redis->set('count'.$tel,++$count);
         $demo = new SmsDemo(
-            "LTAIblu8cPZ3ZQjj",
-            "60pn0FHB5M9sv4Q1Aya8gzpJTJZ20u"
+            "LTAIypgT6xAIPdMq",
+            "tneztyzfbgbMVRB87TFKrBUhMv3HnM"
         );
         echo "SmsDemo::sendSms\n";
         $response = $demo->sendSms(
-            "yiishop购物商城", // 短信签名
-            "SMS_97935005", // 短信模板编号
-            "13880646145", // 短信接收者
+            "阅酷书城", // 短信签名
+            "SMS_113461555", // 短信模板编号
+            "$tel", // 短信接收者
             Array(  // 短信模板中字段的值
                 "code"=>$captcha,
                 //"product"=>"dsd"
             )
         );
-        $data=['tel'=>$tel,'captcha'=>$captcha,'success'=>'验证码发送成功'];
+        //$data=['tel'=>$tel,'captcha'=>$captcha];
         if($response->Message=='OK'){
-            return json_encode($data);
+            $result['code']=200;
+            $result['msg']='验证码发送成功';
+            $result['data']=['tel'=>$tel,'captcha'=>$captcha];
+            return $result ;
         }else{
-            return '验证码发送失败';
+            $result['msg']='验证码发送失败';
+            return $result;
         }
         //print_r($response->Message);
     }

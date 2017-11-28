@@ -50,7 +50,7 @@ class UserController extends Controller{
         //实例化分页工具类
         $pager=new Pagination([
             'totalCount'=>$query->count(),//总条数
-            'defaultPageSize'=>1//每页显示条数
+            'defaultPageSize'=>10,//每页显示条数
         ]);
         //分页查询
         $models=$query->limit($pager->limit)->offset($pager->offset)->all();

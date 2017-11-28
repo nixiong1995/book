@@ -71,15 +71,15 @@ class AuthorController extends Controller{
             if ($model->validate()) {//验证规则
                 if($model->file){
                     unlink($old_path);//删除原文件
-                    $dir =UPLOAD_PATH . date("Ymd");
+                    $dir = UPLOAD_PATH . date("Y").'/'.date("m").'/'.date("d").'/';
                     if (!is_dir($dir)) {
-                        mkdir($dir);
+                        mkdir($dir,0777,true);
                     }
                     $fileName = date("HiiHsHis") . '.' . $model->file->extension;
                     $dir = $dir . "/" . $fileName;
                     //移动文件
                     $model->file->saveAs($dir, false);
-                    $uploadSuccessPath = date("Ymd") . "/" . $fileName;
+                    $uploadSuccessPath =date("Y").'/'.date("m").'/'.date("d").'/'. $fileName;
                     $model->image = $uploadSuccessPath;
                 }
                 //保存所有数据
