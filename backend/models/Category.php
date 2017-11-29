@@ -8,6 +8,7 @@ class Category extends ActiveRecord{
     {
         return [
             [['name','intro','type','status'],'required'],
+            ['name','unique'],
         ];
     }
 

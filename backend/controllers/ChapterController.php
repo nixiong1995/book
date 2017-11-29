@@ -77,6 +77,7 @@ class ChapterController extends Controller{
     public function actionEdit($id)
     {
         $model = Chapter::findOne(['id' => $id]);
+        $model->is_end=$model->book->is_end;
         $old_path=BOOK_PATH.$model->path;
         $request = \Yii::$app->request;
         if ($request->isPost) {
@@ -101,15 +102,17 @@ class ChapterController extends Controller{
                 try{
                     $model->save();
                     $book=Book::findOne(['id'=>$model->book_id]);
-                    $redis=new \Redis();
-                    $redis->connect('127.0.0.1');
-                    $old_size=$redis->get($model->book_id);
-                    $book->size=($book->size-$old_size)+$model->file->size;
-                    $redis->set($model->book_id,$model->file->size);
+                    if($model->file){
+                        //var_dump($book);exit;
+                        $redis=new \Redis();
+                        $redis->connect('127.0.0.1');
+                        $old_size=$redis->get($model->book_id);
+                        $book->size=($book->size-$old_size)+$model->file->size;
+                        $redis->set($model->book_id,$model->file->size);
+                    }
                     $book->is_end=$model->is_end;
                     $book->save();
                     $transaction->commit();
-
                 }catch ( Exception $e){
                     //事务回滚
                     $transaction->rollBack();
@@ -128,8 +131,12 @@ class ChapterController extends Controller{
         //接收id
         $id=\Yii::$app->request->post('id');
         $chapter=Chapter::findOne(['id'=>$id]);
-        $res1=$chapter->delete();
+        $book=Book::findOne(['id'=>$chapter->book_id]);
         $file = BOOK_PATH.$chapter->path;
+        $file_size=filesize($file);
+        $book->size=$book->size-$file_size;
+        $book->save();
+        $res1=$chapter->delete();
         $res2=unlink($file);
         if($res1&&$res2){
             return 'success';

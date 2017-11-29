@@ -42,4 +42,9 @@ class Chapter extends ActiveRecord{
         }
         return $BookName;
     }
+
+    //关联查询书
+    public function getBook(){
+        return $this->hasOne(Book::className(),['id'=>'book_id']);
+    }
 }
