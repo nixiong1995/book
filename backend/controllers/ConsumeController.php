@@ -44,26 +44,41 @@ class ConsumeController extends Controller{
 
     //书数据统计
     public function actionCount(){
+        $begin_time=\Yii::$app->request->get('begin_time');//开始时间
+        $end_time=\Yii::$app->request->get('end_time');//开始时间
+        $where='';
+        if($begin_time){
+            $begin_time= $begin_time.'000000';//拼接时间戳,加上时分秒
+            $begin_time=strtotime($begin_time);
+            $where.=" and create_time>=$begin_time";
+            //$query->andWhere(['>','created_at',$begin_time]);
+        }
+        if($end_time){
+            $end_time=  $end_time.'235959';//拼接时间戳,加上时分秒
+            $end_time=strtotime($end_time);
+            $where.=" and create_time<=$end_time";
+            //$query->andWhere(['<=','created_at',$end_time]);
+        }
        //$count=Consume::find()->Where(['book_id' =>16])->count('deduction');
-       $query=\Yii::$app->db->createCommand("select sell_tj.sellCount,sell_tj.sellMoney,sell_tj.book_id,book.name from (select count(*) as sellCount,sum(deduction) as sellMoney,book_id from consume group by book_id) as sell_tj,book where book.id = sell_tj.book_id");
+       $models=\Yii::$app->db->createCommand("select sell_tj.sellCount,sell_tj.sellMoney,sell_tj.book_id,book.name from (select count(*) as sellCount,sum(deduction) as sellMoney,book_id from consume WHERE 1=1 $where group by book_id ORDER BY sellCount DESC ) as sell_tj,book where book.id = sell_tj.book_id  ")->queryAll();
         //$query=Consume::findBySql("select sell_tj.sellCount,sell_tj.sellMoney,sell_tj.book_id,book.name from (select count(*) as sellCount,sum(deduction) as sellMoney,book_id from consume group by book_id) as sell_tj,book where book.id = sell_tj.book_id")->all();
-        //var_dump($query);exit;
+        //var_dump($models);exit;
         //$ids=\Yii::$app->db->createCommand("SELECT id FROM book")->queryColumn();
        // foreach ($ids as $id){
           //  $query=Consume::find()->where(['book_id'=>$id]);
         //}
         //$query=Consume::find();
-        $pager=new Pagination([
-            'totalCount'=>2,//总条数
+       /* $pager=new Pagination([
+            'totalCount'=>$query->count(),//总条数
             'defaultPageSize'=>10,//每页显示条数
         ]);
-        $models=$query->limit($pager->limit)->offset($pager->offset)->queryScalar();
+        $models=$query->limit($pager->limit)->offset($pager->offset)->queryScalar();*/
         //var_dump($models);exit;
-        return $this->render('count',['models'=>$models,'pager'=>$pager]);
+        return $this->render('count',['models'=>$models]);
 
     }
 
-    public function behaviors()
+    /*public function behaviors()
     {
         return [
             'rbac'=>[
@@ -71,6 +86,6 @@ class ConsumeController extends Controller{
                 'except'=>['login','logout','captcha','error'],
             ]
         ];
-    }
+    }*/
 
 }
