@@ -41,6 +41,7 @@ class Book extends ActiveRecord{
     public static function getCategoryName(){
         $rows=Category::findAll(['status'=>1]);
         $CategoryName=[];
+        $CategoryName[0]='请选择分类';
         foreach ( $rows as $row){
             $CategoryName[$row->id]=$row->name;
         }

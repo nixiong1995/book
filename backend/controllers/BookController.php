@@ -1,8 +1,12 @@
 <?php
 namespace backend\controllers;
 use backend\filters\RbacFilter;
+use backend\models\Author;
 use backend\models\Book;
+use backend\models\Category;
 use libs\Read;
+use yii\bootstrap\Html;
+use yii\data\Pagination;
 use yii\web\Controller;
 use yii\web\UploadedFile;
 
@@ -10,11 +14,40 @@ class BookController extends Controller{
 
     //图书列表
     public function actionIndex(){
-        /*var_dump(\Yii::$app->user->isGuest);
-        var_dump(\Yii::$app->user->id);
-        var_dump(\Yii::$app->user->identity);exit;*/
-        $models=Book::findAll(['status'=>1]);
-        return $this->render('index',['models'=>$models]);
+        $category_id=\Yii::$app->request->get('category');
+        $book=\Yii::$app->request->get('book');//书名
+        $author=\Yii::$app->request->get('author');//作者
+        //查询数据库分类第一位
+        if(!$book && !$author){
+            $id=\Yii::$app->db->createCommand("SELECT id FROM category ")->queryScalar();
+            $category_id=$category_id?$category_id:$id;
+        }
+        $where='';
+        //$query=Book::find()->where(['status'=>1,'category_id'=>$category_id])->orderBy('groom_time DESC');
+        if($author){
+            $author_id=\Yii::$app->db->createCommand("SELECT id FROM author WHERE name='$author'")->queryScalar();
+            //var_dump($author_id);exit;
+            $where=" and author_id='$author_id'";
+            //$query ->andWhere(['like','author_id',$author_id]);
+        }
+        if ($book){
+            $where.=" and name like '%$book%'";
+            //$query->andWhere(['like','name',$book]);
+        }
+        if ($category_id){
+            $where.=" and category_id='$category_id'";
+            //$query->andWhere(['category_id'=>$category_id]);
+        }
+
+        $query=Book::findBySql("SELECT * FROM book WHERE status=1 $where");
+        //实例化分页工具类
+        $pager=new Pagination([
+            'totalCount'=>$query->count(),//总条数
+            'defaultPageSize'=>10,//每页显示条数
+        ]);
+        //分页查询
+        $models=$query->limit($pager->limit)->offset($pager->offset)->all();
+        return $this->render('index',['models'=>$models,'pager'=>$pager]);
 
     }
 
@@ -107,13 +140,20 @@ class BookController extends Controller{
         }else{
             return 'error';
         }
-
     }
+
+    //今日必读列表
+    public function actionReadIndex(){
+        $models=Book::find()->where(['groom'=>1])->orderBy('groom_time DESC')->limit(6)->all();
+        return $this->render('read-index',['models'=>$models]);
+    }
+
+
 
     public function actionRead(){
         $file = BOOK_PATH.'20171121/wandaojianzun.txt';
         $exts = get_loaded_extensions();
-        $mimeType = 'application/octet-stream';
+        $mimeType ='application/octet-stream';
         if(array_search('fileinfo', $exts)===FALSE)
         {
             $sizeInfo = getimagesize($file);
@@ -124,8 +164,6 @@ class BookController extends Controller{
         $read=new Read();
         $read->smartReadFile($file,$mimeType);
     }
-
-
 
     public function behaviors()
     {

@@ -20,33 +20,37 @@ class UserController extends Controller{
         $end_time=\Yii::$app->request->get('end_time');//搜索结束时间
         $address=\Yii::$app->request->get('address');//地域
         $source=\Yii::$app->request->get('source');//地域
-        if($begin_time){
-            $begin_time= $begin_time.'000000';//拼接时间戳,加上时分秒
-            $begin_time=strtotime($begin_time);
-        }
-        if($end_time){
-            $end_time=  $end_time.'235959';//拼接时间戳,加上时分秒
-            $end_time=strtotime($end_time);
-        }
-        $query=User::find();
+        $where='';
        if($keyword){
-            $query ->Where([//搜索条件
+           $where=" and tel like '%$keyword%' or uid like '%$keyword%'";
+          /*  $query ->Where([//搜索条件
                 'or',
                 ['like','tel',$keyword],
                 ['like','uid',$keyword],
                 ['like','email',$keyword],
-            ]);
-        }elseif($begin_time){
-            $query->andWhere(['>','created_at',$begin_time]);
-        }elseif($end_time){
-            $query->andWhere(['<=','created_at',$end_time]);
-        }elseif ($address){
-            $query->andWhere(['like','address',$address]);
-       }elseif ($source){
-           $query->andWhere(['like','source',$source]);
-       }else{
-            $query->all();
+            ]);*/
         }
+        if($begin_time){
+           $begin_time= $begin_time.'000000';//拼接时间戳,加上时分秒
+           $begin_time=strtotime($begin_time);
+            $where.=" and created_at>=$begin_time";
+            //$query->andWhere(['>','created_at',$begin_time]);
+        }
+        if($end_time){
+            $end_time=  $end_time.'235959';//拼接时间戳,加上时分秒
+            $end_time=strtotime($end_time);
+            $where.=" and created_at<=$end_time";
+            //$query->andWhere(['<=','created_at',$end_time]);
+        }
+        if ($address){
+            $where.=" and address='$address'";
+            //$query->andWhere(['like','address',$address]);
+       }
+       if ($source){
+           $where.=" and source like '%$source%'";
+           //$query->andWhere(['like','source',$source]);
+       }
+        $query=User::findBySql("SELECT * FROM user WHERE 1=1 $where ");
         //实例化分页工具类
         $pager=new Pagination([
             'totalCount'=>$query->count(),//总条数

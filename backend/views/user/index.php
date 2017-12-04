@@ -3,7 +3,7 @@
     <h2>用户列表</h2>
 <p>
     <form class="form-inline" method="get" action="<?=\yii\helpers\Url::to(['user/index'])?>">
-        <input type="text" name="keyword" class="form-control" placeholder="手机、账号、邮箱"/>
+        <input type="text" name="keyword" class="form-control" placeholder="手机、账号"/>
         <input type="text" name="address" class="form-control" placeholder="地域"/>
         <input type="text" name="source" class="form-control" placeholder="来源"/>
         <input type="text" name="begin_time" class="form-control" placeholder="开始时间(如20171115)"/>
@@ -54,12 +54,14 @@ $this->registerJs(new \yii\web\JsExpression(
 $('.ban').on('click',function() {
     if(confirm('你确定要封禁该用户吗?')){
         var tr=$(this).closest('tr');
+        var txt=$(this).parent().prev().prev();
         var id=tr.attr('data-id');
+        var button=$(this);
         $.post("$url_del",{id:id},function(data) {
             if(data=='success'){
                 alert('封禁成功');
-                $('.txt').text('禁用');
-                $('.ban').remove();
+                txt.text('禁用');
+                button.remove();
             }else if(data=='error'){
                 alert('封禁失败');
             }

@@ -9,19 +9,19 @@
     <table class="table">
         <thead>
         <tr>
-            <th>账号</th>
-            <th>手机</th>
             <th>书名</th>
+            <th>销量</th>
+            <th>销售金额</th>
             <th>操作</th>
         </tr>
         </thead>
         <tbody>
         <?php foreach ($models as $model):?>
             <tr>
-                <td><?=$model->user->uid ?></td>
-                <td><?=$model->user->tel?></td>
-                <td><?=$model->book->name?></td>
-                <td> <a tabindex="0" class="btn btn-sm btn-default" role="button" data-toggle="popover" data-trigger="focus" title="本书已购买章节如下" data-content="<?=str_replace('|','-',$model->chapter_no)?>">查看已购买章节</a></td>
+                <td><?=$model->name ?></td>
+                <td>111</td>
+                <td>111</td>
+                <td> </td>
             </tr>
         <?php endforeach;?>
         </tbody>
@@ -31,16 +31,3 @@
 echo \yii\widgets\LinkPager::widget([
     'pagination'=>$pager,
 ]);
-/**
- * @var $this \yii\web\View
- */
-$this->registerJs(new \yii\web\JsExpression(
-        <<<JS
-        $(function () {
-  $('[data-toggle="popover"]').popover()
-})
-        
-
-JS
-
-));

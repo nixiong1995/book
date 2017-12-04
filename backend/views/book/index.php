@@ -1,7 +1,15 @@
 <?php
 ?>
     <p><a href="<?=\yii\helpers\Url::to(['book/add'])?>" class="btn btn-primary">新增图书</a></p>
-    <table id="table_id_example" class="table">
+    <p class="col-lg-5">
+    <form class="form-inline" method="get" action="<?=\yii\helpers\Url::to(['book/index'])?>">
+    <?=\yii\bootstrap\Html::dropDownList('category','0',\backend\models\Book::getCategoryName(),['class'=>"form-control"])?>
+        <input type="text" name="book" class="form-control" placeholder="书名"/>
+        <input type="text" name="author" class="form-control" placeholder="作者"/>
+        <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search">搜索</span></button>
+    </form>
+    </p>
+    <table class="table">
         <thead>
         <tr>
             <th>书名</th>
@@ -9,8 +17,6 @@
             <th>分类</th>
             <th>封面</th>
             <th>是否免费</th>
-            <th>文本大小</th>
-            <th>文本类型</th>
             <th>观看数</th>
             <th>评分</th>
             <th>上架时间</th>
@@ -27,13 +33,11 @@
                 <td><?=$model->category->name?></td>
                 <td><?=yii\bootstrap\Html::img(HTTP_PATH.$model->image,['class'=>'img-cricle','style'=>'width:70px'])?></td>
                 <td><?php if($model->is_free==1){echo 'vip专属';}elseif($model->is_free==2){echo '收费';}else{echo '免费';}?></td>
-                <td><?=$model->size?></td>
-                <td><?=$model->type?></td>
                 <td><?=$model->clicks?></td>
                 <td><?=$model->score?></td>
-                <td><?=date("Ymd",$model->create_time)?></td>
-                <td><?=$model->groom?'是':'否'?></td>
-                <td><?=date("Y-m-d H:i:s",$model->groom_time)?></td>
+                <td><?=date("Y-m-d",$model->create_time)?></td>
+                <td class="txt"><?=$model->groom?'是':'否'?></td>
+                <td><?=date("Y-m-d",$model->groom_time)?></td>
                 <td>
                     <a href="<?=\yii\helpers\Url::to(['book/edit','id'=>$model->id])?>"><span class="glyphicon glyphicon-pencil btn btn-primary btn-sm" ></a>
                     <a href="<?=\yii\helpers\Url::to(['chapter/index','id'=>$model->id])?>"><span class="glyphicon glyphicon-file btn btn-default btn-sm"></a>
@@ -45,7 +49,11 @@
         <?php endforeach;?>
         </tbody>
     </table>
+    <p>合计:<?= $pager->totalCount;?></p>
 <?php
+echo \yii\widgets\LinkPager::widget([
+    'pagination'=>$pager,
+]);
 /**
  * @var $this \yii\web\View
  */
@@ -68,7 +76,7 @@ $this->registerJs(new \yii\web\JsExpression(
                    }
                }) 
             }
-        })
+        });
         $('.today_read').on('click',function() {
             var tr=$(this).closest('tr');
             var id=tr.attr('data-id');
@@ -76,43 +84,13 @@ $this->registerJs(new \yii\web\JsExpression(
                $.post("$read_url",{id:id},function(data) {
                    if(data=='success'){
                        alert('加入成功');
-                       tr.hide('slow');
                    }else{
                        alert('加入失败');
                    }
                }) 
+               alert($(this).parent().find("td:first"))
             }
-        })
-        $(document).ready( function () {
-            $(document).ready( function () {
-    $('#table_id_example').DataTable({
-        language: {
-        "sProcessing": "处理中...",
-        "sLengthMenu": "显示 _MENU_ 项结果",
-        "sZeroRecords": "没有匹配结果",
-        "sInfo": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
-        "sInfoEmpty": "显示第 0 至 0 项结果，共 0 项",
-        "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
-        "sInfoPostFix": "",
-        "sSearch": "搜索:",
-        "sUrl": "",
-        "sEmptyTable": "表中数据为空",
-        "sLoadingRecords": "载入中...",
-        "sInfoThousands": ",",
-        "oPaginate": {
-            "sFirst": "首页",
-            "sPrevious": "上页",
-            "sNext": "下页",
-            "sLast": "末页"
-        }
-        
-        }
-    
-    });
-    
-} );
-} );
-
+        });
 JS
 
 ));
