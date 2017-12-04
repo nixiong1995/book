@@ -70,11 +70,11 @@
         </tr>
         <tr>
             <td>阅票余额:</td>
-            <td><?=$model->ticket?></td>
+            <td><?=$model->user->ticket?></td>
         </tr>
         <tr>
             <td>书卷余额:</td>
-            <td><?=$model->voucher?></td>
+            <td><?=$model->user->voucher?></td>
         </tr>
         <tr>
             <td>注册时间:</td>
