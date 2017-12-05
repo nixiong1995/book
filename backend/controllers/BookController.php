@@ -4,6 +4,8 @@ use backend\filters\RbacFilter;
 use backend\models\Author;
 use backend\models\Book;
 use backend\models\Category;
+use backend\models\GroomForm;
+use backend\models\LoginForm;
 use libs\Read;
 use yii\bootstrap\Html;
 use yii\data\Pagination;
@@ -39,7 +41,7 @@ class BookController extends Controller{
             //$query->andWhere(['category_id'=>$category_id]);
         }
 
-        $query=Book::findBySql("SELECT * FROM book WHERE status=1 $where");
+        $query=Book::findBySql("SELECT * FROM book WHERE status=1 $where ORDER by groom_time DESC ");
         //实例化分页工具类
         $pager=new Pagination([
             'totalCount'=>$query->count(),//总条数
@@ -128,12 +130,11 @@ class BookController extends Controller{
         }
     }
 
-    //加入今日必读
-    public function actionTodayRead(){
+    //加入分类精选
+    public function actionSelected(){
         $id=\Yii::$app->request->post('id');
         $book=Book::findOne(['id'=>$id]);
         if($book){
-            $book->groom=1;
             $book->groom_time=time();
             $book->save();
             return 'success';
@@ -142,13 +143,54 @@ class BookController extends Controller{
         }
     }
 
-    //今日必读列表
-    public function actionReadIndex(){
-        $models=Book::find()->where(['groom'=>1])->orderBy('groom_time DESC')->limit(6)->all();
-        return $this->render('read-index',['models'=>$models]);
+    //加入推荐
+    public function actionGroom(){
+        $book_id=\Yii::$app->request->get('book_id');
+        $model=new GroomForm();
+        $request=\Yii::$app->request;
+        if($request->isPost){
+            $model->load($request->post());
+            if($model->validate()){
+                $book=Book::findOne(['id'=>$book_id]);
+                $book->groom=$model->groom;
+                $book->groom_time=time();
+                $book->save();
+                \Yii::$app->session->setFlash('success', '添加推荐成功');
+                return $this->redirect(['book/index']);
+            }
+        }
+        return $this->render('groom-add',['model'=>$model]);
     }
 
+    //今日必读列表列表
+    public function actionTodayRead(){
+        $models=Book::find()->where(['groom'=>1])->orderBy('groom_time DESC')->limit(5)->all();
+        return $this->render('today-read',['models'=>$models]);
+    }
 
+    //今日限免列表
+    public function actionTodayFree(){
+        $models=Book::find()->where(['groom'=>2])->orderBy('groom_time DESC')->limit(5)->all();
+        return $this->render('today-free',['models'=>$models]);
+    }
+
+    //女生限免
+    public function actionGirlFree(){
+        $models=Book::find()->where(['groom'=>3])->orderBy('groom_time DESC')->limit(5)->all();
+        return $this->render('girl-free',['models'=>$models]);
+    }
+
+    //男生限免
+    public function actionBoyFree(){
+        $models=Book::find()->where(['groom'=>4])->orderBy('groom_time DESC')->limit(5)->all();
+        return $this->render('boy-free',['models'=>$models]);
+    }
+
+    //完本限免
+    public function actionEndFree(){
+        $models=Book::find()->where(['groom'=>5])->orderBy('groom_time DESC')->limit(5)->all();
+        return $this->render('end-free',['models'=>$models]);
+    }
 
     public function actionRead(){
         $file = BOOK_PATH.'20171121/wandaojianzun.txt';

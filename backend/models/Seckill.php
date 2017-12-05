@@ -16,7 +16,7 @@ class Seckill extends ActiveRecord{
     public function attributeLabels()
     {
         return [
-            'create_time'=>'秒杀时间',
+            'seckill_time'=>'秒杀时间',
             'price'=>'价格',
             'people'=>'已参与人数',
         ];
