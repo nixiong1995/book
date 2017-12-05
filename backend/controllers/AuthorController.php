@@ -126,7 +126,7 @@ class AuthorController extends Controller{
         return $this->render('groom-index',['model'=>$model]);
     }
 
-   /* public function behaviors()
+   public function behaviors()
     {
         return [
             'rbac'=>[
@@ -134,5 +134,5 @@ class AuthorController extends Controller{
                 'except'=>['login','logout','captcha','error'],
             ]
         ];
-    }*/
+    }
 }

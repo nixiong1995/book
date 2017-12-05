@@ -78,7 +78,7 @@ class ConsumeController extends Controller{
 
     }
 
-    /*public function behaviors()
+    public function behaviors()
     {
         return [
             'rbac'=>[
@@ -86,6 +86,6 @@ class ConsumeController extends Controller{
                 'except'=>['login','logout','captcha','error'],
             ]
         ];
-    }*/
+    }
 
 }
