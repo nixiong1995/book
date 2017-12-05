@@ -14,6 +14,7 @@
         <th>简介</th>
         <th>图片</th>
         <th>人气</th>
+        <th>签约作者</th>
         <th>操作</th>
     </tr>
     <?php foreach ($models as $model):?>
@@ -23,8 +24,10 @@
             <td><?=$model->intro;?></td>
             <td><?=yii\bootstrap\Html::img(HTTP_PATH.$model->image,['class'=>'img-cricle','style'=>'width:70px'])?></td>
             <td><?=$model->popularity?></td>
+            <td><?=$model->sign?'是':'否'?></td>
             <td>
                 <a href="<?=\yii\helpers\Url::to(['author/edit','id'=>$model->id])?>"><span class="glyphicon glyphicon-pencil btn btn-default btn-sm"></a>
+                <a href="javascript:;" class="groom-author"><span class="glyphicon glyphicon-star btn btn-success btn-sm"></a>
                 <a href="javascript:;" class="delete"><span class="glyphicon glyphicon-trash btn btn-danger btn-sm" ></a>
             </td>
         </tr>
@@ -39,6 +42,7 @@ echo \yii\widgets\LinkPager::widget([
  * @var $this \yii\web\View
  */
 $url_del=\yii\helpers\Url::to(['author/del']);
+$url_groom=\yii\helpers\Url::to(['author/groom']);
 $this->registerJs(new \yii\web\JsExpression(
     <<<JS
 $('.delete').on('click',function() {
@@ -54,7 +58,20 @@ $('.delete').on('click',function() {
             }
         })
     }
-  
+})
+
+$('.groom-author').on('click',function() {
+    if(confirm('你确定要推荐该作者吗?')){
+        var tr=$(this).closest('tr');
+        var id=tr.attr('data-id');
+        $.post("$url_groom",{id:id},function(data) {
+            if(data=='success'){
+                alert('推荐成功');
+            }else{
+                alert('推荐失败');
+            }
+        })
+    }
 })
 JS
 

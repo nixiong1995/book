@@ -96,17 +96,37 @@ class AuthorController extends Controller{
     public function actionDel(){
         //接收id
         $id=\Yii::$app->request->post('id');
-        $category=Author::findOne(['id'=>$id]);
-        if($category){
-            $category->status=0;
-            $category->save();
+        $author=Author::findOne(['id'=>$id]);
+        if( $author){
+            $author->status=0;
+            $author->save();
             return 'success';
         }else{
             return 'error';
         }
     }
 
-    public function behaviors()
+    //作者推荐
+    public function actionGroom(){
+        //接收id
+        $id=\Yii::$app->request->post('id');
+        $author=Author::findOne(['id'=>$id]);
+        if( $author){
+            $author->hot_time=time();
+            $author->save();
+            return 'success';
+        }else{
+            return 'error';
+        }
+    }
+
+    //作者推荐列表
+    public function actionGroomIndex(){
+        $model=Author::find()->orderBy('hot_time DESC')->one();
+        return $this->render('groom-index',['model'=>$model]);
+    }
+
+   /* public function behaviors()
     {
         return [
             'rbac'=>[
@@ -114,5 +134,5 @@ class AuthorController extends Controller{
                 'except'=>['login','logout','captcha','error'],
             ]
         ];
-    }
+    }*/
 }

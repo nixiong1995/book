@@ -12,6 +12,7 @@ class Author extends ActiveRecord{
             ['file','file','extensions'=>['jpg','png','gif']],
             ['popularity','number'],
             ['name','unique'],
+            ['sign','safe']
             ];
     }
 
@@ -22,6 +23,7 @@ class Author extends ActiveRecord{
             'intro'=>'简介',
             'file'=>'图片',
             'popularity'=>'人气',
+            'sign'=>'是否签约作者'
         ];
     }
 }

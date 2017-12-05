@@ -8,5 +8,6 @@ echo $form->field($model, 'file')->widget(FileInput::classname(),[
 ]);
 echo $model->file?yii\bootstrap\Html::img(HTTP_PATH.$model->image,['class'=>'img-cricle','style'=>'width:200px']):'';
 echo $form->field($model,'popularity')->textInput();
+echo $form->field($model,'sign')->radioList([0=>'否',1=>'是']);
 echo '<button type="submit" class="btn btn-info">提交</button>';
 \yii\bootstrap\ActiveForm::end();
