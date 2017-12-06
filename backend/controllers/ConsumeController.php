@@ -59,22 +59,18 @@ class ConsumeController extends Controller{
             $where.=" and create_time<=$end_time";
             //$query->andWhere(['<=','created_at',$end_time]);
         }
-       //$count=Consume::find()->Where(['book_id' =>16])->count('deduction');
-       $models=\Yii::$app->db->createCommand("select sell_tj.sellCount,sell_tj.sellMoney,sell_tj.book_id,book.name from (select count(*) as sellCount,sum(deduction) as sellMoney,book_id from consume WHERE 1=1 $where group by book_id ORDER BY sellCount DESC ) as sell_tj,book where book.id = sell_tj.book_id  ")->queryAll();
-        //$query=Consume::findBySql("select sell_tj.sellCount,sell_tj.sellMoney,sell_tj.book_id,book.name from (select count(*) as sellCount,sum(deduction) as sellMoney,book_id from consume group by book_id) as sell_tj,book where book.id = sell_tj.book_id")->all();
-        //var_dump($models);exit;
-        //$ids=\Yii::$app->db->createCommand("SELECT id FROM book")->queryColumn();
-       // foreach ($ids as $id){
-          //  $query=Consume::find()->where(['book_id'=>$id]);
-        //}
-        //$query=Consume::find();
-       /* $pager=new Pagination([
-            'totalCount'=>$query->count(),//总条数
+
+        $pager=new Pagination([
+            'totalCount'=>2,//总条数
             'defaultPageSize'=>10,//每页显示条数
         ]);
-        $models=$query->limit($pager->limit)->offset($pager->offset)->queryScalar();*/
+        //var_dump($pager->offset);exit;
+        //$query=\Yii::$app->db->createCommand("select sell_tj.sellCount,sell_tj.sellMoney,sell_tj.book_id,book.name from (select count(*) as sellCount,sum(deduction) as sellMoney,book_id from consume WHERE 1=1 $where group by book_id ORDER BY sellCount DESC ) as sell_tj,book where book.id = sell_tj.book_id  ")->queryAll();
+        $query=\Yii::$app->db->createCommand("select sell_tj.sellCount,sell_tj.sellMoney,sell_tj.book_id,book.name from (select count(*) as sellCount,sum(deduction) as sellMoney,book_id from consume WHERE 1=1 $where group by book_id ORDER BY sellCount DESC limit $pager->offset,$pager->limit) as sell_tj,book where book.id = sell_tj.book_id ")->queryAll();
+
+       //$models=$query->limit($pager->limit)->offset($pager->offset)->queryAll();
         //var_dump($models);exit;
-        return $this->render('count',['models'=>$models]);
+        return $this->render('count',['models'=> $query,'pager'=>$pager]);
 
     }
 

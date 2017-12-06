@@ -88,7 +88,7 @@ class RbacController extends Controller
     }
 
     //验证访问权限
-   public function behaviors()
+  public function behaviors()
     {
         return [
             'rbac'=>[

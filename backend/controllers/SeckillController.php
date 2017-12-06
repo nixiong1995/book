@@ -38,7 +38,7 @@ class SeckillController extends Controller{
                     $model->book_id=$book_id;
                     $model->create_time=time();
                     $model->save();
-                    \Yii::$app->session->setFlash('success', '加入秒杀成功');
+                    \Yii::$app->session->setFlash('success', '修改秒杀成功');
                     //跳转
                     return $this->redirect(['seckill/index']);
                 }

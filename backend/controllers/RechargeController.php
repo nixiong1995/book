@@ -12,6 +12,7 @@ class RechargeController extends Controller{
         $tel=\Yii::$app->request->get('tel');//手机
         $begin_time=\Yii::$app->request->get('begin_time');//搜索起始时间
         $end_time=\Yii::$app->request->get('end_time');//搜索结束时间
+        $mode=\Yii::$app->request->get('mode');//充值方式
         $where='';
         if($tel){
             $id=\Yii::$app->db->createCommand("SELECT id FROM user WHERE tel='$tel'")->queryScalar();
@@ -27,6 +28,9 @@ class RechargeController extends Controller{
             $end_time=$end_time.'235959';//拼接时间戳,加上时分秒
             $end_time=strtotime($end_time);
             $where.=" and create_time<=$end_time";
+        }
+        if($mode){
+            $where.=" and mode='$mode'";
         }
 
         $query=Recharge::findBySql("SELECT * From recharge WHERE money>0 $where ");

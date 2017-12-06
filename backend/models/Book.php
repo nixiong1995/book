@@ -10,7 +10,7 @@ class Book extends ActiveRecord{
     public function rules()
     {
         return [
-            [['name','author_id','is_free','intro','category_id','no','type'],'required'],
+            [['name','author_id','is_free','intro','category_id','no','type','from'],'required'],
             ['file','required','on'=>self::SCENARIO_ADD],
             ['name', 'unique','message' => '该书已存在.'],
             [['size','clicks','score'],'number'],
@@ -18,6 +18,8 @@ class Book extends ActiveRecord{
             ['type', 'in', 'range' => ['txt', 'epub'],'message'=>'只能输入txt,epub文本类型'],
             [['no','clicks'],'integer'],
             ['score', 'in', 'range' => [1, 2, 3,4,5,6,7,8,9,10],'message'=>'只能输入1-10的整数'],
+            ['ascription','safe'],
+
         ];
     }
 
@@ -34,6 +36,8 @@ class Book extends ActiveRecord{
             'score'=>'评分',
             'intro'=>'简介',
             'type'=>'文本类型',
+            'from'=>'书来自于(你的选择关系重大,请核对清楚再进行选择)',
+            'ascription'=>'书归属于(你的选择关系重大,请核对清楚再进行选择)',
         ];
     }
 
@@ -56,6 +60,17 @@ class Book extends ActiveRecord{
             $AuthorName[$author->id]=$author->name;
         }
         return $AuthorName;
+    }
+
+    //获取归属出版社或业务员名
+    public static function getInformationName(){
+        $rows=Information::find()->all();
+        $listName=[];
+        $listName['']='请选择...';
+        foreach ( $rows as $row){
+            $listName[$row->id]=$row->name;
+        }
+        return $listName;
     }
 
     //关联查询作者

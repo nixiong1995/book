@@ -21,6 +21,7 @@
         </tr>
         </thead>
         <tbody>
+        <?php $consume=0;$consumption=0;?>
    <?php foreach ($models as $model):?>
     <tr>
         <td><?=$model->user->tel?></td>
@@ -31,10 +32,11 @@
         <td><?=date("Ymd",$model->create_time)?></td>
         <td><a tabindex="0" class="btn btn-sm btn-default" role="button" data-toggle="popover" data-trigger="focus" title="消费章节详细如下" data-content="<?=str_replace('|','-',$model->content)?>">查看消费章节详情</a></td></td>
     </tr>
+       <?php $consume+=$model->consumption;$consumption+=$model->deduction?>
     <?php endforeach;?>
     </tbody>
     </table>
-    <p>合计:<?= $pager->totalCount;?></p>
+    <p>数据合计:<?= $pager->totalCount;?>条&emsp;&emsp;消费阅票统计:<?=$consume?>.00&emsp;&emsp;实际消费阅票统计:<?=$consumption?>.00</p>
 <?php
 echo \yii\widgets\LinkPager::widget([
     'pagination'=>$pager,

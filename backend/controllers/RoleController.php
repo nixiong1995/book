@@ -108,5 +108,4 @@ class RoleController extends Controller
             ]
         ];
     }
-
 }
