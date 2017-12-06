@@ -122,7 +122,7 @@ class AuthorController extends Controller{
 
     //作者推荐列表
     public function actionGroomIndex(){
-        $model=Author::find()->orderBy('hot_time DESC')->one();
+        $model=Author::find()->orderBy('hot_time DESC')->asArray()->one();
         return $this->render('groom-index',['model'=>$model]);
     }
 

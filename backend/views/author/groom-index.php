@@ -8,7 +8,7 @@
         <th>加入时间</th>
     </tr>
         <tr>
-            <td><?=$model->name?></td>
-            <td><?=date("Y-m-d H:i:s",$model->hot_time)?></td>
+            <td><?=$model['name']?></td>
+            <td><?php if($model['name']){echo date("Y-m-d H:i:s",$model['hot_time']);}?></td>
         </tr>
 </table>

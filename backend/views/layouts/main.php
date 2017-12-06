@@ -29,7 +29,7 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => '阅酷后台管理中心',
+        'brandLabel' => '阅酷后台管理',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
@@ -50,6 +50,8 @@ AppAsset::register($this);
             )
             . Html::endForm()
             . '</li>';
+
+      // ['label' => '修改密码', 'url' => ['modify-password/index']];
     }
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],

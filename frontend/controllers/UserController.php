@@ -330,7 +330,7 @@ class UserController extends Controller {
 
     public function actionSign(){
         //var_dump(time());exit;
-        $p = ['tel'=>13880646145,'password'=>123456,'time'=>1511853883,'captcha'=>828256];
+        $p = ['tel'=>13880646145,'password'=>123456,'time'=>1512554300,'captcha'=>162496];
         //1.对key做升序排列 //['a'=>'','b'=>'','c'=>'','time'=>'']
         ksort($p);
         //2. 将参数拼接成字符串 a=4&b=123&c=77&time=12312312
@@ -400,4 +400,6 @@ class UserController extends Controller {
         }
         //print_r($response->Message);
     }
+
+
 }

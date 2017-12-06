@@ -64,7 +64,7 @@ class Book extends ActiveRecord{
 
     //获取归属出版社或业务员名
     public static function getInformationName(){
-        $rows=Information::find()->all();
+        $rows=Information::find()->where(['<','type',2])->all();
         $listName=[];
         $listName['']='请选择...';
         foreach ( $rows as $row){

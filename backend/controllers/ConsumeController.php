@@ -60,8 +60,10 @@ class ConsumeController extends Controller{
             //$query->andWhere(['<=','created_at',$end_time]);
         }
 
+        //查询总条数
+        $count=$query=\Yii::$app->db->createCommand(" select count(*) as totalCount from (select count(*) as sellCount,sum(deduction) as sellMoney,book_id from consume group by book_id) as sell_tj,book where book.id = sell_tj.book_id")->queryScalar();
         $pager=new Pagination([
-            'totalCount'=>2,//总条数
+            'totalCount'=>$count,//总条数
             'defaultPageSize'=>10,//每页显示条数
         ]);
         //var_dump($pager->offset);exit;
