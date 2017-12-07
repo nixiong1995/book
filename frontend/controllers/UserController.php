@@ -365,7 +365,6 @@ class UserController extends Controller {
             "LTAIypgT6xAIPdMq",
             "tneztyzfbgbMVRB87TFKrBUhMv3HnM"
         );
-        echo "SmsDemo::sendSms\n";
         $response = $demo->sendSms(
             "阅酷书城", // 短信签名
             "SMS_113461555", // 短信模板编号
