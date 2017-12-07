@@ -5,7 +5,10 @@ use yii\web\Controller;
 class SignController extends Controller{
     public $token = 'yuekukuyue666888';
     public function actionSign(){
-        var_dump(time());exit;
+        var_dump(date("Ymd H:i:s", 1512635323));
+        var_dump(date("Ymd H:i:s",  1512635300));exit;
+
+        exit;
         $p = ['tel'=>13880646145,'password'=>123456,'time'=>1512633019,'captcha'=>565463];
         //$p=['captcha'=>123,'time'=>123,'tel'=>123,'password'=>123];
         //1.对key做升序排列 //['a'=>'','b'=>'','c'=>'','time'=>'']
