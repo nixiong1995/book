@@ -63,7 +63,7 @@ class UserController extends Controller {
                 $sms=$redis->get('captcha');
                 $time=$redis->get('time'.$tel);
                 if(!$phone){
-                    $result['msg']='请先发送验证嘛';
+                    $result['msg']='请先发送验证';
                     return $result;
                 }
                 if($phone!=$tel && $captcha!=$sms){

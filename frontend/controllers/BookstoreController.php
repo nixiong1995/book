@@ -111,11 +111,8 @@ class BookstoreController extends Controller{
                                 'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
                                 'read'=>$ReadCount,'collection'=>$book->collection];
                         }
-
                     }
-
                 }
-
 
             }else{
                 //不是注册用户
