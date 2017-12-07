@@ -378,7 +378,8 @@ class UserController extends Controller {
         if($response->Message=='OK'){
             $result['code']=200;
             $result['msg']='验证码发送成功';
-            $result['data']=['tel'=>$tel,'captcha'=>$captcha];
+            $result['data']['tel']=$tel;
+            $result['data']['captcha']=$captcha;
             return $result ;
         }else{
             $result['msg']='验证码发送失败';
