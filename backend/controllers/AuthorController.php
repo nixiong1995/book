@@ -113,6 +113,7 @@ class AuthorController extends Controller{
         $author=Author::findOne(['id'=>$id]);
         if( $author){
             $author->hot_time=time();
+            $author->groom=1;
             $author->save();
             return 'success';
         }else{
@@ -122,8 +123,8 @@ class AuthorController extends Controller{
 
     //作者推荐列表
     public function actionGroomIndex(){
-        $model=Author::find()->orderBy('hot_time DESC')->asArray()->one();
-        return $this->render('groom-index',['model'=>$model]);
+        $models=Author::find()->where(['groom'=>1])->orderBy('hot_time DESC')->limit(6)->all();
+        return $this->render('groom-index',['models'=>$models]);
     }
 
    public function behaviors()

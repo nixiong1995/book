@@ -7,8 +7,10 @@
         <th>作者姓名</th>
         <th>加入时间</th>
     </tr>
+    <?php foreach ($models as $model):?>
         <tr>
-            <td><?=$model['name']?></td>
-            <td><?php if($model['name']){echo date("Y-m-d H:i:s",$model['hot_time']);}?></td>
+            <td><?=$model->name?></td>
+            <td><?php if($model->name){echo date("Y-m-d H:i:s",$model->hot_time);}?></td>
         </tr>
+    <?php endforeach;?>
 </table>
