@@ -383,6 +383,7 @@ class UserController extends Controller {
             return $result ;
         }else{
             $result['msg']='验证码发送失败';
+            $result['data']='';
             return $result;
         }
         //print_r($response->Message);

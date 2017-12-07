@@ -65,7 +65,7 @@ class BookstoreController extends Controller{
                // $result['msg']= $res;
            // }else{
             //今日必读
-            /*$models1=Book::find()->where(['groom'=>1])->orderBy('groom_time DESC')->limit(5)->all();
+            $models1=Book::find()->where(['groom'=>1])->orderBy('groom_time DESC')->limit(5)->all();
                 //var_dump($models1);exit;
             $result['data']['read-today']=[];
             foreach ($models1 as $model1){
@@ -88,36 +88,52 @@ class BookstoreController extends Controller{
                     'view'=>$model2->book->clicks,'image'=>HTTP_PATH.$model2->book->image,'size'=>$model2->book->size,
                     'score'=>$model2->book->score,'intro'=>$model2->book->intro,'is_end'=>$model2->book->is_end,
                     'read'=>$ReadCount,'collection'=>$model2->book->collection,];
-            }*/
+            }
 
             //猜你喜欢
             $user_id=\Yii::$app->request->post('user_id');
             //根据用户id查找喜欢的类型
+            $result['data']['like']=[];
             if($user_id){
                 //是注册用户
                 $userdetail=UserDetails::findOne(['user_id'=>$user_id]);
                 if($userdetail->f_type){
                     //有自己喜欢的类型
                     $category_ids=explode('|',$userdetail->f_type);
+                    $index=array_rand($category_ids);
                     //遍历查询书
-                    $result['data']['like']=[];
-                    foreach ($category_ids as $category_id){
-                        $books=Book::find()->where(['category_id'=>$category_id])->orderBy('score DESC')->limit(3)->all();
-                        foreach ($books as $book){
-                            $ReadCount=Reading::find()->where(['book_id'=>$book->id])->count('id');
-                            $result['data']['like'][$book->create_time]=['book_id'=>$book->id,'name'=>$book->name,
-                                'category'=>$book->category->name,'author'=>$book->author->name,
-                                'view'=>$book->clicks,'image'=>HTTP_PATH.$book->image,'size'=>$book->size,
-                                'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
-                                'read'=>$ReadCount,'collection'=>$book->collection];
-                        }
-                    }
-                }
+                    $books=Book::find()->where(['category_id'=>$category_ids[$index]])->orderBy('score DESC')->limit(3)->all();
+                   foreach ($books as $book){
+                       $result['data']['like'][$book->create_time]=['book_id'=>$book->id,'name'=>$book->name,
+                           'category'=>$book->category->name,'author'=>$book->author->name,
+                           'view'=>$book->clicks,'image'=>HTTP_PATH.$book->image,'size'=>$book->size,
+                           'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
+                           'read'=>$book->viewing,'collection'=>$book->collection];
+                   }
+                   $result['code']=200;
+                    $result['msg']='获取书城信息成功';
 
-            }else{
-                //不是注册用户
+                }
+                return  $result;
 
             }
+            //没有注册以及没有喜欢的类型
+            $ids=[];
+            $categorys=Category::findBySql("select id from category")->all();
+            foreach ($categorys as $category){
+                $ids[$category->id]=$category->id;
+            }
+            $index2=array_rand($ids);
+            $books=Book::find()->where(['category_id'=>$index2])->orderBy('score DESC')->limit(3)->all();
+            foreach ($books as $book){
+                $result['data']['like'][$book->create_time]=['book_id'=>$book->id,'name'=>$book->name,
+                    'category'=>$book->category->name,'author'=>$book->author->name,
+                    'view'=>$book->clicks,'image'=>HTTP_PATH.$book->image,'size'=>$book->size,
+                    'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
+                    'read'=>$book->viewing,'collection'=>$book->collection];
+            }
+            $result['code']=200;
+            $result['msg']='获取书城信息成功';
 
 
 
