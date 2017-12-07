@@ -6,8 +6,8 @@ class SignController extends Controller{
     public $token = 'yuekukuyue666888';
     public function actionSign(){
        // var_dump(time());exit;
-        //$p = ['tel'=>13880646145,'password'=>123456,'time'=>1512633019,'captcha'=>565463];
-        $p=['time'=>1512642240,'user_id'=>1];
+        $p = ['tel'=>13632457377,'pwd'=>123456,'time'=>1512643570,'captcha'=>955687];
+        //$p=['time'=>1512642240,'user_id'=>1];
         //1.对key做升序排列 //['a'=>'','b'=>'','c'=>'','time'=>'']
         ksort($p);
 

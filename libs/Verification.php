@@ -32,7 +32,7 @@ class Verification{
             if($sign == $s){
             }else{
                 $error='签名错误';
-                return $error;
+                return $str;
             }
 
         }else{
