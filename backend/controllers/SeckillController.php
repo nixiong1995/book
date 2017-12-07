@@ -8,7 +8,7 @@ class SeckillController extends Controller{
 
     //秒杀列表
     public function actionIndex(){
-        $models=Seckill::find()->orderBy('create_time Desc')->limit(4)->all();
+        $models=Seckill::find()->orderBy('create_time DESC')->limit(4)->all();
         return $this->render('index',['models'=>$models]);
     }
 
