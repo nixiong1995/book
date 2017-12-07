@@ -59,11 +59,11 @@ class BookstoreController extends Controller{
             'data'=>[],
         ];
         if(\Yii::$app->request->isPost){
-            //$obj=new Verification();
-            //$res=$obj->check();
-            //if($res){
+            $obj=new Verification();
+            $res=$obj->check();
+            if($res){
                // $result['msg']= $res;
-           // }else{
+            }else{
             //今日必读
             $models1=Book::find()->where(['groom'=>1])->orderBy('groom_time DESC')->limit(5)->all();
                 //var_dump($models1);exit;
@@ -139,7 +139,7 @@ class BookstoreController extends Controller{
 
 
 
-          //  }
+           }
 
         }else{
            $result['msg']='请求方式错误';
