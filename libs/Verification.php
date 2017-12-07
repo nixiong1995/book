@@ -16,7 +16,7 @@ class Verification{
             //请求有效期是1分钟
             if(time()-$time>60 || ($time-24) >time()){
                 $error = '请求已过期';
-                return $error;
+                return ['time1'=>$time,'time2'=>time()];
             }
         }else{
             $error='缺少参数';
