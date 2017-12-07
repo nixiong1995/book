@@ -42,7 +42,7 @@ class AdvertController extends Controller{
         $query=Advert::find()->where(['position'=>0])->orderBy('create_time  DESC');
         $pager=new Pagination([
             'totalCount'=>$query->count(),//总条数
-            'defaultPageSize'=>10,//每页显示条数
+            'defaultPageSize'=>1,//每页显示条数
         ]);
         $models=$query->limit($pager->limit)->offset($pager->offset)->all();
         return $this->render('bookshelf',['models'=>$models,'pager'=>$pager]);
@@ -53,7 +53,7 @@ class AdvertController extends Controller{
         $query=Advert::find()->where(['position'=>1])->orderBy('create_time  DESC');
         $pager=new Pagination([
             'totalCount'=>$query->count(),//总条数
-            'defaultPageSize'=>10,//每页显示条数
+            'defaultPageSize'=>1,//每页显示条数
         ]);
         $models=$query->limit($pager->limit)->offset($pager->offset)->all();
         return $this->render('bookstore',['models'=>$models,'pager'=>$pager]);
