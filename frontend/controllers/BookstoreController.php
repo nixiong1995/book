@@ -62,7 +62,7 @@ class BookstoreController extends Controller{
             $obj=new Verification();
             $res=$obj->check();
             if($res){
-               // $result['msg']= $res;
+                $result['msg']= $res;
             }else{
             //今日必读
             $models1=Book::find()->where(['groom'=>1])->orderBy('groom_time DESC')->limit(5)->all();
@@ -134,11 +134,6 @@ class BookstoreController extends Controller{
             }
             $result['code']=200;
             $result['msg']='获取书城信息成功';
-
-
-
-
-
            }
 
         }else{

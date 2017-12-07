@@ -332,7 +332,7 @@ class UserController extends Controller {
         $result = [
             'code'=>400,//状态
             'msg'=>'',//错误信息,如果有
-            'data'=>[],
+            'data'=>['tel'=>'','captcha'=>''],
         ];
 
         //判断当前是否能发送短信验证码
@@ -382,7 +382,6 @@ class UserController extends Controller {
             return $result ;
         }else{
             $result['msg']='验证码发送失败';
-            $result['data']=['tel'=>'','captcha'=>'' ];
             return $result;
         }
         //print_r($response->Message);
