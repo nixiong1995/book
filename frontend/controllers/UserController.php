@@ -125,7 +125,7 @@ class UserController extends Controller {
         $result = [
             'code'=>400,
             'msg'=>'',//错误信息,如果有
-            'data'=>[],
+            'data'=>['user_id'=>''],
         ];
         if(\Yii::$app->request->isPost){
             //验证接口

@@ -22,14 +22,6 @@ class BookstoreController extends Controller{
         parent::init();
     }
 
-   /* public function actionApi(){
-        $data = array(
-            array('id' => 1, 'name' => '你好！'),
-            array('id' => 2, 'name' => '我很好！')
-        );
-        return $data;
-    }*/
-
     //获取广告
     public function actionAdvert(){
         $result = [
@@ -145,9 +137,13 @@ class BookstoreController extends Controller{
 
         }else{
            $result['msg']='请求方式错误';
-
        }
         return $result;
+    }
+
+    //分类接口
+    public function actionCategory(){
+
     }
 
 }
