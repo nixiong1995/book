@@ -14,9 +14,9 @@ class Verification{
 
         if($time){
             //请求有效期是1分钟
-            if(time()-$time>60 || ($time-24) >time()){
+            if(time()-$time>20000 || ($time-24) >time()){
                 $error = '请求已过期';
-                return ['time1'=>$time,'time2'=>time()];
+                return $error;
             }
         }else{
             $error='缺少参数';
@@ -32,7 +32,7 @@ class Verification{
             if($sign == $s){
             }else{
                 $error='签名错误';
-                return $str;
+                return $error;
             }
 
         }else{
