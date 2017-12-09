@@ -32,18 +32,18 @@ class BookstoreController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-            if($res){
-                $result['msg']= $res;
-            }else{
+          //  if($res){
+              //  $result['msg']= $res;
+           // }else{
                 $position=\Yii::$app->request->post('position');
                 $models=Advert::find()->where(['position'=>$position])->orderBy('create_time DESC')->limit(3)->all();
                 //var_dump($models);exit;
                 foreach ($models as $model){
-                    $result['data'][$model->id]=['position'=>$model->position ,'sort'=>$model->sort,'image'=>HTTP_PATH.$model->image];
+                    $result['data']['advert'][]=['position'=>$model->position ,'sort'=>$model->sort,'image'=>HTTP_PATH.$model->image];
                 }
                 $result['code']=200;
                 $result['msg']='获取广告图成功';
-            }
+           // }
 
         }else{
             $result['msg']='请求方式错误';
@@ -100,9 +100,7 @@ class BookstoreController extends Controller{
                     $index=array_rand($category_ids);
                     //遍历查询书
                     $books=Book::find()->where(['category_id'=>$category_ids[$index]])->orderBy('score DESC')->limit(3)->all();
-                    $k=0;
                    foreach ($books as $book){
-                       $k++;
                        $result['data']['like'][]=['book_id'=>$book->id,'name'=>$book->name,
                            'category'=>$book->category->name,'author'=>$book->author->name,
                            'view'=>$book->clicks,'image'=>HTTP_PATH.$book->image,'size'=>$book->size,
@@ -143,7 +141,87 @@ class BookstoreController extends Controller{
 
     //分类接口
     public function actionCategory(){
+        $result = [
+            'code'=>400,
+            'msg'=>'',//错误信息,如果有
+            'data'=>[]
+        ];
+        if (\Yii::$app->request->post()){
+            $obj=new Verification();
+            $res=$obj->check();
+            if($res){
+               $result['msg']= $res;
+           }else{
+            //查询男频分类
+                $categorys1=Category::find()->where(['type'=>1])->all();
+                foreach ($categorys1 as $category){
+                    $image=\Yii::$app->db->createCommand("select image from book WHERE category_id=$category->id")->queryScalar();
+                    $count1=Book::find()->andWhere(['category_id'=>$category->id])->count('id');//查询分类书的数量
+                    $result['data']['male'][]=['name'=>$category->name,'intro'=>$category->intro,
+                        'status'=>$category->status,'count'=>$category->count,'type'=>$category->type,
+                    'image'=>HTTP_PATH.$image,'category_id'=>$category->id,'count'=>$count1];
+                }
+                //查询女频
+            $categorys2=Category::find()->where(['type'=>0])->all();
+            foreach ($categorys2 as $category){
+                $image=\Yii::$app->db->createCommand("select image from book WHERE category_id=$category->id")->queryScalar();
+                $count2=Book::find()->andWhere(['category_id'=>$category->id])->count('id');//查询分类书的数量
+                $result['data']['female'][]=['name'=>$category->name,'intro'=>$category->intro,
+                    'status'=>$category->status,'count'=>$category->count,'type'=>$category->type,
+                    'image'=>HTTP_PATH.$image,'category_id'=>$category->id,'count'=>$count2];
+            }
+            $result['code']=200;
+            $result['msg']='获取分类信息成功';
+           }
 
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
+    }
+
+    //图书详情推荐
+    public function  actionDetailGroom(){
+        $result = [
+            'code'=>400,
+            'msg'=>'',//错误信息,如果有
+            'data'=>[]
+        ];
+        if(\Yii::$app->request->isPost){
+            $obj=new Verification();
+            $res=$obj->check();
+            if($res){
+                $result['msg']= $res;
+           }else{
+                $category_id=\Yii::$app->request->post('category_id');
+                $author_id=\Yii::$app->request->post('author_id');
+                //查找同类书
+                $books1=Book::find()->where(['category_id'=>$category_id])->orderBy('score DESC')->limit(3)->all();
+                foreach ($books1 as $book1){
+                    $result['data']['similar'][]=['book_id'=>$book1->id,'name'=>$book1->name,
+                        'category'=>$book1->category->name,'author'=>$book1->author->name,
+                        'view'=>$book1->clicks,'image'=>HTTP_PATH.$book1->image,'size'=>$book1->size,
+                        'score'=>$book1->score,'intro'=>$book1->intro,'is_end'=>$book1->is_end,
+                        'download'=>$book1->downloads,'collection'=>$book1->collection];
+                }
+                //查找作者图书推荐
+                $books2=Book::find()->where(['author_id'=>$author_id])->orderBy('score DESC')->limit(3)->all();
+                foreach ($books2 as $book2){
+                    $result['data']['author'][]=['book_id'=>$book2->id,'name'=>$book2->name,
+                        'category'=>$book2->category->name,'author'=>$book2->author->name,
+                        'view'=>$book2->clicks,'image'=>HTTP_PATH.$book2->image,'size'=>$book2->size,
+                        'score'=>$book2->score,'intro'=>$book2->intro,'is_end'=>$book2->is_end,
+                        'download'=>$book2->downloads,'collection'=>$book2->collection];
+                }
+                $result['code']=200;
+                $result['msg']='获取图书详情推荐书籍成功';
+
+
+           }
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
     }
 
 }

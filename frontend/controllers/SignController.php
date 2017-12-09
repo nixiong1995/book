@@ -6,9 +6,9 @@ use yii\web\Controller;
 class SignController extends Controller{
     public $token = 'yuekukuyue666888';
     public function actionSign(){
-      //var_dump(time());exit;
-        $p = ['tel'=>13880646145,'password'=>123456,'time'=>1512704479];
-        //$p=['time'=>1512653672,'user_id'=>1];
+     // var_dump(time());exit;
+       // $p = ['tel'=>13880646145,'password'=>123456,'time'=>1512704479];
+        $p=['time'=>1512788835];
         //1.对key做升序排列 //['a'=>'','b'=>'','c'=>'','time'=>'']
         ksort($p);
 

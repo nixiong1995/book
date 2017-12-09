@@ -215,7 +215,7 @@ class UserController extends Controller {
                         $result['msg']='登录成功';
                         $result['data']=['user_id'=>$User->id,'uid'=>$User->uid,'tel'=>$User->tel,'email'=>$User->email,
                             'status'=>$User->status,'created_at'=>$User->created_at,'birthday'=>$model->birthday,
-                            'sex'=>$model->sex,'head'=>$model->head,'time'=>$model->time,'author'=> $AuthorName,
+                            'sex'=>$model->sex,'head'=>HTTP_PATH.$model->head,'time'=>$model->time,'author'=> $AuthorName,
                             'Rbook'=>$BookName,'type'=>$TypeName,'ticket'=>$User->ticket,'voucher'=>$User->voucher,
                             'address'=>$User->address,'source'=>$User->source,'vip'=>$model->vip,'collect_book'=>$BookName3,'purchased_book'=>$BookName2];
                     }else{
