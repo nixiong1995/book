@@ -32,18 +32,18 @@ class BookstoreController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-          //  if($res){
-              //  $result['msg']= $res;
-           // }else{
+          if($res){
+                $result['msg']= $res;
+           }else{
                 $position=\Yii::$app->request->post('position');
                 $models=Advert::find()->where(['position'=>$position])->orderBy('create_time DESC')->limit(3)->all();
                 //var_dump($models);exit;
                 foreach ($models as $model){
-                    $result['data']['advert'][]=['position'=>$model->position ,'sort'=>$model->sort,'image'=>HTTP_PATH.$model->image];
+                    $result['data'][]=['position'=>$model->position ,'sort'=>$model->sort,'image'=>HTTP_PATH.$model->image];
                 }
                 $result['code']=200;
                 $result['msg']='获取广告图成功';
-           // }
+            }
 
         }else{
             $result['msg']='请求方式错误';
@@ -268,12 +268,13 @@ class BookstoreController extends Controller{
                // $result['msg']= $res;
            // }else{
                 $keyword=\Yii::$app->request->post('keyword');
-                $author_id=\Yii::$app->db->createCommand("select id from author where name=`$keyword`")->queryScalar();
-
-                $books=Book::find()
-                    ->andWhere(['name'=>$keyword])
-                    ->andWhere(['author_id'=>$author_id])
-                    ->all();
+                $author_id=\Yii::$app->db->createCommand("select id from author where name='$keyword'")->queryScalar();
+                if($author_id){
+                    $where="author_id=$author_id";
+                }else{
+                    $where="name like '%$keyword%'";
+                }
+                $books=Book::findBySql("SELECT * FROM book WHERE $where")->all();
                 foreach ($books as $book){
                     $result['data'][]=['book_id'=>$book->id,'name'=>$book->name,
                         'category'=>$book->category->name,'author'=>$book->author->name,

@@ -131,9 +131,9 @@ class UserController extends Controller {
             //验证接口
             $obj=new Verification();
             $res=$obj->check();
-            if($res){
-                $result['msg']= $res;
-            }else{
+           // if($res){
+              //  $result['msg']= $res;
+           // }else{
 
                 $tel=\Yii::$app->request->post('tel');
                 $password=\Yii::$app->request->post('password');
@@ -227,7 +227,7 @@ class UserController extends Controller {
                     //未查到用户
                     $result['msg']='该手机未注册或者账号被封停状态';
                 }
-            }
+           // }
         }else{
             $result['msg']='请求方式错误';
         }
