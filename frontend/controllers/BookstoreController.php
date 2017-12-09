@@ -61,9 +61,9 @@ class BookstoreController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-            if($res){
-                $result['msg']= $res;
-            }else{
+           // if($res){
+             //   $result['msg']= $res;
+          //  }else{
             //今日必读
             $models1=Book::find()->where(['groom'=>1])->orderBy('groom_time DESC')->limit(5)->all();
                 //var_dump($models1);exit;
@@ -131,7 +131,7 @@ class BookstoreController extends Controller{
             }
             $result['code']=200;
             $result['msg']='获取书城信息成功';
-           }
+          // }
 
         }else{
            $result['msg']='请求方式错误';
@@ -180,6 +180,11 @@ class BookstoreController extends Controller{
         return $result;
     }
 
+    //分类二级页面接口
+    public function actionTwoCategory(){
+
+    }
+
     //图书详情推荐
     public function  actionDetailGroom(){
         $result = [
@@ -215,8 +220,6 @@ class BookstoreController extends Controller{
                 }
                 $result['code']=200;
                 $result['msg']='获取图书详情推荐书籍成功';
-
-
            }
         }else{
             $result['msg']='请求方式错误';
@@ -264,9 +267,9 @@ class BookstoreController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-            //if($res){
-               // $result['msg']= $res;
-           // }else{
+            if($res){
+                $result['msg']= $res;
+           }else{
                 $keyword=\Yii::$app->request->post('keyword');
                 $author_id=\Yii::$app->db->createCommand("select id from author where name='$keyword'")->queryScalar();
                 if($author_id){
@@ -284,13 +287,10 @@ class BookstoreController extends Controller{
                     $result['code']=200;
                     $result['msg']='获取图书信息成功';
                 }
-
-          //  }
-
+           }
         }else{
             $result['msg']='请求方式错误';
         }
         return $result;
     }
-
 }

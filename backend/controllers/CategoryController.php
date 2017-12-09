@@ -14,7 +14,7 @@ class CategoryController extends Controller{
             'totalCount'=>$query->count(),//总条数
             'defaultPageSize'=>10,//每页显示条数
         ]);
-        $models=$query->limit($pager->limit)->offset($pager->offset)->all();
+        $models=$query->limit($pager->limit)->offset($pager->offset)->orderBy('groom_time DESC')->all();
         //调用视图展示数据
         return $this->render('index',['models'=>$models,'pager'=>$pager]);
     }
@@ -57,6 +57,20 @@ class CategoryController extends Controller{
         $category=Category::findOne(['id'=>$id]);
         if($category){
             $category->status=0;
+            $category->save();
+            return 'success';
+        }else{
+            return 'error';
+        }
+    }
+
+    //推荐分类
+    public function actionGroom(){
+        //接收id
+        $id=\Yii::$app->request->post('id');
+        $category=Category::findOne(['id'=>$id]);
+        if($category){
+            $category->groom_time=time();
             $category->save();
             return 'success';
         }else{

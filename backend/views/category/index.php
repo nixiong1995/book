@@ -17,6 +17,7 @@
                 <td><?=$model->type?'男频':'女频';?></td>
                 <td>
                     <a href="<?=\yii\helpers\Url::to(['category/edit','id'=>$model->id])?>"><span class="glyphicon glyphicon-pencil btn btn-default btn-sm"></a>
+                    <a href="javascript:;" class="groom"><span class="glyphicon glyphicon-star btn btn-success btn-sm"></a>
                     <a href="javascript:;" class="delete"><span class="glyphicon glyphicon-trash btn btn-danger btn-sm" ></a>
                 </td>
             </tr>
@@ -31,6 +32,7 @@ echo \yii\widgets\LinkPager::widget([
  * @var $this \yii\web\View
  */
 $url_del=\yii\helpers\Url::to(['category/del']);
+$url_groom=\yii\helpers\Url::to(['category/groom']);
 $this->registerJs(new \yii\web\JsExpression(
     <<<JS
 $('.delete').on('click',function() {
@@ -46,7 +48,21 @@ $('.delete').on('click',function() {
             }
         })
     }
-  
+})
+
+
+$('.groom').on('click',function() {
+    if(confirm('你确定要推荐该分类吗?')){
+        var tr=$(this).closest('tr');
+        var id=tr.attr('data-id');
+        $.post("$url_groom",{id:id},function(data) {
+            if(data=='success'){
+                alert('推荐成功');
+            }else{
+                alert('推荐失败');
+            }
+        })
+    }
 })
 JS
 
