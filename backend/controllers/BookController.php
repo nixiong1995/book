@@ -97,7 +97,7 @@ class BookController extends Controller{
                 if($model->file){
                     $dir = UPLOAD_PATH .date("Y").'/'.date("m").'/'.date("d").'/';
                     if (!is_dir($dir)) {
-                        mkdir($dir);
+                        mkdir($dir,0777,true);
                     }
                     $fileName = date("HiiHsHis") . '.' . $model->file->extension;
                     $dir = $dir . "/" . $fileName;

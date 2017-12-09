@@ -224,4 +224,72 @@ class BookstoreController extends Controller{
         return $result;
     }
 
+    //获取一个本书的详细信息
+    public function actionBook(){
+        $result = [
+            'code'=>400,
+            'msg'=>'',//错误信息,如果有
+            'data'=>[]
+        ];
+        if(\Yii::$app->request->post()){
+            $obj=new Verification();
+            $res=$obj->check();
+            if($res){
+                $result['msg']= $res;
+           }else{
+                $book_id=\Yii::$app->request->post('book_id');
+                $book=Book::findOne(['id'=>$book_id]);
+                    $result['data'][]=['book_id'=>$book->id,'name'=>$book->name,
+                        'category'=>$book->category->name,'author'=>$book->author->name,
+                        'view'=>$book->clicks,'image'=>HTTP_PATH.$book->image,'size'=>$book->size,
+                        'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
+                        'download'=>$book->downloads,'collection'=>$book->collection];
+                    $result['code']=200;
+                    $result['msg']='获取图书信息成功';
+           }
+
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
+    }
+
+    //书城搜索
+    public function actionSearch(){
+        $result = [
+            'code'=>400,
+            'msg'=>'',//错误信息,如果有
+            'data'=>[]
+        ];
+        if(\Yii::$app->request->isPost){
+            $obj=new Verification();
+            $res=$obj->check();
+            //if($res){
+               // $result['msg']= $res;
+           // }else{
+                $keyword=\Yii::$app->request->post('keyword');
+                $author_id=\Yii::$app->db->createCommand("select id from author where name=`$keyword`")->queryScalar();
+
+                $books=Book::find()
+                    ->andWhere(['name'=>$keyword])
+                    ->andWhere(['author_id'=>$author_id])
+                    ->all();
+                foreach ($books as $book){
+                    $result['data'][]=['book_id'=>$book->id,'name'=>$book->name,
+                        'category'=>$book->category->name,'author'=>$book->author->name,
+                        'view'=>$book->clicks,'image'=>HTTP_PATH.$book->image,'size'=>$book->size,
+                        'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
+                        'download'=>$book->downloads,'collection'=>$book->collection];
+                    $result['code']=200;
+                    $result['msg']='获取图书信息成功';
+                }
+
+          //  }
+
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
+    }
+
 }

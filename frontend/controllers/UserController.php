@@ -217,7 +217,8 @@ class UserController extends Controller {
                             'status'=>$User->status,'created_at'=>$User->created_at,'birthday'=>$model->birthday,
                             'sex'=>$model->sex,'head'=>HTTP_PATH.$model->head,'time'=>$model->time,'author'=> $AuthorName,
                             'Rbook'=>$BookName,'type'=>$TypeName,'ticket'=>$User->ticket,'voucher'=>$User->voucher,
-                            'address'=>$User->address,'source'=>$User->source,'vip'=>$model->vip,'collect_book'=>$BookName3,'purchased_book'=>$BookName2];
+                            'address'=>$User->address,'source'=>$User->source,'vip'=>$model->vip,'collect_book'=>$BookName3,
+                            'purchased_book'=>$BookName2,'nickname'=>$model->nickname];
                     }else{
                         $result['msg']='密码错误';
                     }
@@ -378,8 +379,7 @@ class UserController extends Controller {
         if($response->Message=='OK'){
             $result['code']=200;
             $result['msg']='验证码发送成功';
-            $result['data']['tel']=$tel;
-            $result['data']['captcha']=$captcha;
+            $result['data']=['tel'=>$tel,'captcha'=>$captcha];
             return $result ;
         }else{
             $result['msg']='验证码发送失败';

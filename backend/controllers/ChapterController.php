@@ -59,6 +59,7 @@ class ChapterController extends Controller{
                     $redis->set($model->book_id,$model->file->size);
                     $book->size=$book->size+$model->file->size;
                     $book->is_end=$model->is_end;
+                    $book->update_time=time();
                     $book->save();
                     $transaction->commit();
                 }catch ( Exception $e){
@@ -111,6 +112,7 @@ class ChapterController extends Controller{
                         $redis->set($model->book_id,$model->file->size);
                     }
                     $book->is_end=$model->is_end;
+                    $book->update_time=time();
                     $book->save();
                     $transaction->commit();
                 }catch ( Exception $e){
