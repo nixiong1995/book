@@ -1,6 +1,6 @@
 <?php
 ?>
-<h2>男生完本限免列表</h2>
+<h2>女生完本限免列表</h2>
 <p><a href="<?=\yii\helpers\Url::to(['book/index'])?>" class="btn btn-primary">加入书籍</a></p>
 <table class="table">
     <tr>

@@ -186,10 +186,16 @@ class BookController extends Controller{
         return $this->render('boy-free',['models'=>$models]);
     }
 
-    //完本限免
+    //男生完本限免
     public function actionEndFree(){
-        $models=Book::find()->where(['groom'=>5])->orderBy('groom_time DESC')->limit(3)->all();
+        $models=Book::find()->where(['groom'=>5])->orderBy('groom_time DESC')->limit(6)->all();
         return $this->render('end-free',['models'=>$models]);
+    }
+
+    //女生完本限免
+    public function actionGirlEndfree(){
+        $models=Book::find()->where(['groom'=>6])->orderBy('groom_time DESC')->limit(6)->all();
+        return $this->render('girl-endfree',['models'=>$models]);
     }
 
     public function actionRead(){

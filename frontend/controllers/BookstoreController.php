@@ -191,16 +191,16 @@ class BookstoreController extends Controller{
         if(\Yii::$app->request->isGet){
             $obj=new Verification();
             $res=$obj->check();
-            //if($res){
-              //  $result['msg']= $res;
-           // }else{
+            if($res){
+               $result['msg']= $res;
+            }else{
                 $category_id=\Yii::$app->request->get('category_id');
                 $page=\Yii::$app->request->get('page');
                 $type=\Yii::$app->request->get('type');
                 $query=Book::find()->where(['category_id'=>$category_id]);
                 $pager=new Pagination([
                     'totalCount'=>$query->count(),
-                    'defaultPageSize'=>10,
+                    'defaultPageSize'=>1,
                 ]);
                 if($type==1){
                     $models=$query->limit($pager->limit)->offset($pager->offset)->orderBy('clicks DESC')->all();
@@ -235,8 +235,7 @@ class BookstoreController extends Controller{
             }*/
             $result['code']=200;
             $result['msg']='获取分类二级页面成功';
-          //  }
-
+            }
 
         }else{
             $result['msg']='请求方式错误';
@@ -364,9 +363,9 @@ class BookstoreController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-           // if($res){
-              //  $result['msg']= $res;
-           // }else{
+           if($res){
+                $result['msg']= $res;
+           }else{
                 $categorys=Category::find()->orderBy('groom_time DESC')->limit(5)->all();
 
                 foreach ($categorys as $category){
@@ -420,7 +419,7 @@ class BookstoreController extends Controller{
             $result['code']=200;
             $result['msg']='获取信息成功';
 
-          //  }
+           }
 
         }else{
             $result['msg']='请求方式错误';
@@ -472,6 +471,53 @@ class BookstoreController extends Controller{
                 }
                 $result['msg']='获取书本信息成功';
                 $result['code']=200;
+           // }
+
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
+    }
+
+
+    //书城完本限免
+    public function actionEndBook(){
+        $result = [
+            'code'=>400,
+            'msg'=>'',//错误信息,如果有
+            'data'=>[]
+        ];
+        if(\Yii::$app->request->isPost){
+           // $obj=new Verification();
+            //$res=$obj->check();
+            //if($res){
+            // $result['msg']= $res;
+            //}else{
+            //男生完本限免
+                $groom=\Yii::$app->request->post('groom');
+                $type=\Yii::$app->request->post('type');
+                $ManBooks1=Book::find()->where(['groom'=>$groom])->orderBy('groom_time DESC')->limit(6)->all();
+                foreach ($ManBooks1 as $Manbook1){
+                    $result['data']['end_book'][]=['book_id'=>$Manbook1->id,'name'=>$Manbook1->name,
+                        'category'=>$Manbook1->category->name,'author'=>$Manbook1->author->name,
+                        'view'=>$Manbook1->clicks,'image'=>HTTP_PATH.$Manbook1->image,'size'=>$Manbook1->size,
+                        'score'=>$Manbook1->score,'intro'=>$Manbook1->intro,'is_end'=>$Manbook1->is_end,
+                        'download'=>$Manbook1->downloads,'collection'=>$Manbook1->collection];
+                }
+
+                //男生完本分类推荐
+                $ManIds=\Yii::$app->db->createCommand("SELECT id FROM category WHERE type=$type")->queryColumn();
+                $ManBooks2=Book::find()->where(['category_id'=>$ManIds[array_rand($ManIds,1)],'is_end'=>1])->orderBy('score DESC')->limit(3)->all();
+                foreach ($ManBooks2 as $Manbook2){
+                    $result['data']['end_category'][]=['book_id'=>$Manbook2->id,'name'=>$Manbook2->name,
+                        'category'=>$Manbook2->category->name,'author'=>$Manbook2->author->name,
+                        'view'=>$Manbook2->clicks,'image'=>HTTP_PATH.$Manbook2->image,'size'=>$Manbook2->size,
+                        'score'=>$Manbook2->score,'intro'=>$Manbook2->intro,'is_end'=>$Manbook2->is_end,
+                        'download'=>$Manbook2->downloads,'collection'=>$Manbook2->collection];
+                }
+                $result['code']=200;
+                $result['msg']='获取书本信息成功';
+
            // }
 
         }else{
