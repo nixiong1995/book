@@ -189,11 +189,11 @@ class BookstoreController extends Controller{
             'data'=>[]
         ];
         if(\Yii::$app->request->isGet){
-            $obj=new Verification();
-            $res=$obj->check();
-            if($res){
-               $result['msg']= $res;
-            }else{
+            //$obj=new Verification();
+            //$res=$obj->check();
+            //if($res){
+              // $result['msg']= $res;
+           // }else{
                 $category_id=\Yii::$app->request->get('category_id');
                 $page=\Yii::$app->request->get('page');
                 $type=\Yii::$app->request->get('type');
@@ -235,7 +235,7 @@ class BookstoreController extends Controller{
             }*/
             $result['code']=200;
             $result['msg']='获取分类二级页面成功';
-            }
+           // }
 
         }else{
             $result['msg']='请求方式错误';
