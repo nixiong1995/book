@@ -200,7 +200,7 @@ class BookstoreController extends Controller{
                 $query=Book::find()->where(['category_id'=>$category_id]);
                 $pager=new Pagination([
                     'totalCount'=>$query->count(),
-                    'defaultPageSize'=>1,
+                    'defaultPageSize'=>3,
                 ]);
                 if($type==1){
                     $models=$query->limit($pager->limit)->offset($pager->offset)->orderBy('clicks DESC')->all();
@@ -209,8 +209,6 @@ class BookstoreController extends Controller{
                 }elseif($type==3){
                     $models=$query->limit($pager->limit)->offset($pager->offset)->orderBy('score DESC')->all();
                 }
-
-
 
             foreach ($models as $model){
                 $result['data'][]=['book_id'=>$model->id,'name'=>$model->name,
