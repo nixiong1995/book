@@ -191,27 +191,35 @@ class BookstoreController extends Controller{
         if(\Yii::$app->request->isGet){
             $obj=new Verification();
             $res=$obj->check();
-            if($res){
-                $result['msg']= $res;
-            }else{
+            //if($res){
+              //  $result['msg']= $res;
+           // }else{
                 $category_id=\Yii::$app->request->get('category_id');
                 $page=\Yii::$app->request->get('page');
+                $type=\Yii::$app->request->get('type');
                 $query=Book::find()->where(['category_id'=>$category_id]);
                 $pager=new Pagination([
                     'totalCount'=>$query->count(),
                     'defaultPageSize'=>10,
                 ]);
-            $models1=$query->limit($pager->limit)->offset($pager->offset)->orderBy('clicks DESC')->all();
-            $models2=$query->limit($pager->limit)->offset($pager->offset)->orderBy('create_time DESC')->all();
-            $models3=$query->limit($pager->limit)->offset($pager->offset)->orderBy('score DESC')->all();
-            foreach ($models1 as $model1){
-                $result['data']['hot'][]=['book_id'=>$model1->id,'name'=>$model1->name,
-                    'category'=>$model1->category->name,'author'=>$model1->author->name,
-                    'view'=>$model1->clicks,'image'=>HTTP_PATH.$model1->image,'size'=>$model1->size,
-                    'score'=>$model1->score,'intro'=>$model1->intro,'is_end'=>$model1->is_end,
-                    'download'=>$model1->downloads,'collection'=>$model1->collection];
+                if($type==1){
+                    $models=$query->limit($pager->limit)->offset($pager->offset)->orderBy('clicks DESC')->all();
+                }elseif ($type==2){
+                    $models=$query->limit($pager->limit)->offset($pager->offset)->orderBy('create_time DESC')->all();
+                }elseif($type==3){
+                    $models=$query->limit($pager->limit)->offset($pager->offset)->orderBy('score DESC')->all();
+                }
+
+
+
+            foreach ($models as $model){
+                $result['data'][]=['book_id'=>$model->id,'name'=>$model->name,
+                    'category'=>$model->category->name,'author'=>$model->author->name,
+                    'view'=>$model->clicks,'image'=>HTTP_PATH.$model->image,'size'=>$model->size,
+                    'score'=>$model->score,'intro'=>$model->intro,'is_end'=>$model->is_end,
+                    'download'=>$model->downloads,'collection'=>$model->collection];
             }
-            foreach ($models2 as $model2){
+           /* foreach ($models2 as $model2){
                 $result['data']['new'][]=['book_id'=>$model2->id,'name'=>$model2->name,
                     'category'=>$model2->category->name,'author'=>$model2->author->name,
                     'view'=>$model2->clicks,'image'=>HTTP_PATH.$model2->image,'size'=>$model2->size,
@@ -224,10 +232,10 @@ class BookstoreController extends Controller{
                     'view'=>$model3->clicks,'image'=>HTTP_PATH.$model3->image,'size'=>$model3->size,
                     'score'=>$model3->score,'intro'=>$model3->intro,'is_end'=>$model3->is_end,
                     'download'=>$model3->downloads,'collection'=>$model3->collection];
-            }
+            }*/
             $result['code']=200;
             $result['msg']='获取分类二级页面成功';
-            }
+          //  }
 
 
         }else{
