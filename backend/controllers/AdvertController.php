@@ -31,7 +31,7 @@ class AdvertController extends Controller{
                 $model->save();
                 \Yii::$app->session->setFlash('success', '添加成功');
                 //跳转
-                return $this->redirect(['advert/bookstore']);
+                return $this->redirect(['advert/bookshelf']);
             }
         }
         return $this->render('add',['model'=>$model]);
@@ -39,16 +39,20 @@ class AdvertController extends Controller{
 
     //书架广告
     public function actionBookshelf(){
-        $query=Advert::find()->where(['position'=>0])->orderBy('create_time  DESC');
+        $position=\Yii::$app->request->get('position');
+        $query=Advert::find();//->where(['position'=>0])->orderBy('create_time  DESC');
+        if($position){
+            $query->where(['position'=>$position]);
+        }
         $pager=new Pagination([
             'totalCount'=>$query->count(),//总条数
             'defaultPageSize'=>10,//每页显示条数
         ]);
-        $models=$query->limit($pager->limit)->offset($pager->offset)->all();
+        $models=$query->limit($pager->limit)->offset($pager->offset)->orderBy('create_time  DESC')->all();
         return $this->render('bookshelf',['models'=>$models,'pager'=>$pager]);
     }
 
-    //书城广告
+   /* //书城广告
     public function actionBookstore(){
         $query=Advert::find()->where(['position'=>1])->orderBy('create_time  DESC');
         $pager=new Pagination([
@@ -57,7 +61,7 @@ class AdvertController extends Controller{
         ]);
         $models=$query->limit($pager->limit)->offset($pager->offset)->all();
         return $this->render('bookstore',['models'=>$models,'pager'=>$pager]);
-    }
+    }*/
 
     //广告修改
     public function actionEdit($id){
@@ -87,7 +91,7 @@ class AdvertController extends Controller{
                 $model->save();
                 \Yii::$app->session->setFlash('success', '修改成功');
                 //跳转
-                return $this->redirect(['advert/bookstore']);
+                return $this->redirect(['advert/bookshelf']);
             }
         }
         return $this->render('add',['model'=>$model]);

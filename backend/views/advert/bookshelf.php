@@ -1,12 +1,10 @@
 <?php
 ?>
-<h2>书架广告列表(客户端显示前6条)</h2>
+<h2>广告列表</h2>
 <p><a href="<?=\yii\helpers\Url::to(['advert/add'])?>" class="btn btn-primary">新增广告</a></p>
-    <p class="col-lg-5">
-    <form class="form-inline" method="get" action="<?=\yii\helpers\Url::to(['book/index'])?>">
-        <?=\yii\bootstrap\Html::dropDownList('category','0',\backend\models\Book::getCategoryName(),['class'=>"form-control"])?>
-        <input type="text" name="book" class="form-control" placeholder="书名"/>
-        <input type="text" name="author" class="form-control" placeholder="作者"/>
+    <p class="col-lg-9">
+    <form class="form-inline" method="get" action="<?=\yii\helpers\Url::to(['advert/bookshelf'])?>">
+        <?=\yii\bootstrap\Html::dropDownList('position','1',[1=>'书架',2=>'书城首页',3=>'书城排行页',4=>'书城精品页',5=>'书城星本页',6=>'书城免费页',7=>'书城完本页'],['class'=>"form-control"])?>
         <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search">搜索</span></button>
     </form>
     </p>
