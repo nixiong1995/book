@@ -15,7 +15,7 @@ class Verification{
         if($time){
             //请求有效期是1分钟
             if(time()-$time>20000 || ($time-60) >time()){
-                $error =($time-24).','.time();
+                $error =($time-60).','.time();
                 return $error;
             }
         }else{
