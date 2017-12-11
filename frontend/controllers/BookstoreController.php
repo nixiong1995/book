@@ -33,9 +33,9 @@ class BookstoreController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-         // if($res){
-             //   $result['msg']= $res;
-         //  }else{
+         if($res){
+               $result['msg']= $res;
+          }else{
                 $position=\Yii::$app->request->post('position');
                 $models=Advert::find()->where(['position'=>$position])->orderBy('create_time DESC')->limit(4)->all();
                 //var_dump($models);exit;
@@ -44,7 +44,7 @@ class BookstoreController extends Controller{
                 }
                 $result['code']=200;
                 $result['msg']='获取广告图成功';
-            //}
+            }
 
         }else{
             $result['msg']='请求方式错误';
@@ -62,9 +62,9 @@ class BookstoreController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-           // if($res){
-             //   $result['msg']= $res;
-          //  }else{
+           if($res){
+               $result['msg']= $res;
+            }else{
             //今日必读
             $models1=Book::find()->where(['groom'=>1])->orderBy('groom_time DESC')->limit(5)->all();
                 //var_dump($models1);exit;
@@ -133,7 +133,7 @@ class BookstoreController extends Controller{
             }
             $result['code']=200;
             $result['msg']='获取书城信息成功';
-          // }
+           }
 
         }else{
            $result['msg']='请求方式错误';
