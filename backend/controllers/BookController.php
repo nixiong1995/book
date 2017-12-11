@@ -170,25 +170,25 @@ class BookController extends Controller{
 
     //今日限免列表
     public function actionTodayFree(){
-        $models=Book::find()->where(['groom'=>2])->orderBy('groom_time DESC')->limit(5)->all();
+        $models=Book::find()->where(['groom'=>2])->orderBy('groom_time DESC')->limit(3)->all();
         return $this->render('today-free',['models'=>$models]);
     }
 
     //女生限免
     public function actionGirlFree(){
-        $models=Book::find()->where(['groom'=>3])->orderBy('groom_time DESC')->limit(5)->all();
+        $models=Book::find()->where(['groom'=>3])->orderBy('groom_time DESC')->limit(8)->all();
         return $this->render('girl-free',['models'=>$models]);
     }
 
     //男生限免
     public function actionBoyFree(){
-        $models=Book::find()->where(['groom'=>4])->orderBy('groom_time DESC')->limit(5)->all();
+        $models=Book::find()->where(['groom'=>4])->orderBy('groom_time DESC')->limit(3)->all();
         return $this->render('boy-free',['models'=>$models]);
     }
 
     //完本限免
     public function actionEndFree(){
-        $models=Book::find()->where(['groom'=>5])->orderBy('groom_time DESC')->limit(5)->all();
+        $models=Book::find()->where(['groom'=>5])->orderBy('groom_time DESC')->limit(3)->all();
         return $this->render('end-free',['models'=>$models]);
     }
 

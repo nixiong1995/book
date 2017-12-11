@@ -420,4 +420,56 @@ class BookstoreController extends Controller{
         return $result;
     }
 
+    //书城免费
+    public function actionFree(){
+        $result = [
+            'code'=>400,
+            'msg'=>'',//错误信息,如果有
+            'data'=>[]
+        ];
+        if(\Yii::$app->request->isPost){
+           // $obj=new Verification();
+            //$res=$obj->check();
+            //if($res){
+            //  $result['msg']= $res;
+            //}else{
+            //今日限免
+                $books1=Book::find()->where(['groom'=>2])->orderBy('groom_time DESC')->limit(3)->all();
+                foreach ( $books1 as $book1){
+                    $result['data']['today-free'][]=['book_id'=>$book1->id,'name'=>$book1->name,
+                        'category'=>$book1->category->name,'author'=>$book1->author->name,
+                        'view'=>$book1->clicks,'image'=>HTTP_PATH.$book1->image,'size'=>$book1->size,
+                        'score'=>$book1->score,'intro'=>$book1->intro,'is_end'=>$book1->is_end,
+                        'download'=>$book1->downloads,'collection'=>$book1->collection];
+                }
+
+                //女生限免
+                $books2=Book::find()->where(['groom'=>3])->orderBy('groom_time DESC')->limit(8)->all();
+                foreach ( $books2 as $book2){
+                    $result['data']['female-free'][]=['book_id'=>$book2->id,'name'=>$book2->name,
+                        'category'=>$book2->category->name,'author'=>$book2->author->name,
+                        'view'=>$book2->clicks,'image'=>HTTP_PATH.$book2->image,'size'=>$book2->size,
+                        'score'=>$book2->score,'intro'=>$book2->intro,'is_end'=>$book2->is_end,
+                        'download'=>$book2->downloads,'collection'=>$book2->collection];
+                }
+
+                //男生限免
+                $books3=Book::find()->where(['groom'=>4])->orderBy('groom_time DESC')->limit(3)->all();
+                foreach ( $books3 as $book3){
+                    $result['data']['male-free'][]=['book_id'=>$book3->id,'name'=>$book3->name,
+                        'category'=>$book3->category->name,'author'=>$book3->author->name,
+                        'view'=>$book3->clicks,'image'=>HTTP_PATH.$book3->image,'size'=>$book3->size,
+                        'score'=>$book3->score,'intro'=>$book3->intro,'is_end'=>$book3->is_end,
+                        'download'=>$book3->downloads,'collection'=>$book3->collection];
+                }
+                $result['msg']='获取书本信息成功';
+                $result['code']=200;
+           // }
+
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
+    }
+
 }
