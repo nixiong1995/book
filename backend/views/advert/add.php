@@ -1,7 +1,7 @@
 <?php
 use kartik\file\FileInput;
 $form=\yii\bootstrap\ActiveForm::begin();
-echo $form->field($model,'position')->dropDownList(['书架','书城']);
+echo $form->field($model,'position')->dropDownList(['书架','书城首页','书城排行页','书城精品页','书城星本页','书城免费页','书城完本页']);
 echo $form->field($model, 'file')->widget(FileInput::classname(),[
     'options'=>['multiple'=>false],
 ]);

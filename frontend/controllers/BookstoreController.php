@@ -8,6 +8,7 @@ use backend\models\Reading;
 use backend\models\Seckill;
 use backend\models\UserDetails;
 use libs\Verification;
+use yii\data\Pagination;
 use yii\web\Controller;
 use yii\web\Response;
 
@@ -84,7 +85,8 @@ class BookstoreController extends Controller{
                     'category'=> $categoty->name,'author'=>$author->name,
                     'view'=>$model2->book->clicks,'image'=>HTTP_PATH.$model2->book->image,'size'=>$model2->book->size,
                     'score'=>$model2->book->score,'intro'=>$model2->book->intro,'is_end'=>$model2->book->is_end,
-                    'download'=>$model2->book->downloads,'collection'=>$model2->book->collection,];
+                    'download'=>$model2->book->downloads,'collection'=>$model2->book->collection,'begin_time'=>$model2->begin_time,
+                    'end_time'=>$model2->end_time,'people'=>$model2->people];
             }
 
 
@@ -182,6 +184,57 @@ class BookstoreController extends Controller{
 
     //分类二级页面接口
     public function actionTwoCategory(){
+        $result = [
+            'code'=>400,
+            'msg'=>'',//错误信息,如果有
+            'data'=>[]
+        ];
+        if(\Yii::$app->request->isGet){
+            $obj=new Verification();
+            $res=$obj->check();
+            if($res){
+                $result['msg']= $res;
+            }else{
+                $category_id=\Yii::$app->request->get('category_id');
+                $page=\Yii::$app->request->get('page');
+                $query=Book::find()->where(['category_id'=>$category_id]);
+                $pager=new Pagination([
+                    'totalCount'=>$query->count(),
+                    'defaultPageSize'=>10,
+                ]);
+            $models1=$query->limit($pager->limit)->offset($pager->offset)->orderBy('clicks DESC')->all();
+            $models2=$query->limit($pager->limit)->offset($pager->offset)->orderBy('create_time DESC')->all();
+            $models3=$query->limit($pager->limit)->offset($pager->offset)->orderBy('score DESC')->all();
+            foreach ($models1 as $model1){
+                $result['data']['hot'][]=['book_id'=>$model1->id,'name'=>$model1->name,
+                    'category'=>$model1->category->name,'author'=>$model1->author->name,
+                    'view'=>$model1->clicks,'image'=>HTTP_PATH.$model1->image,'size'=>$model1->size,
+                    'score'=>$model1->score,'intro'=>$model1->intro,'is_end'=>$model1->is_end,
+                    'download'=>$model1->downloads,'collection'=>$model1->collection];
+            }
+            foreach ($models2 as $model2){
+                $result['data']['new'][]=['book_id'=>$model2->id,'name'=>$model2->name,
+                    'category'=>$model2->category->name,'author'=>$model2->author->name,
+                    'view'=>$model2->clicks,'image'=>HTTP_PATH.$model2->image,'size'=>$model2->size,
+                    'score'=>$model2->score,'intro'=>$model2->intro,'is_end'=>$model2->is_end,
+                    'download'=>$model2->downloads,'collection'=>$model2->collection];
+            }
+            foreach ($models3 as $model3){
+                $result['data']['evaluate'][]=['book_id'=>$model3->id,'name'=>$model3->name,
+                    'category'=>$model3->category->name,'author'=>$model3->author->name,
+                    'view'=>$model3->clicks,'image'=>HTTP_PATH.$model3->image,'size'=>$model3->size,
+                    'score'=>$model3->score,'intro'=>$model3->intro,'is_end'=>$model3->is_end,
+                    'download'=>$model3->downloads,'collection'=>$model3->collection];
+            }
+            $result['code']=200;
+            $result['msg']='获取分类二级页面成功';
+            }
+
+
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
 
     }
 
@@ -293,4 +346,77 @@ class BookstoreController extends Controller{
         }
         return $result;
     }
+
+    //书城精品
+    public function actionBoutique(){
+        $result = [
+            'code'=>400,
+            'msg'=>'',//错误信息,如果有
+            'data'=>[]
+        ];
+        if(\Yii::$app->request->isPost){
+            $obj=new Verification();
+            $res=$obj->check();
+           // if($res){
+              //  $result['msg']= $res;
+           // }else{
+                $categorys=Category::find()->orderBy('groom_time DESC')->limit(5)->all();
+
+                foreach ($categorys as $category){
+                    $ids[]=$category->id;
+                }
+                //var_dump($ids);exit;
+                $models1=Book::find()->where(['category_id'=>$ids[0]])->orderBy('groom_time DESC')->limit(3)->all();
+                foreach ($models1 as $model1){
+                    $result['data']['category1'][]=['book_id'=>$model1->id,'name'=>$model1->name,
+                        'category'=>$model1->category->name,'author'=>$model1->author->name,
+                        'view'=>$model1->clicks,'image'=>HTTP_PATH.$model1->image,'size'=>$model1->size,
+                        'score'=>$model1->score,'intro'=>$model1->intro,'is_end'=>$model1->is_end,
+                        'download'=>$model1->downloads,'collection'=>$model1->collection];
+                }
+
+            $models2=Book::find()->where(['category_id'=>$ids[1]])->orderBy('groom_time DESC')->limit(3)->all();
+            foreach ($models2 as $model2){
+                $result['data']['category2'][]=['book_id'=>$model2->id,'name'=>$model2->name,
+                    'category'=>$model2->category->name,'author'=>$model2->author->name,
+                    'view'=>$model2->clicks,'image'=>HTTP_PATH.$model2->image,'size'=>$model2->size,
+                    'score'=>$model2->score,'intro'=>$model2->intro,'is_end'=>$model2->is_end,
+                    'download'=>$model2->downloads,'collection'=>$model2->collection];
+            }
+
+            $models3=Book::find()->where(['category_id'=>$ids[2]])->orderBy('groom_time DESC')->limit(3)->all();
+            foreach ($models3 as $model3){
+                $result['data']['category3'][]=['book_id'=>$model3->id,'name'=>$model3->name,
+                    'category'=>$model3->category->name,'author'=>$model3->author->name,
+                    'view'=>$model3->clicks,'image'=>HTTP_PATH.$model3->image,'size'=>$model3->size,
+                    'score'=>$model3->score,'intro'=>$model3->intro,'is_end'=>$model3->is_end,
+                    'download'=>$model3->downloads,'collection'=>$model3->collection];
+            }
+
+            $models4=Book::find()->where(['category_id'=>$ids[3]])->orderBy('groom_time DESC')->limit(3)->all();
+            foreach ($models4 as $model4){
+                $result['data']['category4'][]=['book_id'=>$model4->id,'name'=>$model4->name,
+                    'category'=>$model4->category->name,'author'=>$model4->author->name,
+                    'view'=>$model4->clicks,'image'=>HTTP_PATH.$model4->image,'size'=>$model4->size,
+                    'score'=>$model4->score,'intro'=>$model4->intro,'is_end'=>$model4->is_end,
+                    'download'=>$model4->downloads,'collection'=>$model4->collection];
+            }
+
+            $models5=Book::find()->where(['category_id'=>$ids[4]])->orderBy('groom_time DESC')->limit(3)->all();
+            foreach ($models5 as $model5){
+                $result['data']['category5'][]=['book_id'=>$model5->id,'name'=>$model5->name,
+                    'category'=>$model5->category->name,'author'=>$model5->author->name,
+                    'view'=>$model5->clicks,'image'=>HTTP_PATH.$model5->image,'size'=>$model5->size,
+                    'score'=>$model5->score,'intro'=>$model5->intro,'is_end'=>$model5->is_end,
+                    'download'=>$model5->downloads,'collection'=>$model5->collection];
+            }
+
+          //  }
+
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
+    }
+
 }
