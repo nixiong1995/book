@@ -8,7 +8,7 @@ class SignController extends Controller{
     public function actionSign(){
      //var_dump(time());exit;
        // $p = ['tel'=>13880646145,'password'=>123456,'time'=>1512704479];
-        $p=['time'=>1512808681,'position'=>1];
+        $p=['time'=>1512974960,'user_id'=>4];
         //1.对key做升序排列 //['a'=>'','b'=>'','c'=>'','time'=>'']
         ksort($p);
 

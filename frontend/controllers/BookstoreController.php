@@ -62,9 +62,9 @@ class BookstoreController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-           if($res){
-               $result['msg']= $res;
-            }else{
+          // if($res){
+             //  $result['msg']= $res;
+           // }else{
             //今日必读
             $models1=Book::find()->where(['groom'=>1])->orderBy('groom_time DESC')->limit(5)->all();
                 //var_dump($models1);exit;
@@ -75,7 +75,7 @@ class BookstoreController extends Controller{
                     'score'=>$model1->score,'intro'=>$model1->intro,'is_end'=>$model1->is_end,
                     'download'=>$model1->downloads,'collection'=>$model1->collection];
             }
-            //var_dump($result);exit;
+
             //限时秒杀
             $models2=Seckill::find()->orderBy('create_time DESC')->limit(4)->all();
             foreach ($models2 as $model2){
@@ -114,7 +114,6 @@ class BookstoreController extends Controller{
 
                 }
                 return  $result;
-
             }
             //没有注册以及没有喜欢的类型
             $ids=[];
@@ -133,7 +132,7 @@ class BookstoreController extends Controller{
             }
             $result['code']=200;
             $result['msg']='获取书城信息成功';
-           }
+          // }
 
         }else{
            $result['msg']='请求方式错误';
@@ -410,6 +409,8 @@ class BookstoreController extends Controller{
                     'score'=>$model5->score,'intro'=>$model5->intro,'is_end'=>$model5->is_end,
                     'download'=>$model5->downloads,'collection'=>$model5->collection];
             }
+            $result['code']=200;
+            $result['msg']='获取信息成功';
 
           //  }
 
