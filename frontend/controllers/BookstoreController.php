@@ -375,13 +375,15 @@ class BookstoreController extends Controller{
 
                 if($books){
                     foreach ($books as $book){
-                        $result['data']['book'][]=['book_id'=>$book->id,'book_name'=>$book->name,
+                        $result['data']['book'][]=['book_id'=>$book->id,'name'=>$book->name,
                             'category'=>$book->category->name,'author'=>$book->author->name,
-                            'view'=>$book->clicks,'book_image'=>HTTP_PATH.$book->image,'size'=>$book->size,
-                            'score'=>$book->score,'book_intro'=>$book->intro,'is_end'=>$book->is_end,
+                            'view'=>$book->clicks,'image'=>HTTP_PATH.$book->image,'size'=>$book->size,
+                            'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
                             'download'=>$book->downloads,'collection'=>$book->collection,'author_id'=>$book->author_id,
                             'category_id'=>$book->category_id,'no_free'=>$book->no,'type'=>$book->type,
                             'create_time'=>$book->create_time,'update_time'=>$book->update_time];
+                        $book->search=$book->search+1;
+                        $book->save();
                     }
 
                 }

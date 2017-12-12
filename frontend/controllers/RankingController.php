@@ -102,12 +102,27 @@ class RankingController extends Controller{
                     }elseif ($type==5){
 
                         //热搜
-                        $word=\Yii::$app->db->createCommand("SELECT name FROM word ORDER BY count DESC limit 20")->queryColumn();
-                        $HotsearchBooks=Book::find()->where(['category_id'=>$ManIds])->where(['like','name',$word])->orderBy('score DESC')->limit(10)->all();
-                        var_dump($HotsearchBooks);exit;
+                        $HotsearchBooks=Book::find()->where(['category_id'=> $ManIds,'is_end'=>1])->orderBy('search DESC')->limit(10)->all();
 
 
-                        foreach ($EndBooks as $endBook) {
+                        foreach ($HotsearchBooks as $hotsearchBook){
+                            $result['data']['new'][] = ['book_id' => $hotsearchBook->id, 'name' => $hotsearchBook->name,
+                                'category' => $hotsearchBook->category->name, 'author' => $hotsearchBook->author->name,
+                                'view' => $hotsearchBook->clicks, 'image' => HTTP_PATH .$hotsearchBook->image, 'size' => $hotsearchBook->size,
+                                'score' => $hotsearchBook->score, 'intro' => $hotsearchBook->intro, 'is_end' =>$hotsearchBook->is_end,
+                                'download' => $hotsearchBook->downloads, 'collection' => $hotsearchBook->collection, 'author_id' => $hotsearchBook->author_id,
+                                'category_id' => $hotsearchBook->category_id, 'no_free' => $hotsearchBook->no, 'type' => $hotsearchBook->type,
+                                'create_time' => $hotsearchBook->create_time, 'update_time' => $hotsearchBook->update_time];
+                        }
+
+
+
+                        //var_dump($HotsearchBooks);exit;
+
+                        //var_dump($HotsearchBooks);exit;
+
+
+                        /*foreach ($EndBooks as $endBook) {
                             $result['data']['new'][] = ['book_id' => $endBook->id, 'name' => $endBook->name,
                                 'category' => $endBook->category->name, 'author' => $endBook->author->name,
                                 'view' => $endBook->clicks, 'image' => HTTP_PATH . $endBook->image, 'size' => $endBook->size,
@@ -115,7 +130,7 @@ class RankingController extends Controller{
                                 'download' => $endBook->downloads, 'collection' => $endBook->collection, 'author_id' => $endBook->author_id,
                                 'category_id' => $endBook->category_id, 'no_free' => $endBook->no, 'type' => $endBook->type,
                                 'create_time' => $endBook->create_time, 'update_time' => $endBook->update_time];
-                        }
+                        }*/
 
 
                     }
