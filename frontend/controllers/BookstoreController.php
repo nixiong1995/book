@@ -73,7 +73,9 @@ class BookstoreController extends Controller{
                     'category'=>$model1->category->name,'author'=>$model1->author->name,
                     'view'=>$model1->clicks,'image'=>HTTP_PATH.$model1->image,'size'=>$model1->size,
                     'score'=>$model1->score,'intro'=>$model1->intro,'is_end'=>$model1->is_end,
-                    'download'=>$model1->downloads,'collection'=>$model1->collection];
+                    'download'=>$model1->downloads,'collection'=>$model1->collection,'author_id'=>$model1->author_id,
+                    'category_id'=>$model1->category_id,'no_free'=>$model1->no,'type'=>$model1->type,
+                    'create_time'=>$model1->create_time,'update_time'=>$model1->update_time];
             }
 
             //限时秒杀
@@ -86,7 +88,9 @@ class BookstoreController extends Controller{
                     'view'=>$model2->book->clicks,'image'=>HTTP_PATH.$model2->book->image,'size'=>$model2->book->size,
                     'score'=>$model2->book->score,'intro'=>$model2->book->intro,'is_end'=>$model2->book->is_end,
                     'download'=>$model2->book->downloads,'collection'=>$model2->book->collection,'begin_time'=>$model2->begin_time,
-                    'end_time'=>$model2->end_time,'people'=>$model2->people];
+                    'end_time'=>$model2->end_time,'people'=>$model2->people,'author_id'=>$model2->book->author_id,
+                    'category_id'=>$model2->book->category_id,'no_free'=>$model2->book->no,'type'=>$model2->book->type,
+                    'create_time'=>$model2->book->create_time,'update_time'=>$model2->book->update_time];
             }
 
 
@@ -107,7 +111,9 @@ class BookstoreController extends Controller{
                            'category'=>$book->category->name,'author'=>$book->author->name,
                            'view'=>$book->clicks,'image'=>HTTP_PATH.$book->image,'size'=>$book->size,
                            'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
-                           'download'=>$book->downloads,'collection'=>$book->collection];
+                           'download'=>$book->downloads,'collection'=>$book->collection,'author_id'=>$book->author_id,
+                           'category_id'=>$book->category_id,'no_free'=>$book->no,'type'=>$book->type,
+                           'create_time'=>$book->create_time,'update_time'=>$book->update_time];
                    }
                    $result['code']=200;
                     $result['msg']='获取书城信息成功';
@@ -128,7 +134,9 @@ class BookstoreController extends Controller{
                     'category'=>$book->category->name,'author'=>$book->author->name,
                     'view'=>$book->clicks,'image'=>HTTP_PATH.$book->image,'size'=>$book->size,
                     'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
-                    'download'=>$book->downloads,'collection'=>$book->collection];
+                    'download'=>$book->downloads,'collection'=>$book->collection,'author_id'=>$book->author_id,
+                    'category_id'=>$book->category_id,'no_free'=>$book->no,'type'=>$book->type,
+                    'create_time'=>$book->create_time,'update_time'=>$book->update_time];
             }
             $result['code']=200;
             $result['msg']='获取书城信息成功';
@@ -215,7 +223,9 @@ class BookstoreController extends Controller{
                     'category'=>$model->category->name,'author'=>$model->author->name,
                     'view'=>$model->clicks,'image'=>HTTP_PATH.$model->image,'size'=>$model->size,
                     'score'=>$model->score,'intro'=>$model->intro,'is_end'=>$model->is_end,
-                    'download'=>$model->downloads,'collection'=>$model->collection];
+                    'download'=>$model->downloads,'collection'=>$model->collection,'author_id'=>$model->author_id,
+                    'category_id'=>$model->category_id,'no_free'=>$model->no,'type'=>$model->type,
+                    'create_time'=>$model->create_time,'update_time'=>$model->update_time];
             }
            /* foreach ($models2 as $model2){
                 $result['data']['new'][]=['book_id'=>$model2->id,'name'=>$model2->name,
@@ -251,7 +261,7 @@ class BookstoreController extends Controller{
         ];
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
-            $res=$obj->check();
+           $res=$obj->check();
             if($res){
                 $result['msg']= $res;
            }else{
@@ -264,7 +274,9 @@ class BookstoreController extends Controller{
                         'category'=>$book1->category->name,'author'=>$book1->author->name,
                         'view'=>$book1->clicks,'image'=>HTTP_PATH.$book1->image,'size'=>$book1->size,
                         'score'=>$book1->score,'intro'=>$book1->intro,'is_end'=>$book1->is_end,
-                        'download'=>$book1->downloads,'collection'=>$book1->collection];
+                        'download'=>$book1->downloads,'collection'=>$book1->collection,'author_id'=>$book1->author_id,
+                        'category_id'=>$book1->category_id,'no_free'=>$book1->no,'type'=>$book1->type,
+                        'create_time'=>$book1->create_time,'update_time'=>$book1->update_time];
                 }
                 //查找作者图书推荐
                 $books2=Book::find()->where(['author_id'=>$author_id])->orderBy('score DESC')->limit(3)->all();
@@ -273,11 +285,13 @@ class BookstoreController extends Controller{
                         'category'=>$book2->category->name,'author'=>$book2->author->name,
                         'view'=>$book2->clicks,'image'=>HTTP_PATH.$book2->image,'size'=>$book2->size,
                         'score'=>$book2->score,'intro'=>$book2->intro,'is_end'=>$book2->is_end,
-                        'download'=>$book2->downloads,'collection'=>$book2->collection];
+                        'download'=>$book2->downloads,'collection'=>$book2->collection,'author_id'=>$book2->author_id,
+                        'category_id'=>$book2->category_id,'no_free'=>$book2->no,'type'=>$book2->type,
+                        'create_time'=>$book2->create_time,'update_time'=>$book2->update_time];
                 }
                 $result['code']=200;
                 $result['msg']='获取图书详情推荐书籍成功';
-           }
+          }
         }else{
             $result['msg']='请求方式错误';
         }
@@ -295,7 +309,7 @@ class BookstoreController extends Controller{
             $obj=new Verification();
             $res=$obj->check();
             if($res){
-                $result['msg']= $res;
+               $result['msg']= $res;
            }else{
                 $book_id=\Yii::$app->request->post('book_id');
                 $book=Book::findOne(['id'=>$book_id]);
@@ -303,11 +317,12 @@ class BookstoreController extends Controller{
                         'category'=>$book->category->name,'author'=>$book->author->name,
                         'view'=>$book->clicks,'image'=>HTTP_PATH.$book->image,'size'=>$book->size,
                         'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
-                        'download'=>$book->downloads,'collection'=>$book->collection];
+                        'download'=>$book->downloads,'collection'=>$book->collection,'author_id'=>$book->author_id,
+                        'category_id'=>$book->category_id,'no_free'=>$book->no,'type'=>$book->type,
+                        'create_time'=>$book->create_time,'update_time'=>$book->update_time];
                     $result['code']=200;
                     $result['msg']='获取图书信息成功';
-           }
-
+          }
         }else{
             $result['msg']='请求方式错误';
         }
@@ -324,9 +339,9 @@ class BookstoreController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-            if($res){
-                $result['msg']= $res;
-           }else{
+            //if($res){
+               // $result['msg']= $res;
+          //}else{
                 $keyword=\Yii::$app->request->post('keyword');
                 $author_id=\Yii::$app->db->createCommand("select id from author where name='$keyword'")->queryScalar();
                 if($author_id){
@@ -340,11 +355,13 @@ class BookstoreController extends Controller{
                         'category'=>$book->category->name,'author'=>$book->author->name,
                         'view'=>$book->clicks,'image'=>HTTP_PATH.$book->image,'size'=>$book->size,
                         'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
-                        'download'=>$book->downloads,'collection'=>$book->collection];
+                        'download'=>$book->downloads,'collection'=>$book->collection,'author_id'=>$book->author_id,
+                        'category_id'=>$book->category_id,'no_free'=>$book->no,'type'=>$book->type,
+                        'create_time'=>$book->create_time,'update_time'=>$book->update_time];
                     $result['code']=200;
                     $result['msg']='获取图书信息成功';
                 }
-           }
+          // }
         }else{
             $result['msg']='请求方式错误';
         }
@@ -363,7 +380,7 @@ class BookstoreController extends Controller{
             $res=$obj->check();
            if($res){
                 $result['msg']= $res;
-           }else{
+          }else{
                 $categorys=Category::find()->orderBy('groom_time DESC')->limit(5)->all();
 
                 foreach ($categorys as $category){
@@ -376,7 +393,9 @@ class BookstoreController extends Controller{
                         'category'=>$model1->category->name,'author'=>$model1->author->name,
                         'view'=>$model1->clicks,'image'=>HTTP_PATH.$model1->image,'size'=>$model1->size,
                         'score'=>$model1->score,'intro'=>$model1->intro,'is_end'=>$model1->is_end,
-                        'download'=>$model1->downloads,'collection'=>$model1->collection];
+                        'download'=>$model1->downloads,'collection'=>$model1->collection,'author_id'=>$model1->author_id,
+                        'category_id'=>$model1->category_id,'no_free'=>$model1->no,'type'=>$model1->type,
+                        'create_time'=>$model1->create_time,'update_time'=>$model1->update_time];
                 }
 
             $models2=Book::find()->where(['category_id'=>$ids[1]])->orderBy('groom_time DESC')->limit(3)->all();
@@ -385,7 +404,9 @@ class BookstoreController extends Controller{
                     'category'=>$model2->category->name,'author'=>$model2->author->name,
                     'view'=>$model2->clicks,'image'=>HTTP_PATH.$model2->image,'size'=>$model2->size,
                     'score'=>$model2->score,'intro'=>$model2->intro,'is_end'=>$model2->is_end,
-                    'download'=>$model2->downloads,'collection'=>$model2->collection];
+                    'download'=>$model2->downloads,'collection'=>$model2->collection,'author_id'=>$model2->author_id,
+                    'category_id'=>$model2->category_id,'no_free'=>$model2->no,'type'=>$model2->type,
+                    'create_time'=>$model2->create_time,'update_time'=>$model2->update_time];
             }
 
             $models3=Book::find()->where(['category_id'=>$ids[2]])->orderBy('groom_time DESC')->limit(3)->all();
@@ -394,7 +415,9 @@ class BookstoreController extends Controller{
                     'category'=>$model3->category->name,'author'=>$model3->author->name,
                     'view'=>$model3->clicks,'image'=>HTTP_PATH.$model3->image,'size'=>$model3->size,
                     'score'=>$model3->score,'intro'=>$model3->intro,'is_end'=>$model3->is_end,
-                    'download'=>$model3->downloads,'collection'=>$model3->collection];
+                    'download'=>$model3->downloads,'collection'=>$model3->collection,'author_id'=>$model3->author_id,
+                    'category_id'=>$model3->category_id,'no_free'=>$model3->no,'type'=>$model3->type,
+                    'create_time'=>$model3->create_time,'update_time'=>$model3->update_time];
             }
 
             $models4=Book::find()->where(['category_id'=>$ids[3]])->orderBy('groom_time DESC')->limit(3)->all();
@@ -403,7 +426,9 @@ class BookstoreController extends Controller{
                     'category'=>$model4->category->name,'author'=>$model4->author->name,
                     'view'=>$model4->clicks,'image'=>HTTP_PATH.$model4->image,'size'=>$model4->size,
                     'score'=>$model4->score,'intro'=>$model4->intro,'is_end'=>$model4->is_end,
-                    'download'=>$model4->downloads,'collection'=>$model4->collection];
+                    'download'=>$model4->downloads,'collection'=>$model4->collection,'author_id'=>$model4->author_id,
+                    'category_id'=>$model4->category_id,'no_free'=>$model4->no,'type'=>$model4->type,
+                    'create_time'=>$model4->create_time,'update_time'=>$model4->update_time];
             }
 
             $models5=Book::find()->where(['category_id'=>$ids[4]])->orderBy('groom_time DESC')->limit(3)->all();
@@ -412,13 +437,13 @@ class BookstoreController extends Controller{
                     'category'=>$model5->category->name,'author'=>$model5->author->name,
                     'view'=>$model5->clicks,'image'=>HTTP_PATH.$model5->image,'size'=>$model5->size,
                     'score'=>$model5->score,'intro'=>$model5->intro,'is_end'=>$model5->is_end,
-                    'download'=>$model5->downloads,'collection'=>$model5->collection];
+                    'download'=>$model5->downloads,'collection'=>$model5->collection,'author_id'=>$model5->author_id,
+                    'category_id'=>$model5->category_id,'no_free'=>$model5->no,'type'=>$model5->type,
+                    'create_time'=>$model5->create_time,'update_time'=>$model5->update_time];
             }
             $result['code']=200;
             $result['msg']='获取信息成功';
-
-           }
-
+          }
         }else{
             $result['msg']='请求方式错误';
         }
@@ -433,11 +458,11 @@ class BookstoreController extends Controller{
             'data'=>[]
         ];
         if(\Yii::$app->request->isPost){
-           // $obj=new Verification();
-            //$res=$obj->check();
-            //if($res){
-            //  $result['msg']= $res;
-            //}else{
+            $obj=new Verification();
+            $res=$obj->check();
+            if($res){
+              $result['msg']= $res;
+            }else{
             //今日限免
                 $books1=Book::find()->where(['groom'=>2])->orderBy('groom_time DESC')->limit(3)->all();
                 foreach ( $books1 as $book1){
@@ -445,7 +470,9 @@ class BookstoreController extends Controller{
                         'category'=>$book1->category->name,'author'=>$book1->author->name,
                         'view'=>$book1->clicks,'image'=>HTTP_PATH.$book1->image,'size'=>$book1->size,
                         'score'=>$book1->score,'intro'=>$book1->intro,'is_end'=>$book1->is_end,
-                        'download'=>$book1->downloads,'collection'=>$book1->collection];
+                        'download'=>$book1->downloads,'collection'=>$book1->collection,'author_id'=>$book1->author_id,
+                        'category_id'=>$book1->category_id,'no_free'=>$book1->no,'type'=>$book1->type,
+                        'create_time'=>$book1->create_time,'update_time'=>$book1->update_time];
                 }
 
                 //女生限免
@@ -455,7 +482,9 @@ class BookstoreController extends Controller{
                         'category'=>$book2->category->name,'author'=>$book2->author->name,
                         'view'=>$book2->clicks,'image'=>HTTP_PATH.$book2->image,'size'=>$book2->size,
                         'score'=>$book2->score,'intro'=>$book2->intro,'is_end'=>$book2->is_end,
-                        'download'=>$book2->downloads,'collection'=>$book2->collection];
+                        'download'=>$book2->downloads,'collection'=>$book2->collection,'author_id'=>$book2->author_id,
+                        'category_id'=>$book2->category_id,'no_free'=>$book2->no,'type'=>$book2->type,
+                        'create_time'=>$book2->create_time,'update_time'=>$book2->update_time];
                 }
 
                 //男生限免
@@ -465,11 +494,13 @@ class BookstoreController extends Controller{
                         'category'=>$book3->category->name,'author'=>$book3->author->name,
                         'view'=>$book3->clicks,'image'=>HTTP_PATH.$book3->image,'size'=>$book3->size,
                         'score'=>$book3->score,'intro'=>$book3->intro,'is_end'=>$book3->is_end,
-                        'download'=>$book3->downloads,'collection'=>$book3->collection];
+                        'download'=>$book3->downloads,'collection'=>$book3->collection,'author_id'=>$book3->author_id,
+                        'category_id'=>$book3->category_id,'no_free'=>$book3->no,'type'=>$book3->type,
+                        'create_time'=>$book3->create_time,'update_time'=>$book3->update_time];
                 }
                 $result['msg']='获取书本信息成功';
                 $result['code']=200;
-           // }
+            }
 
         }else{
             $result['msg']='请求方式错误';
@@ -500,7 +531,9 @@ class BookstoreController extends Controller{
                         'category'=>$Manbook1->category->name,'author'=>$Manbook1->author->name,
                         'view'=>$Manbook1->clicks,'image'=>HTTP_PATH.$Manbook1->image,'size'=>$Manbook1->size,
                         'score'=>$Manbook1->score,'intro'=>$Manbook1->intro,'is_end'=>$Manbook1->is_end,
-                        'download'=>$Manbook1->downloads,'collection'=>$Manbook1->collection];
+                        'download'=>$Manbook1->downloads,'collection'=>$Manbook1->collection,'author_id'=>$Manbook1->author_id,
+                        'category_id'=>$Manbook1->category_id,'no_free'=>$Manbook1->no,'type'=>$Manbook1->type,
+                        'create_time'=>$Manbook1->create_time,'update_time'=>$Manbook1->update_time];
                 }
 
                 //男生完本分类推荐
@@ -511,13 +544,13 @@ class BookstoreController extends Controller{
                         'category'=>$Manbook2->category->name,'author'=>$Manbook2->author->name,
                         'view'=>$Manbook2->clicks,'image'=>HTTP_PATH.$Manbook2->image,'size'=>$Manbook2->size,
                         'score'=>$Manbook2->score,'intro'=>$Manbook2->intro,'is_end'=>$Manbook2->is_end,
-                        'download'=>$Manbook2->downloads,'collection'=>$Manbook2->collection];
+                        'download'=>$Manbook2->downloads,'collection'=>$Manbook2->collection,'author_id'=>$Manbook2->author_id,
+                        'category_id'=>$Manbook2->category_id,'no_free'=>$Manbook2->no,'type'=>$Manbook2->type,
+                        'create_time'=>$Manbook2->create_time,'update_time'=>$Manbook2->update_time];
                 }
                 $result['code']=200;
                 $result['msg']='获取书本信息成功';
-
            // }
-
         }else{
             $result['msg']='请求方式错误';
         }
