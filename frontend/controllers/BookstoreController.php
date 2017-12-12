@@ -7,6 +7,7 @@ use backend\models\Category;
 use backend\models\Reading;
 use backend\models\Seckill;
 use backend\models\UserDetails;
+use frontend\models\Word;
 use libs\Verification;
 use yii\data\Pagination;
 use yii\web\Controller;
@@ -15,7 +16,6 @@ use yii\web\Response;
 class BookstoreController extends Controller{
 
     public $enableCsrfValidation=false;
-    public $token = 'yuekukuyue666888';
 
     public function init()
     {
@@ -337,33 +337,88 @@ class BookstoreController extends Controller{
             'data'=>[]
         ];
         if(\Yii::$app->request->isPost){
-            $obj=new Verification();
-            $res=$obj->check();
+            //$obj=new Verification();
+            //$res=$obj->check();
             //if($res){
                // $result['msg']= $res;
           //}else{
                 $keyword=\Yii::$app->request->post('keyword');
-                $author_id=\Yii::$app->db->createCommand("select id from author where name='$keyword'")->queryScalar();
-                if($author_id){
-                    $where="author_id=$author_id";
+                //查询是否存在该关键字热词
+                $word=Word::findOne(['name'=>$keyword]);
+                if($word){
+                    //数据库有改热词
+                    $word->count=$word->count+1;
+                    $word->save();
                 }else{
-                    $where="name like '%$keyword%'";
+                    //数据库无该热词
+                    $model=new Word();
+                    $model->name=$keyword;
+                    $model->create_time=time();
+                    $model->count=1;
+                    $model->save();
                 }
-                $books=Book::findBySql("SELECT * FROM book WHERE $where")->all();
-                foreach ($books as $book){
-                    $result['data'][]=['book_id'=>$book->id,'name'=>$book->name,
-                        'category'=>$book->category->name,'author'=>$book->author->name,
-                        'view'=>$book->clicks,'image'=>HTTP_PATH.$book->image,'size'=>$book->size,
-                        'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
-                        'download'=>$book->downloads,'collection'=>$book->collection,'author_id'=>$book->author_id,
-                        'category_id'=>$book->category_id,'no_free'=>$book->no,'type'=>$book->type,
-                        'create_time'=>$book->create_time,'update_time'=>$book->update_time];
+                $authors=Author::find()->where(['like','name',$keyword])->all();
+                $books=Book::find()->where(['like','name',$keyword])->all();
+                if(!$books && !$authors){
+                    $result['msg']='未搜索到结果';
+                    return $result;
+                }
+                if($authors){
+
+                    foreach ($authors as $author){
+                        $count=Book::find()->andWhere(['author_id'=>$author->id])->count('id');
+                        $result['data']['author'][]=['author_id'=>$author->id,'author_name'=>$author->name,'author_image'=>HTTP_PATH.$author->image,
+                            'author_intro'=>$author->intro,'popularity'=>$author->popularity,'sign'=>$author->sign,'count'=>$count,'good_type'=>$author->type];
+                    }
+
+                }
+
+                if($books){
+                    foreach ($books as $book){
+                        $result['data']['book'][]=['book_id'=>$book->id,'book_name'=>$book->name,
+                            'category'=>$book->category->name,'author'=>$book->author->name,
+                            'view'=>$book->clicks,'book_image'=>HTTP_PATH.$book->image,'size'=>$book->size,
+                            'score'=>$book->score,'book_intro'=>$book->intro,'is_end'=>$book->is_end,
+                            'download'=>$book->downloads,'collection'=>$book->collection,'author_id'=>$book->author_id,
+                            'category_id'=>$book->category_id,'no_free'=>$book->no,'type'=>$book->type,
+                            'create_time'=>$book->create_time,'update_time'=>$book->update_time];
+                    }
+
+                }
                     $result['code']=200;
-                    $result['msg']='获取图书信息成功';
-                }
+                    $result['msg']='搜索信息如下';
+
           // }
         }else{
             $result['msg']='请求方式错误';
+        }
+        return $result;
+    }
+
+    //搜索热词
+    public function actionHotWord(){
+        $result = [
+            'code'=>400,
+            'msg'=>'',//错误信息,如果有
+            'data'=>[]
+        ];
+        if(\Yii::$app->request->isPost){
+           $obj=new Verification();
+            $res=$obj->check();
+            if($res){
+             $result['msg']= $res;
+            }else{
+                $words=Word::find()->orderBy('count DESC')->limit(6)->all();
+                foreach ($words as $word){
+                    $result['data'][]=$word->name;
+                }
+                $result['code']=200;
+                $result['msg']='获取热词成功';
+            }
+
+        }else{
+            $result['msg']='请求方式错误';
+
         }
         return $result;
     }
@@ -557,4 +612,37 @@ class BookstoreController extends Controller{
         return $result;
     }
 
+    //根据作者id查询书
+    public function actionAuthorBook(){
+        $result = [
+            'code'=>400,
+            'msg'=>'',//错误信息,如果有
+            'data'=>[]
+        ];
+        if(\Yii::$app->request->isPost){
+           // $obj=new Verification();
+           // $res=$obj->check();
+           // if($res){
+           //  $result['msg']= $res;
+           // }else{
+                $author_id=\Yii::$app->request->post('author_id');
+                $books=Book::find()->where(['author_id'=>$author_id])->orderBy('score DESC')->limit(4)->all();
+                foreach ($books as $book){
+                    $result['data'][]=['book_id'=>$book->id,'book_name'=>$book->name,
+                        'category'=>$book->category->name,'author'=>$book->author->name,
+                        'view'=>$book->clicks,'book_image'=>HTTP_PATH.$book->image,'size'=>$book->size,
+                        'score'=>$book->score,'book_intro'=>$book->intro,'is_end'=>$book->is_end,
+                        'download'=>$book->downloads,'collection'=>$book->collection,'author_id'=>$book->author_id,
+                        'category_id'=>$book->category_id,'no_free'=>$book->no,'type'=>$book->type,
+                        'create_time'=>$book->create_time,'update_time'=>$book->update_time];
+                }
+                $result['code']=200;
+                $result['msg']='获取作者书籍成功';
+          //  }
+
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
+    }
 }

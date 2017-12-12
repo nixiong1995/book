@@ -8,11 +8,12 @@ class Author extends ActiveRecord{
     public function rules()
     {
         return [
-            [['name','intro'],'required'],
+            [['name','intro','type'],'required'],
             ['file','file','extensions'=>['jpg','png','gif']],
             ['popularity','number'],
             ['name','unique'],
-            ['sign','safe']
+            ['sign','safe'],
+            ['type','string'],
             ];
     }
 
@@ -23,7 +24,8 @@ class Author extends ActiveRecord{
             'intro'=>'简介',
             'file'=>'图片',
             'popularity'=>'人气',
-            'sign'=>'是否签约作者'
+            'sign'=>'是否签约作者',
+            'type'=>'擅长的类型',
         ];
     }
 }
