@@ -323,13 +323,15 @@ class BookstoreController extends Controller{
             'data'=>[]
         ];
         if(\Yii::$app->request->isPost){
-           // $obj=new Verification();
-          // $res=$obj->check();
-          // if($res){
-              //  $result['msg']= $res;
-         // }else{
+            $obj=new Verification();
+           $res=$obj->check();
+           if($res){
+                $result['msg']= $res;
+          }else{
                 $keyword=\Yii::$app->request->post('keyword');
-                if(!trim($keyword)){
+                $keyword=trim($keyword);
+                //var_dump($keyword);exit;
+                if(!$keyword){
                     exit;
                 }
                 //查询是否存在该关键字热词
@@ -379,7 +381,7 @@ class BookstoreController extends Controller{
                     $result['code']=200;
                     $result['msg']='搜索信息如下';
 
-          // }
+           }
         }else{
             $result['msg']='请求方式错误';
         }
