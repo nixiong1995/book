@@ -60,8 +60,8 @@ class BookstoreController extends Controller{
             'data'=>[],
         ];
         if(\Yii::$app->request->isPost){
-            $obj=new Verification();
-            $res=$obj->check();
+           // $obj=new Verification();
+           // $res=$obj->check();
           // if($res){
              //  $result['msg']= $res;
            // }else{
@@ -115,11 +115,11 @@ class BookstoreController extends Controller{
                            'category_id'=>$book->category_id,'no_free'=>$book->no,'type'=>$book->type,
                            'create_time'=>$book->create_time,'update_time'=>$book->update_time];
                    }
-                   $result['code']=200;
+                    $result['code']=200;
                     $result['msg']='获取书城信息成功';
-
+                    return  $result;
                 }
-                return  $result;
+
             }
             //没有注册以及没有喜欢的类型
             $ids=[];
