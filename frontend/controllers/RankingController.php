@@ -26,9 +26,9 @@ class RankingController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-           // if($res){
-              //  $result['msg']= $res;
-           // }else{
+            if($res){
+                $result['msg']= $res;
+            }else{
                 $sex=\Yii::$app->request->post('sex');
                 $type=\Yii::$app->request->post('type');
                 if($sex==1){
@@ -209,7 +209,7 @@ class RankingController extends Controller{
                 }
                 $result['code']=200;
                 $result['msg']='获取排行书籍成功';
-           // }
+            }
 
         }else{
             $result['msg']='请求方式错误';
