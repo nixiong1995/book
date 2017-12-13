@@ -206,9 +206,14 @@ class BookstoreController extends Controller{
                 $page=\Yii::$app->request->get('page');
                 $type=\Yii::$app->request->get('type');
                 $query=Book::find()->where(['category_id'=>$category_id]);
+                $count=ceil($query->count()/5);
+                if($page>$count){
+                    $result['msg']='没有更多了';
+                    return $result;
+                }
                 $pager=new Pagination([
                     'totalCount'=>$query->count(),
-                    'defaultPageSize'=>6,
+                    'defaultPageSize'=>5,
                 ]);
                 if($type==1){
                     $models=$query->limit($pager->limit)->offset($pager->offset)->orderBy('clicks DESC')->all();
