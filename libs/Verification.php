@@ -32,7 +32,7 @@ class Verification{
             if($sign == $s){
             }else{
                 $error='签名错误';
-                return $this->token.$str;
+                return $sign.','.$s;
             }
 
         }else{
