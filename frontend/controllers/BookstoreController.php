@@ -208,7 +208,7 @@ class BookstoreController extends Controller{
                 $query=Book::find()->where(['category_id'=>$category_id]);
                 $pager=new Pagination([
                     'totalCount'=>$query->count(),
-                    'defaultPageSize'=>3,
+                    'defaultPageSize'=>6,
                 ]);
                 if($type==1){
                     $models=$query->limit($pager->limit)->offset($pager->offset)->orderBy('clicks DESC')->all();
