@@ -22,39 +22,42 @@ class DownloadController extends Controller
         $result = [
             'code' => 400,
             'msg' => '',//错误信息,如果有
-            'data' => [],
         ];
-        if (\Yii::$app->request->isGet) {
-            // $obj=new Verification();
-            //$res=$obj->check();
-            //if($res){
-            //  $result['msg']= $res;
+        if (\Yii::$app->request->isPost) {
+             $obj=new Verification();
+            $res=$obj->check();
+           // if($res){
+             // $result['msg']= $res;
             // }else{
-            $book_id = \Yii::$app->request->get('book_id');
-            $no = \Yii::$app->request->get('no');
+            $book_id = \Yii::$app->request->post('book_id');
+            $no = \Yii::$app->request->post('no');
             if ($book_id != null && $no != null) {
-                $path = \Yii::$app->db->createCommand("SELECT path FROM chapter WHERE book_id=$book_id AND no=$no")->queryScalar();
+                $file = \Yii::$app->db->createCommand("SELECT path FROM chapter WHERE book_id=$book_id AND no=$no")->queryScalar();
+                //var_dump($file);exit;
+                $file = BOOK_PATH . $file;//加上完整路径
                 $exts = get_loaded_extensions();
                 $mimeType = 'application/octet-stream';
                 if (array_search('fileinfo', $exts) === FALSE) {
-                    $sizeInfo = getimagesize(HTTP_PATH.$path);
+                    $sizeInfo = getimagesize($file);
                     $mimeType = $sizeInfo['mime'];
                 } else {
-                    $mimeType = mime_content_type(HTTP_PATH.$path);
+                    $mimeType = mime_content_type($file);
                 }
                 $Read = new Read();
-                $Read->smartReadFile(HTTP_PATH.$path, $mimeType);
+                //var_dump(HTTP_PATH.$path);exit;
+                $Read->smartReadFile($file, $mimeType);
+                $result['code']=200;
+                $result['msg']='下载成功';
 
 
-                // }
-
-
-
-            } else {
+            }else{
+                $result['msg']='缺少下载参数';
+            }
+           // }
+            }else {
                 $result['msg'] = '请求方式错误';
             }
             return $result;
-
         }
-    }
+
 }

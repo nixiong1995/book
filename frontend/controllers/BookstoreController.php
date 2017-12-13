@@ -227,20 +227,6 @@ class BookstoreController extends Controller{
                     'category_id'=>$model->category_id,'no_free'=>$model->no,'type'=>$model->type,
                     'create_time'=>$model->create_time,'update_time'=>$model->update_time];
             }
-           /* foreach ($models2 as $model2){
-                $result['data']['new'][]=['book_id'=>$model2->id,'name'=>$model2->name,
-                    'category'=>$model2->category->name,'author'=>$model2->author->name,
-                    'view'=>$model2->clicks,'image'=>HTTP_PATH.$model2->image,'size'=>$model2->size,
-                    'score'=>$model2->score,'intro'=>$model2->intro,'is_end'=>$model2->is_end,
-                    'download'=>$model2->downloads,'collection'=>$model2->collection];
-            }
-            foreach ($models3 as $model3){
-                $result['data']['evaluate'][]=['book_id'=>$model3->id,'name'=>$model3->name,
-                    'category'=>$model3->category->name,'author'=>$model3->author->name,
-                    'view'=>$model3->clicks,'image'=>HTTP_PATH.$model3->image,'size'=>$model3->size,
-                    'score'=>$model3->score,'intro'=>$model3->intro,'is_end'=>$model3->is_end,
-                    'download'=>$model3->downloads,'collection'=>$model3->collection];
-            }*/
             $result['code']=200;
             $result['msg']='获取分类二级页面成功';
            // }
@@ -337,12 +323,15 @@ class BookstoreController extends Controller{
             'data'=>[]
         ];
         if(\Yii::$app->request->isPost){
-            //$obj=new Verification();
-            //$res=$obj->check();
-            //if($res){
-               // $result['msg']= $res;
-          //}else{
+            $obj=new Verification();
+            $res=$obj->check();
+            if($res){
+                $result['msg']= $res;
+          }else{
                 $keyword=\Yii::$app->request->post('keyword');
+                if(!trim($keyword)){
+                    exit;
+                }
                 //查询是否存在该关键字热词
                 $word=Word::findOne(['name'=>$keyword]);
                 if($word){
@@ -390,7 +379,7 @@ class BookstoreController extends Controller{
                     $result['code']=200;
                     $result['msg']='搜索信息如下';
 
-          // }
+           }
         }else{
             $result['msg']='请求方式错误';
         }

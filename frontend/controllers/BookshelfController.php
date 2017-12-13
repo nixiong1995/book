@@ -65,9 +65,74 @@ class BookshelfController extends Controller{
                 $result['msg']='获取书信息成功';
 
 
-
             }
 
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
+    }
+
+
+    //删除书架的书
+    public function actionDel(){
+        $result = [
+            'code'=>400,
+            'msg'=>'',//错误信息,如果有
+        ];
+        if(\Yii::$app->request->isPost){
+            $obj=new Verification();
+            $res=$obj->check();
+            if($res){
+                $result['msg']= $res;
+            }else{
+                $book_id=\Yii::$app->request->post('book_id');
+                $user_id=\Yii::$app->request->post('user_id');
+                $model=Reading::findOne(['book_id'=>$book_id,'user_id'=>$user_id]);
+                $res=$model->delete();
+                if($res){
+                    $result['code']=200;
+                    $result['msg']='删除书籍成功';
+                }else{
+                    $result['msg']='删除书籍失败';
+                }
+            }
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
+    }
+
+    //添加书架书籍
+    public function actionAdd(){
+        $result = [
+            'code'=>400,
+            'msg'=>'',//错误信息,如果有
+        ];
+        if(\Yii::$app->request->isPost){
+            $obj=new Verification();
+            $res=$obj->check();
+           if($res){
+               $result['msg']= $res;
+            }else{
+                $book_id=\Yii::$app->request->post('book_id');
+                $user_id=\Yii::$app->request->post('user_id');
+                $res=Reading::findOne(['user_id'=>$user_id,'book_id'=>$book_id]);
+                if($res){
+                    $result['msg']='你的书架已有该书籍';
+                    return $result;
+                }
+                $model=new Reading();
+                $model->book_id=$book_id;
+                $model->user_id=$user_id;
+                $model->create_time=time();
+                if($model->save()){
+                    $result['code']=200;
+                    $result['msg']='加入书籍成功';
+                }else{
+                    $result['msg']='加入书籍失败';
+                }
+            }
         }else{
             $result['msg']='请求方式错误';
         }
