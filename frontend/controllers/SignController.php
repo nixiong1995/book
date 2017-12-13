@@ -7,7 +7,7 @@ class SignController extends Controller{
     public $token = 'yuekukuyue666888';
     public function actionSign(){
        //var_dump(time());exit;
-       $p = ['sex'=>1,'type'=>1,'time'=>1513137869];
+       $p = ['user_id'=>1,'time'=>1513138613];
         //$p=['time'=>1513004884,'category_id'=>12,'page'=>1,'type'=>1];
         //1.对key做升序排列 //['a'=>'','b'=>'','c'=>'','time'=>'']
         ksort($p);
