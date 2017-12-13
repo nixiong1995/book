@@ -309,11 +309,11 @@ class BookstoreController extends Controller{
             $obj=new Verification();
             $res=$obj->check();
             if($res){
-               $result['msg']= $res;
-           }else{
+              $result['msg']= $res;
+             }else{
                 $book_id=\Yii::$app->request->post('book_id');
                 $book=Book::findOne(['id'=>$book_id]);
-                    $result['data'][]=['book_id'=>$book->id,'name'=>$book->name,
+                    $result['data']=['book_id'=>$book->id,'name'=>$book->name,
                         'category'=>$book->category->name,'author'=>$book->author->name,
                         'view'=>$book->clicks,'image'=>HTTP_PATH.$book->image,'size'=>$book->size,
                         'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
