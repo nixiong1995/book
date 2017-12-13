@@ -26,9 +26,9 @@ class RankingController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-            if($res){
-                $result['msg']= $res;
-            }else{
+           // if($res){
+              //  $result['msg']= $res;
+           // }else{
                 $sex=\Yii::$app->request->post('sex');
                 $type=\Yii::$app->request->post('type');
                 if($sex==1){
@@ -39,7 +39,7 @@ class RankingController extends Controller{
 
                         $SellingBooks=Book::find()->where(['category_id'=> $ManIds])->orderBy('collection DESC')->limit(10)->all();
                         foreach ( $SellingBooks as $sellingBook) {
-                            $result['data'][][] = ['book_id' => $sellingBook->id, 'name' => $sellingBook->name,
+                            $result['data'][] = ['book_id' => $sellingBook->id, 'name' => $sellingBook->name,
                                 'category' => $sellingBook->category->name, 'author' => $sellingBook->author->name,
                                 'view' => $sellingBook->clicks, 'image' => HTTP_PATH . $sellingBook->image, 'size' => $sellingBook->size,
                                 'score' => $sellingBook->score, 'intro' => $sellingBook->intro, 'is_end' => $sellingBook->is_end,
@@ -57,7 +57,7 @@ class RankingController extends Controller{
                         $NewBooks=Book::find()->where(['category_id'=> $ManIds])->orderBy('create_time DESC')->limit(10)->all();
 
                         foreach (  $NewBooks as $newBook) {
-                            $result['data'][][] = ['book_id' => $newBook->id, 'name' => $newBook->name,
+                            $result['data'][]= ['book_id' => $newBook->id, 'name' => $newBook->name,
                                 'category' => $newBook->category->name, 'author' => $newBook->author->name,
                                 'view' => $newBook->clicks, 'image' => HTTP_PATH . $newBook->image, 'size' => $newBook->size,
                                 'score' => $newBook->score, 'intro' => $newBook->intro, 'is_end' =>$newBook->is_end,
@@ -73,7 +73,7 @@ class RankingController extends Controller{
                         $UpdateBooks=Book::find()->where(['category_id'=> $ManIds])->orderBy('update_time DESC')->limit(10)->all();
 
                         foreach ( $UpdateBooks as $updateBook) {
-                            $result['data'][][] = ['book_id' => $updateBook->id, 'name' => $updateBook->name,
+                            $result['data'][] = ['book_id' => $updateBook->id, 'name' => $updateBook->name,
                                 'category' => $updateBook->category->name, 'author' => $updateBook->author->name,
                                 'view' => $updateBook->clicks, 'image' => HTTP_PATH . $updateBook->image, 'size' => $updateBook->size,
                                 'score' => $updateBook->score, 'intro' => $updateBook->intro, 'is_end' =>$updateBook->is_end,
@@ -90,7 +90,7 @@ class RankingController extends Controller{
                         $EndBooks=Book::find()->where(['category_id'=> $ManIds,'is_end'=>1])->orderBy('score DESC')->limit(10)->all();
 
                         foreach ($EndBooks as $endBook) {
-                            $result['data'][][] = ['book_id' => $endBook->id, 'name' => $endBook->name,
+                            $result['data'][] = ['book_id' => $endBook->id, 'name' => $endBook->name,
                                 'category' => $endBook->category->name, 'author' => $endBook->author->name,
                                 'view' => $endBook->clicks, 'image' => HTTP_PATH . $endBook->image, 'size' => $endBook->size,
                                 'score' => $endBook->score, 'intro' => $endBook->intro, 'is_end' =>$endBook->is_end,
@@ -106,7 +106,7 @@ class RankingController extends Controller{
 
 
                         foreach ($HotsearchBooks as $hotsearchBook){
-                            $result['data'][][] = ['book_id' => $hotsearchBook->id, 'name' => $hotsearchBook->name,
+                            $result['data'][] = ['book_id' => $hotsearchBook->id, 'name' => $hotsearchBook->name,
                                 'category' => $hotsearchBook->category->name, 'author' => $hotsearchBook->author->name,
                                 'view' => $hotsearchBook->clicks, 'image' => HTTP_PATH .$hotsearchBook->image, 'size' => $hotsearchBook->size,
                                 'score' => $hotsearchBook->score, 'intro' => $hotsearchBook->intro, 'is_end' =>$hotsearchBook->is_end,
@@ -126,7 +126,7 @@ class RankingController extends Controller{
 
                         $SellingBooks=Book::find()->where(['category_id'=> $ManIds])->orderBy('collection DESC')->limit(10)->all();
                         foreach ( $SellingBooks as $sellingBook) {
-                            $result['data'][][] = ['book_id' => $sellingBook->id, 'name' => $sellingBook->name,
+                            $result['data'][] = ['book_id' => $sellingBook->id, 'name' => $sellingBook->name,
                                 'category' => $sellingBook->category->name, 'author' => $sellingBook->author->name,
                                 'view' => $sellingBook->clicks, 'image' => HTTP_PATH . $sellingBook->image, 'size' => $sellingBook->size,
                                 'score' => $sellingBook->score, 'intro' => $sellingBook->intro, 'is_end' => $sellingBook->is_end,
@@ -144,7 +144,7 @@ class RankingController extends Controller{
                         $NewBooks=Book::find()->where(['category_id'=> $ManIds])->orderBy('create_time DESC')->limit(10)->all();
 
                         foreach (  $NewBooks as $newBook) {
-                            $result['data'][][] = ['book_id' => $newBook->id, 'name' => $newBook->name,
+                            $result['data'][] = ['book_id' => $newBook->id, 'name' => $newBook->name,
                                 'category' => $newBook->category->name, 'author' => $newBook->author->name,
                                 'view' => $newBook->clicks, 'image' => HTTP_PATH . $newBook->image, 'size' => $newBook->size,
                                 'score' => $newBook->score, 'intro' => $newBook->intro, 'is_end' =>$newBook->is_end,
@@ -160,7 +160,7 @@ class RankingController extends Controller{
                         $UpdateBooks=Book::find()->where(['category_id'=> $ManIds])->orderBy('update_time DESC')->limit(10)->all();
 
                         foreach ( $UpdateBooks as $updateBook) {
-                            $result['data'][][] = ['book_id' => $updateBook->id, 'name' => $updateBook->name,
+                            $result['data'][] = ['book_id' => $updateBook->id, 'name' => $updateBook->name,
                                 'category' => $updateBook->category->name, 'author' => $updateBook->author->name,
                                 'view' => $updateBook->clicks, 'image' => HTTP_PATH . $updateBook->image, 'size' => $updateBook->size,
                                 'score' => $updateBook->score, 'intro' => $updateBook->intro, 'is_end' =>$updateBook->is_end,
@@ -177,7 +177,7 @@ class RankingController extends Controller{
                         $EndBooks=Book::find()->where(['category_id'=> $ManIds,'is_end'=>1])->orderBy('score DESC')->limit(10)->all();
 
                         foreach ($EndBooks as $endBook) {
-                            $result['data'][][] = ['book_id' => $endBook->id, 'name' => $endBook->name,
+                            $result['data'][] = ['book_id' => $endBook->id, 'name' => $endBook->name,
                                 'category' => $endBook->category->name, 'author' => $endBook->author->name,
                                 'view' => $endBook->clicks, 'image' => HTTP_PATH . $endBook->image, 'size' => $endBook->size,
                                 'score' => $endBook->score, 'intro' => $endBook->intro, 'is_end' =>$endBook->is_end,
@@ -193,7 +193,7 @@ class RankingController extends Controller{
 
 
                         foreach ($HotsearchBooks as $hotsearchBook){
-                            $result['data'][][] = ['book_id' => $hotsearchBook->id, 'name' => $hotsearchBook->name,
+                            $result['data'][] = ['book_id' => $hotsearchBook->id, 'name' => $hotsearchBook->name,
                                 'category' => $hotsearchBook->category->name, 'author' => $hotsearchBook->author->name,
                                 'view' => $hotsearchBook->clicks, 'image' => HTTP_PATH .$hotsearchBook->image, 'size' => $hotsearchBook->size,
                                 'score' => $hotsearchBook->score, 'intro' => $hotsearchBook->intro, 'is_end' =>$hotsearchBook->is_end,
@@ -209,7 +209,7 @@ class RankingController extends Controller{
                 }
                 $result['code']=200;
                 $result['msg']='获取排行书籍成功';
-            }
+           // }
 
         }else{
             $result['msg']='请求方式错误';
