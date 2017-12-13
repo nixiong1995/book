@@ -332,7 +332,8 @@ class BookstoreController extends Controller{
                 $keyword=trim($keyword);
                 //var_dump($keyword);exit;
                 if(!$keyword){
-                    exit;
+                    $result['msg']='请输入搜索关键字';
+                   return $result;
                 }
                 //查询是否存在该关键字热词
                 $word=Word::findOne(['name'=>$keyword]);
