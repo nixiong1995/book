@@ -630,10 +630,10 @@ class BookstoreController extends Controller{
                 $author_id=\Yii::$app->request->post('author_id');
                 $books=Book::find()->where(['author_id'=>$author_id])->orderBy('score DESC')->limit(4)->all();
                 foreach ($books as $book){
-                    $result['data'][]=['book_id'=>$book->id,'book_name'=>$book->name,
+                    $result['data'][]=['book_id'=>$book->id,'name'=>$book->name,
                         'category'=>$book->category->name,'author'=>$book->author->name,
-                        'view'=>$book->clicks,'book_image'=>HTTP_PATH.$book->image,'size'=>$book->size,
-                        'score'=>$book->score,'book_intro'=>$book->intro,'is_end'=>$book->is_end,
+                        'view'=>$book->clicks,'image'=>HTTP_PATH.$book->image,'size'=>$book->size,
+                        'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
                         'download'=>$book->downloads,'collection'=>$book->collection,'author_id'=>$book->author_id,
                         'category_id'=>$book->category_id,'no_free'=>$book->no,'type'=>$book->type,
                         'create_time'=>$book->create_time,'update_time'=>$book->update_time];
