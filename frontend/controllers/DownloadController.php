@@ -23,14 +23,14 @@ class DownloadController extends Controller
             'code' => 400,
             'msg' => '',//错误信息,如果有
         ];
-        if (\Yii::$app->request->isPost) {
+        if (\Yii::$app->request->isGet) {
              $obj=new Verification();
             $res=$obj->check();
            // if($res){
              // $result['msg']= $res;
             // }else{
-            $book_id = \Yii::$app->request->post('book_id');
-            $no = \Yii::$app->request->post('no');
+            $book_id = \Yii::$app->request->get('book_id');
+            $no = \Yii::$app->request->get('no');
             if ($book_id != null && $no != null) {
                 $file = \Yii::$app->db->createCommand("SELECT path FROM chapter WHERE book_id=$book_id AND no=$no")->queryScalar();
                 //var_dump($file);exit;
