@@ -332,6 +332,7 @@ class BookstoreController extends Controller{
             $res=$obj->check();
             if($res){
                 $result['msg']= $res;
+                return $result;
          }else{
                 $keyword=\Yii::$app->request->post('keyword');
                 $keyword=trim($keyword);
