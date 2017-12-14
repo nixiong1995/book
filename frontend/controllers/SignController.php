@@ -6,8 +6,8 @@ use yii\web\Controller;
 class SignController extends Controller{
     public $token = 'yuekukuyue666888';
     public function actionSign(){
-       //var_dump(time());exit;
-       $p = ['keyword'=>'','time'=>1513156279];
+       var_dump(time());exit;
+       $p = ['book_id'=>25,'time'=>1513218725,'no'=>0];
         //$p=['time'=>1513004884,'category_id'=>12,'page'=>1,'type'=>1];
         //1.对key做升序排列 //['a'=>'','b'=>'','c'=>'','time'=>'']
         ksort($p);

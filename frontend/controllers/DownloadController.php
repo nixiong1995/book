@@ -26,9 +26,9 @@ class DownloadController extends Controller
         if (\Yii::$app->request->isGet) {
              $obj=new Verification();
             $res=$obj->check();
-           if($res){
-             $result['msg']= $res;
-            }else{
+         //  if($res){
+           //  $result['msg']= $res;
+          //  }else{
             $book_id = \Yii::$app->request->get('book_id');
             $no = \Yii::$app->request->get('no');
             if ($book_id != null && $no != null) {
@@ -53,7 +53,7 @@ class DownloadController extends Controller
             }else{
                 $result['msg']='缺少下载参数';
             }
-            }
+           // }
             }else {
                 $result['msg'] = '请求方式错误';
             }
