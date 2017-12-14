@@ -325,7 +325,6 @@ class BookstoreController extends Controller{
         $result = [
             'code'=>400,
             'msg'=>'',//错误信息,如果有
-            'data'=>[]
         ];
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
