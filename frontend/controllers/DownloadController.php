@@ -35,7 +35,6 @@ class DownloadController extends Controller
                 $file = \Yii::$app->db->createCommand("SELECT path FROM chapter WHERE book_id=$book_id AND no=$no")->queryScalar();
                 //var_dump($file);exit;
                 $file = BOOK_PATH . $file;//加上完整路径
-                var_dump($file);exit;
                 $exts = get_loaded_extensions();
                 $mimeType = 'application/octet-stream';
                 if (array_search('fileinfo', $exts) === FALSE) {
