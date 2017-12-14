@@ -292,12 +292,12 @@ class BookstoreController extends Controller{
         if(\Yii::$app->request->post()){
             $obj=new Verification();
             $res=$obj->check();
-           if($res){
-              $result['msg']= $res;
-            }else{
+           //if($res){
+            ///  $result['msg']= $res;
+           // }else{
                 $book_id=\Yii::$app->request->post('book_id');
                 $book=Book::findOne(['id'=>$book_id]);
-                    $result['data'][]=['book_id'=>$book->id,'name'=>$book->name,
+                    $result['data']=['book_id'=>$book->id,'name'=>$book->name,
                         'category'=>$book->category->name,'author'=>$book->author->name,
                         'view'=>$book->clicks,'image'=>HTTP_PATH.$book->image,'size'=>$book->size,
                         'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
@@ -306,7 +306,7 @@ class BookstoreController extends Controller{
                         'create_time'=>$book->create_time,'update_time'=>$book->update_time];
                     $result['code']=200;
                     $result['msg']='获取图书信息成功';
-          }
+         // }
         }else{
             $result['msg']='请求方式错误';
         }
