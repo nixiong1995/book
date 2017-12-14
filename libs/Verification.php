@@ -27,12 +27,12 @@ class Verification{
         if($sign){
             unset($data['sign']);
             ksort($data);
-            $str = http_build_query($data);
+            $str = urldecode(http_build_query($data));
             $s = strtoupper(md5($this->token.$str));
             if($sign == $s){
             }else{
                 $error='签名错误';
-                return $this->token.$str;
+                return $error;
             }
 
         }else{
