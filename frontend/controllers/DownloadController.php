@@ -1,5 +1,6 @@
 <?php
 namespace frontend\controllers;
+use backend\models\Book;
 use backend\models\Chapter;
 use libs\Read;
 use libs\Verification;
@@ -33,21 +34,33 @@ class DownloadController extends Controller
             $no = \Yii::$app->request->get('no');
             if ($book_id != null && $no != null) {
                 $file = \Yii::$app->db->createCommand("SELECT path FROM chapter WHERE book_id=$book_id AND no=$no")->queryScalar();
-                //var_dump($file);exit;
-                $file = BOOK_PATH . $file;//加上完整路径
-                $exts = get_loaded_extensions();
-                $mimeType = 'application/octet-stream';
-                if (array_search('fileinfo', $exts) === FALSE) {
-                    $sizeInfo = getimagesize($file);
-                    $mimeType = $sizeInfo['mime'];
-                } else {
-                    $mimeType = mime_content_type($file);
+                if($file){
+                    //var_dump($file);exit;
+                    $file = BOOK_PATH . $file;//加上完整路径
+                    $exts = get_loaded_extensions();
+                    $mimeType = 'application/octet-stream';
+                    if (array_search('fileinfo', $exts) === FALSE) {
+                        $sizeInfo = getimagesize($file);
+                        $mimeType = $sizeInfo['mime'];
+                    } else {
+                        $mimeType = mime_content_type($file);
+                    }
+                    $Read = new Read();
+                    //var_dump(HTTP_PATH.$path);exit;
+                    $Read->smartReadFile($file, $mimeType);
+                    //判断章节号是否小于2,如果小于说明是第一次下载,该书下载次数加1
+                    if($no<2){
+                        $model=Book::findOne(['id'=>$book_id]);
+                        $model->downloads=$model->downloads+1;
+                        $model->save();
+                    }
+                    $result['code']=200;
+                    $result['msg']='下载成功';
+                }else{
+                    $result['msg']='没有该下载文件';
                 }
-                $Read = new Read();
-                //var_dump(HTTP_PATH.$path);exit;
-                $Read->smartReadFile($file, $mimeType);
-                $result['code']=200;
-                $result['msg']='下载成功';
+
+
 
 
             }else{

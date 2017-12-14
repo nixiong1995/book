@@ -2,7 +2,9 @@
 namespace frontend\controllers;
 use backend\models\Book;
 use backend\models\Reading;
+use backend\models\UserDetails;
 use libs\Verification;
+use yii\db\Exception;
 use yii\web\Controller;
 use yii\web\Response;
 
@@ -20,52 +22,67 @@ class BookshelfController extends Controller{
         $result = [
             'code'=>400,
             'msg'=>'',//错误信息,如果有
-            'data'=>[],
         ];
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
             if($res){
-            $result['msg']= $res;
+           $result['msg']= $res;
             }else{
                 $user_id=\Yii::$app->request->post('user_id');
                 if($user_id){
-                    //查询用户读过的书id
-                    $ReadIds=\Yii::$app->db->createCommand("SELECT book_id FROM reading WHERE user_id=$user_id")->queryColumn();
-                    //根据书id查询书信息
-                    $Books1=Book::find()->where(['id'=>$ReadIds])->all();
-                    if($Books1){
-                        foreach ($Books1 as $book1){
-                            $result['data'][]=['book_id'=>$book1->id,'name'=>$book1->name,
-                                'category'=>$book1->category->name,'author'=>$book1->author->name,
-                                'view'=>$book1->clicks,'image'=>HTTP_PATH.$book1->image,'size'=>$book1->size,
-                                'score'=>$book1->score,'intro'=>$book1->intro,'is_end'=>$book1->is_end,
-                                'download'=>$book1->downloads,'collection'=>$book1->collection,'author_id'=>$book1->author_id,
-                                'category_id'=>$book1->category_id,'no_free'=>$book1->no,'type'=>$book1->type,
-                                'create_time'=>$book1->create_time,'update_time'=>$book1->update_time];
+                    //查询用户收藏过的书id
+                    $collect=\Yii::$app->db->createCommand("SELECT collect FROM user_details WHERE user_id=$user_id")->queryScalar();
+                    if($collect){
+
+                        //将收藏过的书分割成数组
+                        $CollectIds=explode('|',$collect);
+                        //根据书id查询书信息
+                        $Books1=Book::find()->where(['id'=>$CollectIds])->all();
+                        if($Books1){
+                            foreach ($Books1 as $book1){
+                                $result['data'][]=['book_id'=>$book1->id,'name'=>$book1->name,
+                                    'category'=>$book1->category->name,'author'=>$book1->author->name,
+                                    'view'=>$book1->clicks,'image'=>HTTP_PATH.$book1->image,'size'=>$book1->size,
+                                    'score'=>$book1->score,'intro'=>$book1->intro,'is_end'=>$book1->is_end,
+                                    'download'=>$book1->downloads,'collection'=>$book1->collection,'author_id'=>$book1->author_id,
+                                    'category_id'=>$book1->category_id,'no_free'=>$book1->no,'type'=>$book1->type,
+                                    'create_time'=>$book1->create_time,'update_time'=>$book1->update_time];
+                            }
+                            $result['code']=200;
+                            $result['msg']='获取收藏书信息成功';
+                            return $result;
                         }
-                        $result['code']=200;
-                        $result['msg']='获取书信息成功';
-                        return $result;
+                    }else{
+                        //没有收藏过书,默认推荐(查询推荐书id)
+                        //查询数据库有没有该用户
+                        $model=UserDetails::findOne(['user_id'=>$user_id]);
+                        if($model){
+                            $GroomIds=\Yii::$app->db->createCommand("SELECT id FROM book ORDER BY downloads DESC LIMIT 7")->queryColumn();
+                            $Books2=Book::find()->where(['id'=>$GroomIds])->all();
+                            //将推荐的书的通过|符号转成字符串存入数据库
+                            $collect=implode('|',$GroomIds);
+                            $model->collect=$collect;
+                            $model->save();
+                            foreach ( $Books2 as $book2){
+                                $result['data'][]=['book_id'=>$book2->id,'name'=>$book2->name,
+                                    'category'=>$book2->category->name,'author'=>$book2->author->name,
+                                    'view'=>$book2->clicks,'image'=>HTTP_PATH.$book2->image,'size'=>$book2->size,
+                                    'score'=>$book2->score,'intro'=>$book2->intro,'is_end'=>$book2->is_end,
+                                    'download'=>$book2->downloads,'collection'=>$book2->collection,'author_id'=>$book2->author_id,
+                                    'category_id'=>$book2->category_id,'no_free'=>$book2->no,'type'=>$book2->type,
+                                    'create_time'=>$book2->create_time,'update_time'=>$book2->update_time];
+                            }
+                            $result['code']=200;
+                            $result['msg']='获取默认推荐书信息成功';
+                        }else{
+                            $result['msg']='数据库没有该用户';
+                        }
                     }
+                }else{
+                    $result['msg']='请传入用户id';
                 }
-
-                //没有收藏过书,默认推荐
-                $Books2=Book::find()->orderBy('downloads DESC')->limit(7)->all();
-                foreach ( $Books2 as $book2){
-                    $result['data'][]=['book_id'=>$book2->id,'name'=>$book2->name,
-                        'category'=>$book2->category->name,'author'=>$book2->author->name,
-                        'view'=>$book2->clicks,'image'=>HTTP_PATH.$book2->image,'size'=>$book2->size,
-                        'score'=>$book2->score,'intro'=>$book2->intro,'is_end'=>$book2->is_end,
-                        'download'=>$book2->downloads,'collection'=>$book2->collection,'author_id'=>$book2->author_id,
-                        'category_id'=>$book2->category_id,'no_free'=>$book2->no,'type'=>$book2->type,
-                        'create_time'=>$book2->create_time,'update_time'=>$book2->update_time];
-                }
-                $result['code']=200;
-                $result['msg']='获取书信息成功';
-
-
-            }
+           }
 
         }else{
             $result['msg']='请求方式错误';
@@ -86,15 +103,36 @@ class BookshelfController extends Controller{
             if($res){
                 $result['msg']= $res;
             }else{
-                $book_id=\Yii::$app->request->post('book_id');
                 $user_id=\Yii::$app->request->post('user_id');
-                $model=Reading::findOne(['book_id'=>$book_id,'user_id'=>$user_id]);
-                $res=$model->delete();
-                if($res){
-                    $result['code']=200;
-                    $result['msg']='删除书籍成功';
+                $book_id=\Yii::$app->request->post('book_id');
+                //查询用户详情收藏过的书
+                $model=UserDetails::findOne(['user_id'=>$user_id]);
+                if($model){
+                    //将收藏过的书转成数组
+                    $CollectIds=explode('|',$model->collect);
+                    //查询该书id在数组中的键名
+                    $key=array_search($book_id,$CollectIds);
+                    if($key!==false){
+                        //删除数组中的书id
+                        $res1=array_splice($CollectIds, $key, 1);
+                        if($res1){
+                            //将数组通过|分割成字符串保存进数据库
+                            $collect=implode('|',$CollectIds);
+                            $model->collect=$collect;
+                            $model->save();
+                            $result['code']=200;
+                            $result['msg']='删除书籍成功';
+
+                        }else{
+                            $result['msg']='删除书籍失败';
+                        }
+                    }else{
+                        $result['msg']='用户未收藏该书';
+                    }
+
+
                 }else{
-                    $result['msg']='删除书籍失败';
+                    $result['msg']='未找到该用户';
                 }
             }
         }else{
@@ -113,26 +151,46 @@ class BookshelfController extends Controller{
             $obj=new Verification();
             $res=$obj->check();
            if($res){
-               $result['msg']= $res;
-            }else{
+              $result['msg']= $res;
+          }else{
                 $book_id=\Yii::$app->request->post('book_id');
                 $user_id=\Yii::$app->request->post('user_id');
-                $res=Reading::findOne(['user_id'=>$user_id,'book_id'=>$book_id]);
-                if($res){
-                    $result['msg']='你的书架已有该书籍';
-                    return $result;
-                }
-                $model=new Reading();
-                $model->book_id=$book_id;
-                $model->user_id=$user_id;
-                $model->create_time=time();
-                if($model->save()){
-                    $result['code']=200;
-                    $result['msg']='加入书籍成功';
+                $model=UserDetails::findOne(['user_id'=>$user_id]);
+                if($model){
+                    //将收藏过的书转成数组
+                    $CollectIds=explode('|',$model->collect);
+                    //查询该书id在数组中的键名
+                    $key=array_search($book_id,$CollectIds);
+                    if($key!==false){
+                        $result['msg']='用户已经收藏过该书';
+                    }else{
+                        $res1=array_push($CollectIds,$book_id);
+                        if($res1){
+                            $collect=implode('|',$CollectIds);
+                            $model->collect=$collect;
+                            $transaction=\Yii::$app->db->beginTransaction();//开启事务
+                            try{
+                                $model->save();
+                                $book=Book::findOne(['id'=>$book_id]);
+                                $book->collection=$book->collection+1;
+                                $book->save();
+                                $transaction->commit();
+
+                            }catch (Exception $e){
+                                //事务回滚
+                                $transaction->rollBack();
+                            }
+
+                            $result['code']=200;
+                            $result['msg']='收藏书籍成功';
+                        }else{
+                            $result['msg']='收藏书籍失败';
+                        }
+                    }
                 }else{
-                    $result['msg']='加入书籍失败';
+                    $result['msg']='未找到该用户';
                 }
-            }
+          }
         }else{
             $result['msg']='请求方式错误';
         }
