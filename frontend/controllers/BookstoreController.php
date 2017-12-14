@@ -32,18 +32,17 @@ class BookstoreController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-        // if($res){
-              // $result['msg']= $res;
-         // }else{
+        if($res){
+               $result['msg']= $res;
+         }else{
                 $position=\Yii::$app->request->post('position');
                 $models=Advert::find()->where(['position'=>$position])->orderBy('create_time DESC')->limit(4)->all();
-                //var_dump($models);exit;
                 foreach ($models as $model){
                     $result['data'][]=['position'=>$model->position ,'sort'=>$model->sort,'image'=>HTTP_PATH.$model->image];
                 }
                 $result['code']=200;
                 $result['msg']='获取广告图成功';
-          //  }
+            }
 
         }else{
             $result['msg']='请求方式错误';
@@ -56,7 +55,6 @@ class BookstoreController extends Controller{
         $result = [
             'code'=>400,
             'msg'=>'',//错误信息,如果有
-            'data'=>[],
         ];
         if(\Yii::$app->request->isPost){
            // $obj=new Verification();
@@ -152,7 +150,6 @@ class BookstoreController extends Controller{
         $result = [
             'code'=>400,
             'msg'=>'',//错误信息,如果有
-            'data'=>[]
         ];
         if (\Yii::$app->request->post()){
             $obj=new Verification();
@@ -193,7 +190,6 @@ class BookstoreController extends Controller{
         $result = [
             'code'=>400,
             'msg'=>'',//错误信息,如果有
-            'data'=>[]
         ];
         if(\Yii::$app->request->isGet){
             //$obj=new Verification();
@@ -247,7 +243,6 @@ class BookstoreController extends Controller{
         $result = [
             'code'=>400,
             'msg'=>'',//错误信息,如果有
-            'data'=>[]
         ];
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
@@ -293,17 +288,16 @@ class BookstoreController extends Controller{
         $result = [
             'code'=>400,
             'msg'=>'',//错误信息,如果有
-            'data'=>[]
         ];
         if(\Yii::$app->request->post()){
             $obj=new Verification();
             $res=$obj->check();
-            if($res){
+           if($res){
               $result['msg']= $res;
-             }else{
+            }else{
                 $book_id=\Yii::$app->request->post('book_id');
                 $book=Book::findOne(['id'=>$book_id]);
-                    $result['data']=['book_id'=>$book->id,'name'=>$book->name,
+                    $result['data'][]=['book_id'=>$book->id,'name'=>$book->name,
                         'category'=>$book->category->name,'author'=>$book->author->name,
                         'view'=>$book->clicks,'image'=>HTTP_PATH.$book->image,'size'=>$book->size,
                         'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
@@ -398,13 +392,12 @@ class BookstoreController extends Controller{
         $result = [
             'code'=>400,
             'msg'=>'',//错误信息,如果有
-            'data'=>[]
         ];
         if(\Yii::$app->request->isPost){
            $obj=new Verification();
             $res=$obj->check();
-            if($res){
-             $result['msg']= $res;
+           if($res){
+            $result['msg']= $res;
             }else{
                 $words=Word::find()->orderBy('count DESC')->limit(6)->all();
                 foreach ($words as $word){
@@ -426,7 +419,6 @@ class BookstoreController extends Controller{
         $result = [
             'code'=>400,
             'msg'=>'',//错误信息,如果有
-            'data'=>[]
         ];
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
@@ -508,7 +500,6 @@ class BookstoreController extends Controller{
         $result = [
             'code'=>400,
             'msg'=>'',//错误信息,如果有
-            'data'=>[]
         ];
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
@@ -567,7 +558,6 @@ class BookstoreController extends Controller{
         $result = [
             'code'=>400,
             'msg'=>'',//错误信息,如果有
-            'data'=>[]
         ];
         if(\Yii::$app->request->isPost){
            // $obj=new Verification();
@@ -615,7 +605,6 @@ class BookstoreController extends Controller{
         $result = [
             'code'=>400,
             'msg'=>'',//错误信息,如果有
-            'data'=>[]
         ];
         if(\Yii::$app->request->isPost){
            // $obj=new Verification();

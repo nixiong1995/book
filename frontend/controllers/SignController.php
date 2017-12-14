@@ -9,14 +9,14 @@ class SignController extends Controller
 
     public function actionSign()
     {
-        //var_dump(time());exit;
-        $p = ['keyword' =>'大佬', 'time' => 1513220354];
+       // var_dump(time());exit;
+       // $p = ['keyword' =>'大佬', 'time' => 1513220354];
+        $p = ['position' =>2, 'time' => 1513226993];
         //$p=['time'=>1513004884,'category_id'=>12,'page'=>1,'type'=>1];
         //1.对key做升序排列 //['a'=>'','b'=>'','c'=>'','time'=>'']
         ksort($p);
         //2. 将参数拼接成字符串 a=4&b=123&c=77&time=12312312
         $s = urldecode(http_build_query($p));
-        //var_dump($s);exit;
         //3 将token拼接到字符串前面.然后做md5运算,将结果转换成大写
         $sign = strtoupper(md5($this->token . $s));
         var_dump($sign);
