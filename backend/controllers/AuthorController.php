@@ -19,7 +19,7 @@ class AuthorController extends Controller{
         }
         $pager=new Pagination([
             'totalCount'=>$query->count(),//总条数
-            'defaultPageSize'=>10,//每页显示条数
+            'defaultPageSize'=>20,//每页显示条数
         ]);
         $models=$query->limit($pager->limit)->offset($pager->offset)->all();
         return $this->render('index',['models'=>$models,'pager'=>$pager]);

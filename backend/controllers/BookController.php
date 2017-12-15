@@ -41,14 +41,15 @@ class BookController extends Controller{
             //$query->andWhere(['category_id'=>$category_id]);
         }
 
-        $query=Book::findBySql("SELECT * FROM book WHERE status=1 $where ORDER by groom_time DESC ");
+        $count=Book::findBySql("SELECT * FROM book WHERE status=1 $where")->count();
         //实例化分页工具类
         $pager=new Pagination([
-            'totalCount'=>$query->count(),//总条数
-            'defaultPageSize'=>10,//每页显示条数
+            'totalCount'=>$count,//总条数
+            'defaultPageSize'=>20,//每页显示条数
         ]);
+        $models=Book::findBySql("SELECT * FROM book WHERE status=1 $where ORDER by groom_time DESC lIMIT $pager->offset,$pager->limit")->all();
         //分页查询
-        $models=$query->limit($pager->limit)->offset($pager->offset)->all();
+       // $models=$query->limit($pager->limit)->offset($pager->offset)->all();
         return $this->render('index',['models'=>$models,'pager'=>$pager]);
 
     }

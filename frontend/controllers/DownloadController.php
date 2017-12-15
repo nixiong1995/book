@@ -60,9 +60,6 @@ class DownloadController extends Controller
                     $result['msg']='没有该下载文件';
                 }
 
-
-
-
             }else{
                 $result['msg']='缺少下载参数';
             }
