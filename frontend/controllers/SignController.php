@@ -9,9 +9,9 @@ class SignController extends Controller
 
     public function actionSign()
     {
-       // var_dump(time());exit;
+        //var_dump(time());exit;
        // $p = ['keyword' =>'大佬', 'time' => 1513220354];
-        $p = ['position' =>2, 'time' => 1513226993];
+        $p = ['tel' =>18215688739, 'time' =>1513406915,'password'=>123456];
         //$p=['time'=>1513004884,'category_id'=>12,'page'=>1,'type'=>1];
         //1.对key做升序排列 //['a'=>'','b'=>'','c'=>'','time'=>'']
         ksort($p);

@@ -85,12 +85,7 @@ class UserController extends Controller {
                 $User->tel=$data['tel'];
                 $User->password_hash=\Yii::$app->security->generatePasswordHash($data['password']);
                 if($User->validate()){
-                    $uid=$this->getuid();
-                    $res=User::findOne(['uid'=>$uid]);
-                    while ($res){
-                        $uid=$this->getuid();
-                    }
-                    $User->uid=$uid;
+
                     $User->auth_key=\Yii::$app->security->generateRandomString();
                     $User->created_at=time();
                     $User->status=1;
@@ -131,9 +126,9 @@ class UserController extends Controller {
             //验证接口
             $obj=new Verification();
             $res=$obj->check();
-           if($res){
-               $result['msg']= $res;
-            }else{
+           //if($res){
+             //  $result['msg']= $res;
+           // }else{
 
                 $tel=\Yii::$app->request->post('tel');
                 $password=\Yii::$app->request->post('password');
@@ -227,7 +222,7 @@ class UserController extends Controller {
                     //未查到用户
                     $result['msg']='该手机未注册或者账号被封停状态';
                 }
-           }
+          // }
         }else{
             $result['msg']='请求方式错误';
         }
@@ -502,6 +497,70 @@ class UserController extends Controller {
         }else{
             $result['msg']='请求方式错误';
 
+        }
+        return $result;
+    }
+
+    //用户打开app记录用户信息
+    public function actionRecordUser(){
+        $result = [
+            'code'=>400,//状态
+            'msg'=>'',//错误信息,如果有
+        ];
+        if(\Yii::$app->request->isPost){
+            $obj=new Verification();
+            $res=$obj->check();
+           // if($res){
+                //接口验证不通过
+               // $result['msg']= $res;
+          //  }else{
+                //实例化request
+                $requset=\Yii::$app->request;
+                //接收手机端传过来的数据
+                $imei=$requset->post('imei');//用户手机唯一标示
+                $address=$requset->post('address');//用户地域
+                //通过imei判断是返回用户信息还是记录用户信息
+                $UserObj=User::findOne(['imei'=>$imei]);
+                if($UserObj){
+                    //数据库有该用户
+                    $result['code']=200;
+                    $result['msg']='获取用户信息成功';
+                    $result['data']=['user_id'=>$UserObj->id,'imei'=>$UserObj->imei,
+                        'address'=>$UserObj->address,'uid'=>$UserObj->uid];
+
+                }else{
+                    //数据库没有该用户
+                    $User=new User();
+                    $User->imei=$imei;
+                    $User->address=$address;
+                    $User->status=1;
+                    $uid=$this->getuid();
+                    $res=\Yii::$app->db->createCommand("SELECT uid FROM user WHERE uid='JA4G1NZJFA'")->queryAll();
+                    while ($res){
+                        $uid=$this->getuid();
+                        $res=\Yii::$app->db->createCommand("SELECT uid FROM user WHERE uid='$uid'")->queryAll();
+                    }
+                    $User->uid=$uid;
+                    $transaction=\Yii::$app->db->beginTransaction();//开启事务
+                    try{
+                        $User->save();
+                        //实例化UserDetails
+                        $model=new UserDetails();
+                        $model->user_id=$User->id;
+                        //保存所有数据
+                        $model->save();
+                        $result['code']=200;
+                        $result['msg']='记录用户信息成功';
+                        $transaction->commit();
+                    }catch ( Exception $e){
+                        //事务回滚
+                        $transaction->rollBack();
+                    }
+
+                }
+           // }
+        }else{
+            $result['msg']='请求方式错误';
         }
         return $result;
     }
