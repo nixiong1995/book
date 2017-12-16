@@ -432,13 +432,14 @@ class UserController extends Controller {
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-            if($res){
+           // if($res){
                 //接口验证不通过
-                $result['msg']= $res;
-            }else{
+               // $result['msg']= $res;
+            //}else{
                 //接收手机端
                 $user_id=\Yii::$app->request->post('user_id');//用户id
                 $head=isset($_FILES['head'])?$_FILES['head']:'';//头像
+                var_dump($head);exit;
                 $nickname=\Yii::$app->request->post('nickname');//昵称
                 $sex=\Yii::$app->request->post('sex');//性别
                 $birthday=\Yii::$app->request->post('birthday');//生日
@@ -492,7 +493,7 @@ class UserController extends Controller {
                     $result['msg']='没有该用户';
                 }
 
-            }
+            //}
 
         }else{
             $result['msg']='请求方式错误';
@@ -501,7 +502,7 @@ class UserController extends Controller {
         return $result;
     }
 
-    //用户打开app记录用户信息
+    //用户打开app记录或获取用户信息
     public function actionRecordUser(){
         $result = [
             'code'=>400,//状态
@@ -510,10 +511,10 @@ class UserController extends Controller {
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-           // if($res){
+           if($res){
                 //接口验证不通过
-               // $result['msg']= $res;
-          //  }else{
+                $result['msg']= $res;
+           }else{
                 //实例化request
                 $requset=\Yii::$app->request;
                 //接收手机端传过来的数据
@@ -535,7 +536,7 @@ class UserController extends Controller {
                     $User->address=$address;
                     $User->status=1;
                     $uid=$this->getuid();
-                    $res=\Yii::$app->db->createCommand("SELECT uid FROM user WHERE uid='JA4G1NZJFA'")->queryAll();
+                    $res=\Yii::$app->db->createCommand("SELECT uid FROM user WHERE uid='$uid")->queryAll();
                     while ($res){
                         $uid=$this->getuid();
                         $res=\Yii::$app->db->createCommand("SELECT uid FROM user WHERE uid='$uid'")->queryAll();
@@ -556,9 +557,8 @@ class UserController extends Controller {
                         //事务回滚
                         $transaction->rollBack();
                     }
-
                 }
-           // }
+            }
         }else{
             $result['msg']='请求方式错误';
         }

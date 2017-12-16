@@ -100,9 +100,9 @@ class BookshelfController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-            if($res){
-               $result['msg']= $res;
-            }else{
+           // if($res){
+               //$result['msg']= $res;
+           // }else{
                 $user_id=\Yii::$app->request->post('user_id');
                 $book_id=\Yii::$app->request->post('book_id');
                 //查询用户详情收藏过的书
@@ -134,7 +134,7 @@ class BookshelfController extends Controller{
                 }else{
                     $result['msg']='未找到该用户';
                 }
-            }
+           // }
         }else{
             $result['msg']='请求方式错误';
         }
@@ -150,9 +150,9 @@ class BookshelfController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-           if($res){
-              $result['msg']= $res;
-          }else{
+          // if($res){
+            //  $result['msg']= $res;
+         // }else{
                 $book_id=\Yii::$app->request->post('book_id');
                 $user_id=\Yii::$app->request->post('user_id');
                 $model=UserDetails::findOne(['user_id'=>$user_id]);
@@ -190,7 +190,7 @@ class BookshelfController extends Controller{
                 }else{
                     $result['msg']='未找到该用户';
                 }
-          }
+         // }
         }else{
             $result['msg']='请求方式错误';
         }
