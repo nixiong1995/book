@@ -439,6 +439,7 @@ class UserController extends Controller {
                 //接收手机端
                 $user_id=\Yii::$app->request->post('user_id');//用户id
                 $head=isset($_FILES['head'])?$_FILES['head']:'';//头像
+                //return $head;
                 $nickname=\Yii::$app->request->post('nickname');//昵称
                 $sex=\Yii::$app->request->post('sex');//性别
                 $birthday=\Yii::$app->request->post('birthday');//生日
@@ -467,6 +468,9 @@ class UserController extends Controller {
                         $uploadSuccessPath = date("Y").'/'.date("m").'/'.date("d").'/' . $fileName;
                         $model->head =$uploadSuccessPath;
                         unlink($old_path);//删除原文件
+                    }else{
+                        $result['msg']='没有图片';
+                        return $result;
                     }
 
                     //修改昵称
