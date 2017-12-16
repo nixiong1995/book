@@ -41,7 +41,7 @@ class Book extends ActiveRecord{
         ];
     }
 
-    //获取分类名
+    //搜索获取分类名
     public static function getCategoryName(){
         $rows=Category::findAll(['status'=>1]);
         $CategoryName=[];

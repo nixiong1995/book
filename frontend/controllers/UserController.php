@@ -389,4 +389,120 @@ class UserController extends Controller {
     }
 
 
+    //用户读书时间累加
+    public function actionReadTime(){
+        $result = [
+            'code'=>400,//状态
+            'msg'=>'',//错误信息,如果有
+        ];
+        if(\Yii::$app->request->isPost){
+            $obj=new Verification();
+            $res=$obj->check();
+            if($res){
+                //接口验证不通过
+                $result['msg']= $res;
+            }else{
+                //接收手机端传过来的数据
+                $user_id=\Yii::$app->request->post('user_id');
+                $time=\Yii::$app->request->post('time');
+                if($user_id && $time){
+                    $model=UserDetails::findOne(['user_id'=>$user_id]);
+                    if($model){
+                        $model->time=$model->time+$time;
+                        $model->save();
+                        $result['code']=200;
+                        $result['msg']='用户读书时间记录成功';
+
+                    }else{
+                        $result['msg']='没有该用户';
+                    }
+
+                }else{
+                    $result['msg']='未传入指定参数';
+                }
+            }
+
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
+    }
+
+    //用户修改个人信息
+    public function actionUpdate(){
+        $result = [
+            'code'=>400,//状态
+            'msg'=>'',//错误信息,如果有
+        ];
+        if(\Yii::$app->request->isPost){
+            $obj=new Verification();
+            $res=$obj->check();
+            if($res){
+                //接口验证不通过
+                $result['msg']= $res;
+            }else{
+                //接收手机端
+                $user_id=\Yii::$app->request->post('user_id');//用户id
+                $head=isset($_FILES['head'])?$_FILES['head']:'';//头像
+                $nickname=\Yii::$app->request->post('nickname');//昵称
+                $sex=\Yii::$app->request->post('sex');//性别
+                $birthday=\Yii::$app->request->post('birthday');//生日
+                $model=UserDetails::findOne(['user_id'=>$user_id]);
+                $old_path=UPLOAD_PATH.$model->head;
+                if($model){
+                    //有上传头像,处理上传文件
+                    if($head){
+                        $name = $head['name'];
+                        $type = strtolower(substr($name,strrpos($name,'.')+1)); //得到文件类型，并且都转化成小写
+                        $allow_type = array('jpg','jpeg','gif','png'); //定义允许上传的类型
+                        //判断文件类型是否被允许上传
+                        if(!in_array($type, $allow_type)){
+                            //如果不被允许，则直接停止程序运行
+                            $result['msg']='图片格式不允许';
+                            return $result;
+                        }
+                        $dir =UPLOAD_PATH .date("Y").'/'.date("m").'/'.date("d").'/';
+                        if (!is_dir($dir)) {
+                            mkdir($dir,0777,true);
+                        }
+                        $fileName =date("HiiHsHis")  . '.'.$type;
+                        $dir = $dir . "/" . $fileName;
+                        //移动文件
+                        move_uploaded_file($head['tmp_name'],$dir);
+                        $uploadSuccessPath = date("Y").'/'.date("m").'/'.date("d").'/' . $fileName;
+                        $model->head =$uploadSuccessPath;
+                        unlink($old_path);//删除原文件
+                    }
+
+                    //修改昵称
+                    if($nickname){
+                        $model->nickname=$nickname;
+                    }
+
+                    //修改性别
+                    if($sex!==null){
+                        $model->sex=$sex;
+                    }
+
+                    //修改生日
+                    if($birthday){
+                        $model->birthday=$birthday;
+                    }
+                    //保存修改
+                    $model->save();
+                    $result['code']=200;
+                    $result['msg']='用户信息修改成功';
+
+                }else{
+                    $result['msg']='没有该用户';
+                }
+
+            }
+
+        }else{
+            $result['msg']='请求方式错误';
+
+        }
+        return $result;
+    }
 }

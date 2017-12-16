@@ -1,6 +1,22 @@
+<style>
+    .button{
+        margin: 20px 100px 0px 0px;
+    }
+
+</style>
 <?php
 ?>
-    <p><a href="<?=\yii\helpers\Url::to(['book/add'])?>" class="btn btn-primary">新增图书</a></p>
+    <div><a href="<?=\yii\helpers\Url::to(['book/add'])?>" class="btn btn-primary">新增图书</a></div>
+
+    <div class=" button form-inline">
+        <button class="btn btn-default" id="checkall">全选</button>
+        <button class="btn btn-default" id="nocheck">全不选</button>
+        <button class="btn btn-default" id="check1">反选</button>
+        <?=\yii\bootstrap\Html::dropDownList('category','0',\backend\models\Book::getCategoryName(),['class'=>"form-control"])?>
+        <button class="btn btn-succes" id="update">修改分类</button>
+    </div>
+
+
     <p class="col-lg-5">
     <form class="form-inline" method="get" action="<?=\yii\helpers\Url::to(['book/index'])?>">
     <?=\yii\bootstrap\Html::dropDownList('category','0',\backend\models\Book::getCategoryName(),['class'=>"form-control"])?>
@@ -9,9 +25,11 @@
         <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search">搜索</span></button>
     </form>
     </p>
+
     <table class="table">
         <thead>
         <tr>
+            <th></th>
             <th>书名</th>
             <th>作者</th>
             <th>分类</th>
@@ -28,6 +46,7 @@
         <tbody>
         <?php foreach ($models as $model):?>
             <tr data-id="<?=$model->id?>">
+                <td> <input type="checkbox" name="items" value="<?=$model->id?>"/></td>
                 <td><?=$model->name?></td>
                 <td><?=$model->author->name?></td>
                 <td><?=$model->category->name?></td>
@@ -61,7 +80,9 @@ echo \yii\widgets\LinkPager::widget([
 $this->registerCssFile("@web/datatables/media/css/jquery.dataTables.css");
 $this->registerJsFile("@web/datatables/media/js/jquery.dataTables.js",['depends'=>\yii\web\JqueryAsset::className()]);
 $del_url=\yii\helpers\Url::to(['book/del']);
-$sele_url=\yii\helpers\Url::to(['book/selected']);
+$sele_url=\yii\helpers\Url::to(['book/selected']);//加入分类精选url
+$update_url=\yii\helpers\Url::to(['book/update']);//批量修改分类url
+
 $this->registerJs(new \yii\web\JsExpression(
     <<<JS
         $('.delete').on('click',function() {
@@ -91,6 +112,51 @@ $this->registerJs(new \yii\web\JsExpression(
                }) 
             }
         });
+        
+        $(document).ready(function(){
+            //全选
+            $('#checkall').click(function(){
+            $('[name=items]:checkbox').prop('checked',true);
+            });
+            //全不选
+            $('#nocheck').click(function(){
+            $('[name=items]:checkbox').prop('checked',false);
+            });
+            //反选
+            $('#check1').click(function(){
+            $('[name=items]:checkbox').each(function(){
+            this.checked=!this.checked;
+            });
+            });
+        });
+          //获取选中的书id和分类id,发送到后台修改分类
+         $("#update").click(function() {
+            var chk_value =[]; 
+            //获取选中的书id
+            $('input[name="items"]:checked').each(function(){ 
+            chk_value.push($(this).val()); 
+            }); 
+            //获取选中的分类id
+            var category_id=$(".form-control").val();
+            if(category_id==0){
+                alert('请选择书和分类之后再进行操作');
+                return false;
+            }
+            //发送到后台修改分类
+            $.post("$update_url",{book_id:chk_value,category_id:category_id},function(data) {
+                if(data=='success'){
+                       alert('批量修改分类成功');
+                   }else{
+                       alert('批量修改分类失败');
+                   }
+              
+            })
+         // alert(category_id);
+        //alert(chk_value.length==0 ?'你还没有选择任何内容！':chk_value);
+         })
+        
+                
+        
 JS
 
 ));

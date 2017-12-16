@@ -49,7 +49,7 @@ class BookController extends Controller{
         ]);
         $models=Book::findBySql("SELECT * FROM book WHERE status=1 $where ORDER by groom_time DESC lIMIT $pager->offset,$pager->limit")->all();
         //分页查询
-       // $models=$query->limit($pager->limit)->offset($pager->offset)->all();
+        // $models=$query->limit($pager->limit)->offset($pager->offset)->all();
         return $this->render('index',['models'=>$models,'pager'=>$pager]);
 
     }
@@ -63,23 +63,23 @@ class BookController extends Controller{
             $model->load($request->post());
             $model->file=UploadedFile::getInstance($model,'file');
             if ($model->validate()) {//验证规则
-                    $dir =UPLOAD_PATH .date("Y").'/'.date("m").'/'.date("d").'/';
-                    if (!is_dir($dir)) {
-                        mkdir($dir,0777,true);
-                    }
-                    $fileName = date("HiiHsHis") . '.' . $model->file->extension;
-                    $dir = $dir . "/" . $fileName;
-                    //移动文件
-                    $model->file->saveAs($dir, false);
-                    $uploadSuccessPath = date("Y").'/'.date("m").'/'.date("d").'/' . $fileName;
-                    $model->image = $uploadSuccessPath;
-                    $model->status=1;
-                    $model->create_time=time();
-                    //保存所有数据
-                    $model->save();
-                    \Yii::$app->session->setFlash('success', '添加成功');
-                    //跳转
-                    return $this->redirect(['book/index']);
+                $dir =UPLOAD_PATH .date("Y").'/'.date("m").'/'.date("d").'/';
+                if (!is_dir($dir)) {
+                    mkdir($dir,0777,true);
+                }
+                $fileName = date("HiiHsHis") . '.' . $model->file->extension;
+                $dir = $dir . "/" . $fileName;
+                //移动文件
+                $model->file->saveAs($dir, false);
+                $uploadSuccessPath = date("Y").'/'.date("m").'/'.date("d").'/' . $fileName;
+                $model->image = $uploadSuccessPath;
+                $model->status=1;
+                $model->create_time=time();
+                //保存所有数据
+                $model->save();
+                \Yii::$app->session->setFlash('success', '添加成功');
+                //跳转
+                return $this->redirect(['book/index']);
             }
         }
         return $this->render('add',['model'=>$model]);
@@ -90,12 +90,14 @@ class BookController extends Controller{
     {
         $model = Book::findOne(['id' => $id]);
         $model->file = $model->image;
+        $old_path=UPLOAD_PATH.$model->file;
         $request = \Yii::$app->request;
         if ($request->isPost) {
             $model->load($request->post());
             $model->file = UploadedFile::getInstance($model, 'file');
             if ($model->validate()) {//验证规则
                 if($model->file){
+                    unlink($old_path);//删除原文件
                     $dir = UPLOAD_PATH .date("Y").'/'.date("m").'/'.date("d").'/';
                     if (!is_dir($dir)) {
                         mkdir($dir,0777,true);
@@ -107,11 +109,11 @@ class BookController extends Controller{
                     $uploadSuccessPath = date("Y").'/'.date("m").'/'.date("d").'/' . $fileName;
                     $model->image = $uploadSuccessPath;
                 }
-                    //保存所有数据
-                    $model->save();
-                    \Yii::$app->session->setFlash('success', '修改成功');
-                    //跳转
-                    return $this->redirect(['book/index']);
+                //保存所有数据
+                $model->save();
+                \Yii::$app->session->setFlash('success', '修改成功');
+                //跳转
+                return $this->redirect(['book/index']);
             }
         }
         return $this->render('add', ['model' => $model]);
@@ -199,7 +201,7 @@ class BookController extends Controller{
         return $this->render('girl-endfree',['models'=>$models]);
     }
 
-    public function actionRead(){
+   /* public function actionRead(){
         $file = BOOK_PATH.'20171121/wandaojianzun.txt';
         $exts = get_loaded_extensions();
         $mimeType ='application/octet-stream';
@@ -212,6 +214,20 @@ class BookController extends Controller{
         }
         $read=new Read();
         $read->smartReadFile($file,$mimeType);
+    }*/
+
+   //批量修改分类
+    public function actionUpdate(){
+        //接收书id和分类id
+        $book_id=\Yii::$app->request->post('book_id');
+        $category_id=\Yii::$app->request->post('category_id');
+        //查找书,修改书分类id
+        $res=Book::updateAll(['category_id'=>$category_id],['id'=>$book_id]);
+        if($res){
+            return 'success';
+        }else{
+            return 'error';
+        }
     }
 
     public function behaviors()

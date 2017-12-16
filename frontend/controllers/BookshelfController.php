@@ -101,7 +101,7 @@ class BookshelfController extends Controller{
             $obj=new Verification();
             $res=$obj->check();
             if($res){
-                $result['msg']= $res;
+               $result['msg']= $res;
             }else{
                 $user_id=\Yii::$app->request->post('user_id');
                 $book_id=\Yii::$app->request->post('book_id');
