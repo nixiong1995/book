@@ -467,7 +467,7 @@ class UserController extends Controller {
                         move_uploaded_file($head['tmp_name'],$dir);
                         $uploadSuccessPath = date("Y").'/'.date("m").'/'.date("d").'/' . $fileName;
                         $model->head =$uploadSuccessPath;
-                        unlink($old_path);//删除原文件
+                        //unlink($old_path);//删除原文件
                     }
 
                     //修改昵称
