@@ -439,7 +439,6 @@ class UserController extends Controller {
                 //接收手机端
                 $user_id=\Yii::$app->request->post('user_id');//用户id
                 $head=isset($_FILES['head'])?$_FILES['head']:'';//头像
-
                 $nickname=\Yii::$app->request->post('nickname');//昵称
                 $sex=\Yii::$app->request->post('sex');//性别
                 $birthday=\Yii::$app->request->post('birthday');//生日
@@ -449,8 +448,8 @@ class UserController extends Controller {
                     //有上传头像,处理上传文件
                     if($head){
                         $name = $head['name'];
+                        return  $name;
                         $type = strtolower(substr($name,strrpos($name,'.')+1)); //得到文件类型，并且都转化成小写
-                        return  $type;
                         $allow_type = array('jpg','jpeg','gif','png'); //定义允许上传的类型
                         //判断文件类型是否被允许上传
                         if(!in_array($type, $allow_type)){
