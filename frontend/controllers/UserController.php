@@ -449,8 +449,8 @@ class UserController extends Controller {
                     //有上传头像,处理上传文件
                     if($head){
                         $name = $head['name'];
-                        return  $head;
                         $type = strtolower(substr($name,strrpos($name,'.')+1)); //得到文件类型，并且都转化成小写
+                        return  $type;
                         $allow_type = array('jpg','jpeg','gif','png'); //定义允许上传的类型
                         //判断文件类型是否被允许上传
                         if(!in_array($type, $allow_type)){
