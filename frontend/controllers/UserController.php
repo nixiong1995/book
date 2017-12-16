@@ -468,9 +468,6 @@ class UserController extends Controller {
                         $uploadSuccessPath = date("Y").'/'.date("m").'/'.date("d").'/' . $fileName;
                         $model->head =$uploadSuccessPath;
                         unlink($old_path);//删除原文件
-                    }else{
-                        $result['msg']='没有图片';
-                        return $result;
                     }
 
                     //修改昵称
@@ -488,7 +485,7 @@ class UserController extends Controller {
                         $model->birthday=$birthday;
                     }
                     //保存修改
-                    $model->save();
+                    $model->save(false);
                     $result['code']=200;
                     $result['msg']='用户信息修改成功';
 
