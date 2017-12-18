@@ -11,7 +11,7 @@ class SignController extends Controller
     {
         //var_dump(time());exit;
        // $p = ['keyword' =>'大佬', 'time' => 1513220354];
-        $p = ['user_id' =>5, 'old_password' =>123,'new_password'=>1234,'time'=>1513513911];
+        $p = ['imei' =>'26B185DD-38A1-4BC3-8229-D31FE5E01F4', 'address' =>'四川省成都市','time'=>1513607650];
         //$p=['time'=>1513004884,'category_id'=>12,'page'=>1,'type'=>1];
         //1.对key做升序排列 //['a'=>'','b'=>'','c'=>'','time'=>'']
         ksort($p);

@@ -192,10 +192,13 @@ class UserController extends Controller {
 
                 $tel=\Yii::$app->request->post('tel');
                 $password=\Yii::$app->request->post('password');
+                $imei=\Yii::$app->request->post('imei');
+                $address=\Yii::$app->request->post('address');
                 $User=User::findOne(['tel'=>$tel,'status'=>1]);
                 if($User){
                     //查到用户
                     if(\Yii::$app->security->validatePassword($password,$User->password_hash)){
+
                         $model = UserDetails::findOne(['user_id' => $User->id]);
                         if($model->f_type){
                             $category_ids=explode('|',$model->f_type);//分割喜欢的类型字段为数组
@@ -544,10 +547,10 @@ class UserController extends Controller {
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-          if($res){
+          //if($res){
                 //接口验证不通过
-                $result['msg']= $res;
-           }else{
+               // $result['msg']= $res;
+         //  }else{
                 //实例化request
                 $requset=\Yii::$app->request;
                 //接收手机端传过来的数据
@@ -679,7 +682,7 @@ class UserController extends Controller {
                         $transaction->rollBack();
                     }
                 }
-           }
+           //}
         }else{
             $result['msg']='请求方式错误';
         }
