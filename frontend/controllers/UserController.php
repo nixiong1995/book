@@ -484,7 +484,7 @@ class UserController extends Controller {
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-           if($res){
+          if($res){
                 //接口验证不通过
                 $result['msg']= $res;
            }else{
@@ -497,10 +497,90 @@ class UserController extends Controller {
                 $UserObj=User::findOne(['imei'=>$imei]);
                 if($UserObj){
                     //数据库有该用户
+                    $model=UserDetails::findOne(['user_id'=>$UserObj->id]);
+                    if($model->f_type){
+                        $category_ids=explode('|',$model->f_type);//分割喜欢的类型字段为数组
+                        //通过分类id遍历查询喜欢的类型
+                        $molds=[];//定义空数组装分类名
+                        foreach ($category_ids as $category_id){
+                            $category=Category::findBySql("SELECT id,name FROM category where id=$category_id ")->one();
+                            $molds[$category->id]=$category->name;//将分类名装入数组中
+                        }
+                        $TypeName=implode('|',$molds);//分割数组成字符串
+                    }else{
+                        $TypeName=null;
+                    }
+
+                    if($model->f_author){
+                        //通过作者id遍历查询作者名
+                        $author_ids=explode('|',$model->f_author);//分割喜欢的作者为数组
+
+                        $names=[];
+                        foreach ($author_ids as $author_id){
+                            $author=Author::findBySql("SELECT id,name FROM author where id=$author_id ")->one();
+                            //var_dump($author);exit;
+                            $names[$author->id]=$author['name'];
+                        }
+                        $AuthorName=implode('|',$names);
+                    }else{
+                        $AuthorName=null;
+                    }
+
+                    //查询用户已购买的书
+                    $purchaseds=Purchased::find(['user_id'=>$UserObj->id])->all();
+                    if($purchaseds){
+                        $bookdata=[];
+                        foreach ($purchaseds as $purchased){
+                            $book2=Book::findBySql("SELECT id,name FROM book where id=$purchased->book_id")->one();
+                            $bookdata[$book2->id]=$book2->name;
+                        }
+                        $BookName2=implode('|',$bookdata);//购买的书
+                        //var_dump($bookdata);exit;
+                    }else{
+                        $BookName2=null;
+                    }
+
+                    //遍历查询书名
+                    if($model->collect){
+                        $collects=explode('|',$model->collect);//分割收藏的书为数组
+                        $books2=[];
+                        foreach ($collects as $collect) {
+                            $Books= Book::findBySql("SELECT id,name FROM book where id=$collect limit 5")->one();
+                            $books2[$Books->id]= $Books->name;//将书名装入数组中
+                        }
+                        $BookName3=implode('|',$books2);//收藏的书
+                    }else{
+                        $BookName3=null;
+                    }
+
+                    //根据用户id到reading查询该用户读过的书id,再根据书id到book表查询书名
+                    $book_ids = Reading::findBySql("SELECT book_id FROM reading where user_id=$UserObj->id ORDER BY `create_time` DESC ")->all();
+                    if($book_ids){
+                        $books =[];//定义空数组装书名
+                        //遍历查询书名
+                        foreach ($book_ids as $book_id) {
+                            $book= Book::findBySql("SELECT id,name FROM book where id=$book_id->book_id")->one();
+                            $books[$book->id]=$book->name;//将书名装入数组中
+                        }
+                        $BookName=implode('|',$books);//分割数组成字符串
+                    }else{
+                        $BookName=null;
+                    }
+
+                    //处理头像
+                    $head=null;
+                    if($model->head){
+                        $head=HTTP_PATH.$model->head;
+                    }
+
                     $result['code']=200;
                     $result['msg']='获取用户信息成功';
-                    $result['data']=['user_id'=>$UserObj->id,'imei'=>$UserObj->imei,
-                        'address'=>$UserObj->address,'uid'=>$UserObj->uid];
+                    $result['data']=['user_id'=>$UserObj->id,'uid'=>$UserObj->uid,'tel'=>$UserObj->tel,'email'=>$UserObj->email,
+                        'status'=>$UserObj->status,'created_at'=>$UserObj->created_at,'birthday'=>$model->birthday,
+                        'sex'=>$model->sex,'head'=>$head,'time'=>$model->time,'author'=> $AuthorName,
+                        'Rbook'=>$BookName,'type'=>$TypeName,'ticket'=>$UserObj->ticket,'voucher'=>$UserObj->voucher,
+                        'address'=>$UserObj->address,'source'=>$UserObj->source,'vip'=>$model->vip,'collect_book'=>$BookName3,
+                        'purchased_book'=>$BookName2,'nickname'=>$model->nickname];
 
                 }else{
                     //数据库没有该用户
@@ -509,7 +589,7 @@ class UserController extends Controller {
                     $User->address=$address;
                     $User->status=1;
                     $uid=$this->getuid();
-                    $res=\Yii::$app->db->createCommand("SELECT uid FROM user WHERE uid='$uid")->queryAll();
+                    $res=\Yii::$app->db->createCommand("SELECT uid FROM user WHERE uid='$uid'")->queryAll();
                     while ($res){
                         $uid=$this->getuid();
                         $res=\Yii::$app->db->createCommand("SELECT uid FROM user WHERE uid='$uid'")->queryAll();
@@ -523,15 +603,22 @@ class UserController extends Controller {
                         $model->user_id=$User->id;
                         //保存所有数据
                         $model->save();
+
                         $result['code']=200;
                         $result['msg']='记录用户信息成功';
+                        $result['data']=['user_id'=>$User->id,'uid'=>$User->uid,'tel'=>null,'email'=>null,
+                            'status'=>$User->status,'created_at'=>$User->created_at,'birthday'=>null,
+                            'sex'=>$model->sex,'head'=>null,'time'=>0,'author'=> null,
+                            'Rbook'=>null,'type'=>null,'ticket'=>0,'voucher'=>0,
+                            'address'=>$User->address,'source'=>null,'vip'=>$model->vip,'collect_book'=>null,
+                            'purchased_book'=>null,'nickname'=>null];
                         $transaction->commit();
                     }catch ( Exception $e){
                         //事务回滚
                         $transaction->rollBack();
                     }
                 }
-            }
+           }
         }else{
             $result['msg']='请求方式错误';
         }
