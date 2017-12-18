@@ -444,7 +444,7 @@ class UserController extends Controller {
                 $sex=\Yii::$app->request->post('sex');//性别
                 $birthday=\Yii::$app->request->post('birthday');//生日
                 $model=UserDetails::findOne(['user_id'=>$user_id]);
-                $old_path=UPLOAD_PATH.$model->head;
+                $old_path=$model->head;//存放旧图片路径
                 if($model){
                     //有上传头像,处理上传文件
                     if($head){
@@ -467,7 +467,7 @@ class UserController extends Controller {
                         move_uploaded_file($head['tmp_name'],$dir);
                         $uploadSuccessPath = date("Y").'/'.date("m").'/'.date("d").'/' . $fileName;
                         $model->head =$uploadSuccessPath;
-                        //unlink($old_path);//删除原文件
+
                     }
 
                     //修改昵称
@@ -486,6 +486,10 @@ class UserController extends Controller {
                     }
                     //保存修改
                     $model->save(false);
+                    if($old_path){
+                        $old_path=UPLOAD_PATH.$old_path;
+                        unlink($old_path);//删除原文件
+                    }
                     $result['code']=200;
                     $result['msg']='用户信息修改成功';
 

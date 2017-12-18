@@ -100,9 +100,9 @@ class BookshelfController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-           // if($res){
-               //$result['msg']= $res;
-           // }else{
+            if($res){
+               $result['msg']= $res;
+           }else{
                 $user_id=\Yii::$app->request->post('user_id');
                 $book_id=\Yii::$app->request->post('book_id');
                 //查询用户详情收藏过的书
@@ -134,7 +134,7 @@ class BookshelfController extends Controller{
                 }else{
                     $result['msg']='未找到该用户';
                 }
-           // }
+           }
         }else{
             $result['msg']='请求方式错误';
         }
@@ -150,21 +150,22 @@ class BookshelfController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-          // if($res){
-            //  $result['msg']= $res;
-         // }else{
+          if($res){
+             $result['msg']= $res;
+          }else{
                 $book_id=\Yii::$app->request->post('book_id');
                 $user_id=\Yii::$app->request->post('user_id');
                 $model=UserDetails::findOne(['user_id'=>$user_id]);
                 if($model){
                     //将收藏过的书转成数组
                     $CollectIds=explode('|',$model->collect);
+                    $CollectIds=array_filter($CollectIds);//删除数组中空元素
                     //查询该书id在数组中的键名
                     $key=array_search($book_id,$CollectIds);
                     if($key!==false){
                         $result['msg']='用户已经收藏过该书';
                     }else{
-                        $res1=array_push($CollectIds,$book_id);
+                        $res1=array_push($CollectIds,$book_id);//将书id加在数组中
                         if($res1){
                             $collect=implode('|',$CollectIds);
                             $model->collect=$collect;
@@ -190,7 +191,7 @@ class BookshelfController extends Controller{
                 }else{
                     $result['msg']='未找到该用户';
                 }
-         // }
+          }
         }else{
             $result['msg']='请求方式错误';
         }

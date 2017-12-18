@@ -90,14 +90,13 @@ class BookController extends Controller{
     {
         $model = Book::findOne(['id' => $id]);
         $model->file = $model->image;
-        $old_path=UPLOAD_PATH.$model->file;
+        $old_path=$model->file;
         $request = \Yii::$app->request;
         if ($request->isPost) {
             $model->load($request->post());
             $model->file = UploadedFile::getInstance($model, 'file');
             if ($model->validate()) {//验证规则
                 if($model->file){
-                    unlink($old_path);//删除原文件
                     $dir = UPLOAD_PATH .date("Y").'/'.date("m").'/'.date("d").'/';
                     if (!is_dir($dir)) {
                         mkdir($dir,0777,true);
@@ -111,6 +110,11 @@ class BookController extends Controller{
                 }
                 //保存所有数据
                 $model->save();
+                //如果有旧文件,删除旧文件
+                if($old_path){
+                    $old_path=UPLOAD_PATH.$old_path;
+                    unlink($old_path);//删除原文件
+                }
                 \Yii::$app->session->setFlash('success', '修改成功');
                 //跳转
                 return $this->redirect(['book/index']);
