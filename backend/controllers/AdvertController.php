@@ -67,14 +67,13 @@ class AdvertController extends Controller{
     public function actionEdit($id){
         $model=Advert::findOne(['id'=>$id]);
         $model->file =$model->image;
-        $old_path=UPLOAD_PATH.$model->image;
+        $old_path=$model->image;
         $request=\Yii::$app->request;
         if($request->isPost){
             $model->load($request->post());
             $model->file=UploadedFile::getInstance($model,'file');
             if ($model->validate()) {//验证规则
                 if($model->file){
-                    unlink($old_path);//删除原文件
                     $dir =UPLOAD_PATH .date("Y").'/'.date("m").'/'.date("d").'/';
                     if (!is_dir($dir)) {
                         mkdir($dir,0777,true);
@@ -85,6 +84,10 @@ class AdvertController extends Controller{
                     $model->file->saveAs($dir, false);
                     $uploadSuccessPath = date("Y").'/'.date("m").'/'.date("d").'/' . $fileName;
                     $model->image = $uploadSuccessPath;
+                    if($old_path){
+                        $old_path=UPLOAD_PATH.$old_path;
+                        unlink($old_path);//删除原文件
+                    }
                 }
                 $model->create_time=time();
                 //保存所有数据

@@ -547,10 +547,10 @@ class UserController extends Controller {
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-           if($res){
+          if($res){
                 //接口验证不通过
                 $result['msg']= $res;
-           }else{
+          }else{
                 $user_id=\Yii::$app->request->post('user_id');//用户id
                 $head=isset($_FILES['head'])?$_FILES['head']:'';//头像
                 $model=UserDetails::findOne(['user_id'=>$user_id]);

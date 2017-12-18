@@ -81,14 +81,15 @@ class AuthorController extends Controller{
                     $model->file->saveAs($dir, false);
                     $uploadSuccessPath =date("Y").'/'.date("m").'/'.date("d").'/'. $fileName;
                     $model->image = $uploadSuccessPath;
+                    //如果有旧文件,删除旧文件
+                    if($old_path){
+                        $old_path=UPLOAD_PATH.$old_path;
+                        unlink($old_path);//删除原文件
+                    }
                 }
                 //保存所有数据
                 $model->save();
-                //如果有旧文件,删除旧文件
-                if($old_path){
-                    $old_path=UPLOAD_PATH.$old_path;
-                    unlink($old_path);//删除原文件
-                }
+
                 \Yii::$app->session->setFlash('success', '修改成功');
                 //跳转
                 return $this->redirect(['author/index']);
