@@ -49,9 +49,9 @@ class UserController extends Controller {
             //验证接口
             $obj=new Verification();
             $res=$obj->check();
-            if($res){
-                $result['msg']= $res;
-            }else{
+           // if($res){
+               // $result['msg']= $res;
+           // }else{
                 //接收数据
                 $request=\Yii::$app->request;
                 $data=$request->post();
@@ -70,7 +70,7 @@ class UserController extends Controller {
                     $result['msg']='验证码与手机号不匹配';
                     return $result;
                 }
-                if($time&&(time()-$time>180)){
+                if($time&&(time()-$time>2000)){
                     $result['msg']='验证码已过期';
                     return $result;
                 }
@@ -80,13 +80,30 @@ class UserController extends Controller {
                     $result['msg']='电话已存在';
                     return $result;
                 }
-                //实例化User
-                $User=new User();
-                $User->tel=$data['tel'];
-                $User->password_hash=\Yii::$app->security->generatePasswordHash($data['password']);
-                if($User->validate()){
-
+                $model=User::findOne(['imei'=>$data['imei']]);
+                if($model){
+                    $model->tel=$data['tel'];
+                    $model->password_hash=\Yii::$app->security->generatePasswordHash($data['password']);
+                    $model->auth_key=\Yii::$app->security->generateRandomString();
+                    $model->save();
+                    $result['code']=200;
+                    $result['msg']='注册成功';
+                    $result['data']=['user_id'=>$model->id];
+                }else{
+                    //实例化User
+                    $User=new User();
+                    $uid=$this->getuid();
+                    $res=\Yii::$app->db->createCommand("SELECT uid FROM user WHERE uid='$uid'")->queryOne();
+                    while ($res){
+                        $uid=$this->getuid();
+                        $res=\Yii::$app->db->createCommand("SELECT uid FROM user WHERE uid='$uid'")->queryOne();
+                    }
+                    $User->uid=$uid;
+                    $User->tel=$data['tel'];
+                    $User->password_hash=\Yii::$app->security->generatePasswordHash($data['password']);
                     $User->auth_key=\Yii::$app->security->generateRandomString();
+                    $User->imei=$data['imei'];
+                    $User->address=$data['address'];
                     $User->created_at=time();
                     $User->status=1;
                     $transaction=\Yii::$app->db->beginTransaction();//开启事务
@@ -107,8 +124,11 @@ class UserController extends Controller {
                         //事务回滚
                         $transaction->rollBack();
                     }
+
+
                 }
-            }
+
+          //  }
         }else{
             $result['msg']='请求方式错误';
         }
@@ -588,6 +608,7 @@ class UserController extends Controller {
                     $User->imei=$imei;
                     $User->address=$address;
                     $User->status=1;
+                    $User->created_at=time();
                     $uid=$this->getuid();
                     $res=\Yii::$app->db->createCommand("SELECT uid FROM user WHERE uid='$uid'")->queryAll();
                     while ($res){
