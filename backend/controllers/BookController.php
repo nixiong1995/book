@@ -9,6 +9,7 @@ use backend\models\LoginForm;
 use libs\Read;
 use yii\bootstrap\Html;
 use yii\data\Pagination;
+use yii\db\Exception;
 use yii\web\Controller;
 use yii\web\UploadedFile;
 
@@ -62,22 +63,54 @@ class BookController extends Controller{
         if($request->isPost){
             $model->load($request->post());
             $model->file=UploadedFile::getInstance($model,'file');
+            $model->file2=UploadedFile::getInstance($model,'file2');
             if ($model->validate()) {//验证规则
-                $dir =UPLOAD_PATH .date("Y").'/'.date("m").'/'.date("d").'/';
-                if (!is_dir($dir)) {
-                    mkdir($dir,0777,true);
+
+                $Author=new Author();
+                if($model->file2){
+                    $dir2 =  UPLOAD_PATH . date("Y").'/'.date("m").'/'.date("d").'/';
+                    if (!is_dir($dir2)) {
+                        mkdir($dir2,0777,true);
+                    }
+                    $fileName = date("HiiHsHis") .'.'.$model->file2 ->extension;
+                    $dir2 = $dir2 . "/" . $fileName;
+                    //移动文件
+                    $model->file2 ->saveAs($dir2, false);
+                    $uploadSuccessPath2 =date("Y").'/'.date("m").'/'.date("d").'/'. $fileName;
+                    $Author->image = $uploadSuccessPath2;
                 }
-                $fileName = date("HiiHsHis") . '.' . $model->file->extension;
-                $dir = $dir . "/" . $fileName;
-                //移动文件
-                $model->file->saveAs($dir, false);
-                $uploadSuccessPath = date("Y").'/'.date("m").'/'.date("d").'/' . $fileName;
-                $model->image = $uploadSuccessPath;
-                $model->status=1;
-                $model->create_time=time();
-                //保存所有数据
-                $model->save();
-                \Yii::$app->session->setFlash('success', '添加成功');
+                $Author->name=$model->author_name;
+                $Author->intro=$model->author_intro;
+                $Author->status=1;
+                $Author->create_time=time();
+                $transaction=\Yii::$app->db->beginTransaction();//开启事务
+                try{
+                    $Author->save(false);
+                    if($model->file){
+                        $dir1 =UPLOAD_PATH .date("Y").'/'.date("m").'/'.date("d").'/';
+                        if (!is_dir($dir1)) {
+                            mkdir($dir1,0777,true);
+                        }
+                        $fileName = date("HiiHsHis") . '.' . $model->file->extension;
+                        $dir1= $dir1 . "/" . $fileName;
+                        //移动文件
+                        $model->file->saveAs($dir1, false);
+                        $uploadSuccessPath = date("Y").'/'.date("m").'/'.date("d").'/' . $fileName;
+                        $model->image = $uploadSuccessPath;
+                    }
+                    $model->author_id=$Author->id;
+                    $model->status=1;
+                    $model->create_time=time();
+                    //保存所有数据
+                    $model->save();
+                    $transaction->commit();
+                    \Yii::$app->session->setFlash('success', '添加成功');
+
+                }catch (Exception $e){
+                    //事务回滚
+                    $transaction->rollBack();
+                }
+
                 //跳转
                 return $this->redirect(['book/index']);
             }
@@ -89,33 +122,73 @@ class BookController extends Controller{
     public function actionEdit($id)
     {
         $model = Book::findOne(['id' => $id]);
-        $model->file = $model->image;
-        $old_path=$model->file;
+        $Author=Author::findOne(['id'=>$model->author_id]);
+        $model->author_intro=$Author->intro;
+        $model->author_name=$Author->name;
+        $model->file2=$Author->image;//作者头像
+        $model->file = $model->image;//书封面
+        $old_path1=$model->file2;//作者旧头像路径
+        $old_path2=$model->file;//书封面旧路径
         $request = \Yii::$app->request;
         if ($request->isPost) {
             $model->load($request->post());
-            $model->file = UploadedFile::getInstance($model, 'file');
+            $model->file = UploadedFile::getInstance($model, 'file');//书封面
+            $model->file2 = UploadedFile::getInstance($model, 'file2');//作者头像
             if ($model->validate()) {//验证规则
-                if($model->file){
-                    $dir = UPLOAD_PATH .date("Y").'/'.date("m").'/'.date("d").'/';
-                    if (!is_dir($dir)) {
-                        mkdir($dir,0777,true);
+                if($model->file2){
+                    $dir2 =  UPLOAD_PATH . date("Y").'/'.date("m").'/'.date("d").'/';
+                    if (!is_dir($dir2)) {
+                        mkdir($dir2,0777,true);
                     }
-                    $fileName = date("HiiHsHis") . '.' . $model->file->extension;
-                    $dir = $dir . "/" . $fileName;
+                    $fileName = date("HiiHsHisi") .'.'.$model->file2 ->extension;
+                    $dir2 = $dir2 . "/" . $fileName;
                     //移动文件
-                    $model->file->saveAs($dir, false);
-                    $uploadSuccessPath = date("Y").'/'.date("m").'/'.date("d").'/' . $fileName;
-                    $model->image = $uploadSuccessPath;
+
+                    $model->file2 ->saveAs($dir2, false);
+                    $uploadSuccessPath2 =date("Y").'/'.date("m").'/'.date("d").'/'. $fileName;
+                    $Author->image=$uploadSuccessPath2;
+                    if($old_path1){
+                        $old_path1=UPLOAD_PATH.$old_path1;
+                        unlink($old_path1);//删除原文件
+                    }
                 }
-                //保存所有数据
-                $model->save();
-                //如果有旧文件,删除旧文件
-                if($old_path){
-                    $old_path=UPLOAD_PATH.$old_path;
-                    unlink($old_path);//删除原文件
+                $Author->name=$model->author_name;
+                $Author->intro=$model->author_intro;
+                $transaction=\Yii::$app->db->beginTransaction();//开启事务
+                try{
+
+                    //保存作者信息
+                    $Author->save(false);
+
+                    //处理书上传封面
+                    if($model->file){
+                        $dir1 =UPLOAD_PATH .date("Y").'/'.date("m").'/'.date("d").'/';
+                        if (!is_dir($dir1)) {
+                            mkdir($dir1,0777,true);
+                        }
+                        $fileName = date("HiiHsHis") . '.' . $model->file->extension;
+                        $dir1= $dir1 . "/" . $fileName;
+                        //移动文件
+                        $model->file->saveAs($dir1, false);
+                        $uploadSuccessPath = date("Y").'/'.date("m").'/'.date("d").'/' . $fileName;
+                        $model->image = $uploadSuccessPath;
+                        //如果有旧文件,删除旧文件
+                        if($old_path2){
+                            $old_path2=UPLOAD_PATH.$old_path2;
+                            unlink($old_path2);//删除原文件
+                        }
+                    }
+                    $model->author_id=$Author->id;
+                    //保存所有数据
+                    $model->save();
+                    $transaction->commit();
+                    \Yii::$app->session->setFlash('success', '修改成功');
+
+                }catch (Exception $e){
+                    //事务回滚
+                    $transaction->rollBack();
                 }
-                \Yii::$app->session->setFlash('success', '修改成功');
+
                 //跳转
                 return $this->redirect(['book/index']);
             }

@@ -5,16 +5,19 @@ use yii\db\ActiveRecord;
 class Book extends ActiveRecord{
 
     public $file;
+    public $author_intro;
+    public $file2;
+    public $author_name;
     const SCENARIO_ADD ='add';
 
     public function rules()
     {
         return [
-            [['name','author_id','is_free','intro','category_id','no','type','from'],'required'],
+            [['name','author_name','is_free','intro','category_id','no','type','from','author_intro'],'required'],
             ['file','required','on'=>self::SCENARIO_ADD],
             ['name', 'unique','message' => '该书已存在.'],
             [['size','clicks','score'],'number'],
-            ['file', 'file', 'extensions' => ['png', 'jpg', 'gif']],
+            [['file','file2'], 'file', 'extensions' => ['png', 'jpg', 'gif']],
             ['type', 'in', 'range' => ['txt', 'epub'],'message'=>'只能输入txt,epub文本类型'],
             [['no','clicks'],'integer'],
             ['score', 'in', 'range' => [1, 2, 3,4,5,6,7,8,9,10],'message'=>'只能输入1-10的整数'],
@@ -27,17 +30,19 @@ class Book extends ActiveRecord{
     {
         return [
             'name'=>'书名',
-            'author_id'=>'作者',
+            'author_name'=>'作者姓名',
             'is_free'=>'是否免费',
-            'file'=>'封面',
+            'file'=>'书封面',
             'category_id'=>'所属分类',
             'clicks'=>'观看数',
             'no'=>'多少章节开始收费(整本书不收费请输入0)',
             'score'=>'评分',
-            'intro'=>'简介',
+            'intro'=>'书简介',
             'type'=>'文本类型',
             'from'=>'书来自于(你的选择关系重大,请核对清楚再进行选择)',
             'ascription'=>'书归属于(你的选择关系重大,请核对清楚再进行选择)',
+            'author_intro'=>'作者简介',
+            'file2'=>'作者图片',
         ];
     }
 
