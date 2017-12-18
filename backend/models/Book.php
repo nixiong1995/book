@@ -5,19 +5,17 @@ use yii\db\ActiveRecord;
 class Book extends ActiveRecord{
 
     public $file;
-    public $author_intro;
-    public $file2;
     public $author_name;
     const SCENARIO_ADD ='add';
 
     public function rules()
     {
         return [
-            [['name','author_name','is_free','intro','category_id','no','type','from','author_intro'],'required'],
+            [['name','author_name','is_free','intro','category_id','no','type','from'],'required'],
             ['file','required','on'=>self::SCENARIO_ADD],
             ['name', 'unique','message' => '该书已存在.'],
             [['size','clicks','score'],'number'],
-            [['file','file2'], 'file', 'extensions' => ['png', 'jpg', 'gif']],
+            ['file', 'file', 'extensions' => ['png', 'jpg', 'gif']],
             ['type', 'in', 'range' => ['txt', 'epub'],'message'=>'只能输入txt,epub文本类型'],
             [['no','clicks'],'integer'],
             ['score', 'in', 'range' => [1, 2, 3,4,5,6,7,8,9,10],'message'=>'只能输入1-10的整数'],
