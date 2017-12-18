@@ -49,13 +49,14 @@ class UserController extends Controller {
             //验证接口
             $obj=new Verification();
             $res=$obj->check();
-           // if($res){
-               // $result['msg']= $res;
-           // }else{
+           if($res){
+                $result['msg']= $res;
+            }else{
                 //接收数据
                 $request=\Yii::$app->request;
                 $data=$request->post();
                 $tel=$data['tel'];
+                $imei=$data['imei'];
                 $captcha=$data['captcha'];
                 $redis=new \Redis();
                 $redis->connect('127.0.0.1');
@@ -80,8 +81,10 @@ class UserController extends Controller {
                     $result['msg']='电话已存在';
                     return $result;
                 }
-                $model=User::findOne(['imei'=>$data['imei']]);
-                if($model){
+                $rows=\Yii::$app->db->createCommand("SELECT imei,tel FROM user WHERE imei='$imei'")->queryOne();
+
+                if($rows['imei'] && $rows['tel']==null){
+                    $model=User::findOne(['imei'=>$imei]);
                     $model->tel=$data['tel'];
                     $model->password_hash=\Yii::$app->security->generatePasswordHash($data['password']);
                     $model->auth_key=\Yii::$app->security->generateRandomString();
@@ -89,7 +92,44 @@ class UserController extends Controller {
                     $result['code']=200;
                     $result['msg']='注册成功';
                     $result['data']=['user_id'=>$model->id];
-                }else{
+                }elseif($rows['imei'] && $rows['tel']){
+                    //有手机号必须imei已经被注册(同一个手机,手机号不一样)
+                    $User=new User();
+                    $uid=$this->getuid();
+                    $res=\Yii::$app->db->createCommand("SELECT uid FROM user WHERE uid='$uid'")->queryOne();
+                    while ($res){
+                        $uid=$this->getuid();
+                        $res=\Yii::$app->db->createCommand("SELECT uid FROM user WHERE uid='$uid'")->queryOne();
+                    }
+                    $User->uid=$uid;
+                    $User->tel=$data['tel'];
+                    $User->password_hash=\Yii::$app->security->generatePasswordHash($data['password']);
+                    $User->auth_key=\Yii::$app->security->generateRandomString();
+                    $User->address=$data['address'];
+                    $User->created_at=time();
+                    $User->imei='';
+                    $User->status=1;
+                    $transaction=\Yii::$app->db->beginTransaction();//开启事务
+                    try{
+                        $User->save();
+                        //实例化UserDetails
+                        $model=new UserDetails();
+                        $model->user_id=$User->id;
+                        if ($model->validate()) {//验证规则
+                            //保存所有数据
+                            $model->save();
+                            $result['code']=200;
+                            $result['msg']='注册成功';
+                            $result['data']=['user_id'=>$model->user_id];
+                        }
+                        $transaction->commit();
+                    }catch ( Exception $e){
+                        //事务回滚
+                        $transaction->rollBack();
+                    }
+
+                }elseif($rows['imei']==null && $rows['tel']==null){
+                    //手机号和imei都没有被使用
                     //实例化User
                     $User=new User();
                     $uid=$this->getuid();
@@ -128,7 +168,7 @@ class UserController extends Controller {
 
                 }
 
-          //  }
+            }
         }else{
             $result['msg']='请求方式错误';
         }
