@@ -198,6 +198,16 @@ class UserController extends Controller {
                 if($User){
                     //查到用户
                     if(\Yii::$app->security->validatePassword($password,$User->password_hash)){
+                        //判断imei有adress是否为空
+                        if($User->imei==null && $imei){
+                            $User->imei=$imei;
+                        }
+
+                        if($User->address=='(null)' && $address){
+                            $User->address=$address;
+                        }
+
+                        $User->save();
 
                         $model = UserDetails::findOne(['user_id' => $User->id]);
                         if($model->f_type){
@@ -269,11 +279,17 @@ class UserController extends Controller {
                             $BookName=null;
                         }
 
+                        //处理头像
+                        $head=null;
+                        if($model->head){
+                            $head=HTTP_PATH.$model->head;
+                        }
+
                         $result['code']=200;
                         $result['msg']='登录成功';
                         $result['data']=['user_id'=>$User->id,'uid'=>$User->uid,'tel'=>$User->tel,'email'=>$User->email,
                             'status'=>$User->status,'created_at'=>$User->created_at,'birthday'=>$model->birthday,
-                            'sex'=>$model->sex,'head'=>HTTP_PATH.$model->head,'time'=>$model->time,'author'=> $AuthorName,
+                            'sex'=>$model->sex,'head'=>$head,'time'=>$model->time,'author'=> $AuthorName,
                             'Rbook'=>$BookName,'type'=>$TypeName,'ticket'=>$User->ticket,'voucher'=>$User->voucher,
                             'address'=>$User->address,'source'=>$User->source,'vip'=>$model->vip,'collect_book'=>$BookName3,
                             'purchased_book'=>$BookName2,'nickname'=>$model->nickname];
@@ -647,16 +663,17 @@ class UserController extends Controller {
 
                 }else{
                     //数据库没有该用户
+
                     $User=new User();
                     $User->imei=$imei;
                     $User->address=$address;
                     $User->status=1;
                     $User->created_at=time();
                     $uid=$this->getuid();
-                    $res=\Yii::$app->db->createCommand("SELECT uid FROM user WHERE uid='$uid'")->queryAll();
+                    $res=\Yii::$app->db->createCommand("SELECT uid FROM user WHERE uid='$uid'")->queryOne();
                     while ($res){
                         $uid=$this->getuid();
-                        $res=\Yii::$app->db->createCommand("SELECT uid FROM user WHERE uid='$uid'")->queryAll();
+                        $res=\Yii::$app->db->createCommand("SELECT uid FROM user WHERE uid='$uid'")->queryOne();
                     }
                     $User->uid=$uid;
                     $transaction=\Yii::$app->db->beginTransaction();//开启事务
