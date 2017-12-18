@@ -32,8 +32,8 @@ class SignController extends Controller
         $captcha = rand(100000, 999999);
         echo "SmsDemo::sendSms\n";
         $response = $demo->sendSms(
-            "阅酷书城", // 短信签名
-            "SMS_113461555", // 短信模板编号
+            "阅cool书城", // 短信签名
+            "SMS_117515881", // 短信模板编号
             "$phone", // 短信接收者
             Array(  // 短信模板中字段的值
                 "code" => $captcha,
