@@ -134,7 +134,6 @@ class BookController extends Controller{
                         $model->image = $uploadSuccessPath;
                         //如果有旧文件,删除旧文件
                         if($old_path){
-                            var_dump($old_path);exit;
                             $old_path=UPLOAD_PATH.$old_path;
                             unlink($old_path);//删除原文件
                         }
