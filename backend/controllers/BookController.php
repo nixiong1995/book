@@ -194,10 +194,11 @@ class BookController extends Controller{
             if($model->validate()){
 
                 $book=Book::findOne(['id'=>$book_id]);
+                //var_dump($book);exit;
                 $book->groom=$model->groom;
                 $book->groom_time=time();
-
                 $book->save(false);
+                //var_dump($book->errors);exit;
                 \Yii::$app->session->setFlash('success', '添加推荐成功');
                 return $this->redirect(['book/index']);
             }
