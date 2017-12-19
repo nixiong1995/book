@@ -426,12 +426,15 @@ class BookstoreController extends Controller{
            if($res){
                 $result['msg']= $res;
           }else{
+               //根据时间排序,取出推荐分类前5
                 $categorys=Category::find()->orderBy('groom_time DESC')->limit(5)->all();
 
+                //遍历出分类id
                 foreach ($categorys as $category){
                     $ids[]=$category->id;
                 }
                 //var_dump($ids);exit;
+               //根据推荐时间取出分类推荐
                 $models1=Book::find()->where(['category_id'=>$ids[0]])->orderBy('groom_time DESC')->limit(3)->all();
                 foreach ($models1 as $model1){
                     $result['data']['category1'][]=['book_id'=>$model1->id,'name'=>$model1->name,

@@ -52,17 +52,6 @@ class AdvertController extends Controller{
         return $this->render('bookshelf',['models'=>$models,'pager'=>$pager]);
     }
 
-   /* //书城广告
-    public function actionBookstore(){
-        $query=Advert::find()->where(['position'=>1])->orderBy('create_time  DESC');
-        $pager=new Pagination([
-            'totalCount'=>$query->count(),//总条数
-            'defaultPageSize'=>10,//每页显示条数
-        ]);
-        $models=$query->limit($pager->limit)->offset($pager->offset)->all();
-        return $this->render('bookstore',['models'=>$models,'pager'=>$pager]);
-    }*/
-
     //广告修改
     public function actionEdit($id){
         $model=Advert::findOne(['id'=>$id]);

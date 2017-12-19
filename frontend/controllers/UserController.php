@@ -765,6 +765,41 @@ class UserController extends Controller {
             $result['msg']='请求方式错误';
         }
         return $result;
+    }
 
+    //上传喜欢的分类
+    public function actionLikeCategory(){
+        $result = [
+            'code'=>400,//状态
+            'msg'=>'',//错误信息,如果有
+        ];
+        if(\Yii::$app->request->isPost){
+            $obj=new Verification();
+            $res=$obj->check();
+            if($res){
+                //接口验证不通过
+                $result['msg']= $res;
+           }else{
+                $str=\Yii::$app->request->post('type');
+                $user_id=\Yii::$app->request->post('user_id');
+                if($str && $user_id){
+                    $model=UserDetails::findOne(['user_id'=>$user_id]);
+                    if($model){
+                        $model->f_type=$str;
+                        $model->save();
+                        $result['code']=200;
+                        $result['msg']='上传喜欢类型成功';
+                    }else{
+                        $result['msg']='没有该用户';
+                    }
+                }else{
+                    $result['msg']='请传入指定参数';
+                }
+
+            }
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
     }
 }

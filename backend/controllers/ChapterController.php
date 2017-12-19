@@ -79,14 +79,13 @@ class ChapterController extends Controller{
     {
         $model = Chapter::findOne(['id' => $id]);
         $model->is_end=$model->book->is_end;
-        $old_path=BOOK_PATH.$model->path;
+        $old_path=$model->path;
         $request = \Yii::$app->request;
         if ($request->isPost) {
             $model->load($request->post());
             $model->file = UploadedFile::getInstance($model, 'file');
             if ($model->validate()) {
                 if($model->file){
-                    unlink($old_path);//删除原文件
                     $dir=BOOK_PATH.date("Y").'/'.date('m').'/'.date('d').'/';
                     if (!is_dir( $dir)) {
                         mkdir( $dir,0777,true);
@@ -96,6 +95,11 @@ class ChapterController extends Controller{
                     $model->file->saveAs($path,false);//移动文件
                     $bookPath=date("Y").'/'.date('m').'/'.date('d').'/'.$fileName;//数据库保存路径
                     $model->path=$bookPath;
+                    //如果有旧文件,删除旧文件
+                    if($old_path){
+                        $old_path=BOOK_PATH.$old_path;
+                        unlink($old_path);//删除原文件
+                    }
                 }
                 //保存所有数据
                 $model->update_time = time();

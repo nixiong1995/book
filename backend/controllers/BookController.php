@@ -134,6 +134,7 @@ class BookController extends Controller{
                         $model->image = $uploadSuccessPath;
                         //如果有旧文件,删除旧文件
                         if($old_path){
+                            var_dump($old_path);exit;
                             $old_path=UPLOAD_PATH.$old_path;
                             unlink($old_path);//删除原文件
                         }
@@ -194,11 +195,9 @@ class BookController extends Controller{
             if($model->validate()){
 
                 $book=Book::findOne(['id'=>$book_id]);
-                //var_dump($book);exit;
                 $book->groom=$model->groom;
                 $book->groom_time=time();
                 $book->save(false);
-                //var_dump($book->errors);exit;
                 \Yii::$app->session->setFlash('success', '添加推荐成功');
                 return $this->redirect(['book/index']);
             }

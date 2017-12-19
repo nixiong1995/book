@@ -89,7 +89,6 @@ class AuthorController extends Controller{
                 }
                 //保存所有数据
                 $model->save();
-
                 \Yii::$app->session->setFlash('success', '修改成功');
                 //跳转
                 return $this->redirect(['author/index']);
