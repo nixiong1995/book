@@ -95,7 +95,6 @@ class ChapterController extends Controller{
                     $model->file->saveAs($path,false);//移动文件
                     $bookPath=date("Y").'/'.date('m').'/'.date('d').'/'.$fileName;//数据库保存路径
                     $model->path=$bookPath;
-                    //如果有旧文件,删除旧文件
                     if($old_path){
                         $old_path=BOOK_PATH.$old_path;
                         unlink($old_path);//删除原文件
