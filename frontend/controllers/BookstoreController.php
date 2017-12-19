@@ -253,7 +253,7 @@ class BookstoreController extends Controller{
                 $category_id=\Yii::$app->request->post('category_id');
                 $author_id=\Yii::$app->request->post('author_id');
                 //查找同类书
-                $books1=Book::find()->where(['category_id'=>$category_id])->orderBy('score DESC')->limit(3)->all();
+                $books1=Book::find()->where(['category_id'=>$category_id])->orderBy('score DESC')->limit(4)->all();
                 foreach ($books1 as $book1){
                     $result['data']['similar'][]=['book_id'=>$book1->id,'name'=>$book1->name,
                         'category'=>$book1->category->name,'author'=>$book1->author->name,
@@ -264,7 +264,7 @@ class BookstoreController extends Controller{
                         'create_time'=>$book1->create_time,'update_time'=>$book1->update_time];
                 }
                 //查找作者图书推荐
-                $books2=Book::find()->where(['author_id'=>$author_id])->orderBy('score DESC')->limit(3)->all();
+                $books2=Book::find()->where(['author_id'=>$author_id])->orderBy('score DESC')->limit(4)->all();
                 foreach ($books2 as $book2){
                     $result['data']['author'][]=['book_id'=>$book2->id,'name'=>$book2->name,
                         'category'=>$book2->category->name,'author'=>$book2->author->name,

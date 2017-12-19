@@ -190,11 +190,14 @@ class BookController extends Controller{
         $request=\Yii::$app->request;
         if($request->isPost){
             $model->load($request->post());
+
             if($model->validate()){
+
                 $book=Book::findOne(['id'=>$book_id]);
                 $book->groom=$model->groom;
                 $book->groom_time=time();
-                $book->save();
+
+                $book->save(false);
                 \Yii::$app->session->setFlash('success', '添加推荐成功');
                 return $this->redirect(['book/index']);
             }
