@@ -212,6 +212,7 @@ class UserController extends Controller {
                         $model = UserDetails::findOne(['user_id' => $User->id]);
                         if($model->f_type){
                             $category_ids=explode('|',$model->f_type);//分割喜欢的类型字段为数组
+                            $category_ids=array_filter($category_ids);//删除数组中空元素
                             //通过分类id遍历查询喜欢的类型
                             $molds=[];//定义空数组装分类名
                             foreach ($category_ids as $category_id){
@@ -226,6 +227,7 @@ class UserController extends Controller {
                         if($model->f_author){
                             //通过作者id遍历查询作者名
                             $author_ids=explode('|',$model->f_author);//分割喜欢的作者为数组
+                            $author_ids=array_filter($author_ids);//删除数组中空元素
 
                             $names=[];
                             foreach ($author_ids as $author_id){
@@ -579,6 +581,8 @@ class UserController extends Controller {
                     $model=UserDetails::findOne(['user_id'=>$UserObj->id]);
                     if($model->f_type){
                         $category_ids=explode('|',$model->f_type);//分割喜欢的类型字段为数组
+                        $category_ids=array_filter($category_ids);//删除数组中空元素
+
                         //通过分类id遍历查询喜欢的类型
                         $molds=[];//定义空数组装分类名
                         foreach ($category_ids as $category_id){
@@ -593,6 +597,7 @@ class UserController extends Controller {
                     if($model->f_author){
                         //通过作者id遍历查询作者名
                         $author_ids=explode('|',$model->f_author);//分割喜欢的作者为数组
+                        $author_ids=array_filter($author_ids);//删除数组中空元素
 
                         $names=[];
                         foreach ($author_ids as $author_id){
