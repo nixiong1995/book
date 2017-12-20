@@ -42,6 +42,7 @@ class BookController extends Controller{
             //$query->andWhere(['category_id'=>$category_id]);
         }
 
+        $total=Book::find()->andWhere(['status' => 1])->count('id');
         $count=Book::findBySql("SELECT * FROM book WHERE status=1 $where")->count();
         //实例化分页工具类
         $pager=new Pagination([
@@ -51,7 +52,7 @@ class BookController extends Controller{
         $models=Book::findBySql("SELECT * FROM book WHERE status=1 $where ORDER by create_time DESC lIMIT $pager->offset,$pager->limit")->all();
         //分页查询
         // $models=$query->limit($pager->limit)->offset($pager->offset)->all();
-        return $this->render('index',['models'=>$models,'pager'=>$pager]);
+        return $this->render('index',['models'=>$models,'pager'=>$pager,'total'=>$total]);
 
     }
 

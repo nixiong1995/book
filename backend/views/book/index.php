@@ -69,7 +69,7 @@
         <?php endforeach;?>
         </tbody>
     </table>
-    <p>合计:<?= $pager->totalCount;?></p>
+    <p>书合计:<?=$total?>/该分类书合计:<?= $pager->totalCount;?></p>
 <?php
 echo \yii\widgets\LinkPager::widget([
     'pagination'=>$pager,

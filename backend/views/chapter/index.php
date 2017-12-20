@@ -13,15 +13,24 @@
             <th>章节号</th>
             <th>章节名称</th>
             <th>是否收费章节</th>
+            <th>章节大小</th>
             <th>上传时间</th>
             <th>修改时间</th>
             <th>操作</th>
         </tr>
         <?php foreach ($models as $model):?>
+            <?php
+            $size=0;
+            $filename = BOOK_PATH.$model->path;
+            if(is_file($filename)){
+                $size =filesize($filename);
+            }
+            ?>
             <tr data-id="<?=$model->id?>">
                 <td><?=$model->no;?></td>
                 <td><?=$model->chapter_name;?></td>
                 <td><?=$model->is_free?'是':'否';?></td>
+                <td><?php echo \backend\models\Chapter::getSize($size)?></td>
                 <td><?=date("Ymd",$model->create_time);?></td>
                 <td><?=date("Ymd",$model->update_time);?></td>
                 <td>

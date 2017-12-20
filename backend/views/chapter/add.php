@@ -18,12 +18,8 @@ echo '<button type="submit" class="btn btn-info">提交</button>';
  * @var $this \yii\web\View
  */
 $res=is_file(BOOK_PATH.$model->path);//判断书文件是否存在
-$url_chenkFile=\yii\helpers\Url::to(['chapter/netware']);
 $this->registerJs(new \yii\web\JsExpression(
     <<<JS
-    $.post("$url_chenkFile",function(data) {
-      
-    })
     var name=$("#chapter-chapter_name").val();
     if("$res"){
         $(".filename").text('已上传章节文件:'+"$model->path")

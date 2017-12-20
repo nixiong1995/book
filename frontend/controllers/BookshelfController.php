@@ -163,7 +163,7 @@ class BookshelfController extends Controller{
                     //查询该书id在数组中的键名
                     $key=array_search($book_id,$CollectIds);
                     if($key!==false){
-                        $result['msg']='用户已经收藏过该书';
+                        $result['msg']='您已经加入过了';
                     }else{
                         $res1=array_push($CollectIds,$book_id);//将书id加在数组中
                         if($res1){

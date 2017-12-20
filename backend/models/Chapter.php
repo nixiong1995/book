@@ -47,4 +47,17 @@ class Chapter extends ActiveRecord{
     public function getBook(){
         return $this->hasOne(Book::className(),['id'=>'book_id']);
     }
+
+    public static function getSize($filesize) {
+        if($filesize >= 1073741824) {
+            $filesize = round($filesize / 1073741824 * 100) / 100 . ' gb';
+        } elseif($filesize >= 1048576) {
+            $filesize = round($filesize / 1048576 * 100) / 100 . ' mb';
+        } elseif($filesize >= 1024) {
+            $filesize = round($filesize / 1024 * 100) / 100 . ' kb';
+        } else {
+            $filesize = $filesize . ' bytes';
+        }
+        return $filesize;
+    }
 }

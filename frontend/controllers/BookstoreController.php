@@ -33,16 +33,16 @@ class BookstoreController extends Controller{
             $obj=new Verification();
             $res=$obj->check();
         if($res){
-               $result['msg']= $res;
+              $result['msg']= $res;
          }else{
                 $position=\Yii::$app->request->post('position');
                 $models=Advert::find()->where(['position'=>$position])->orderBy('create_time DESC')->limit(4)->all();
                 foreach ($models as $model){
-                    $result['data'][]=['position'=>$model->position ,'sort'=>$model->sort,'image'=>HTTP_PATH.$model->image];
+                    $result['data'][]=['position'=>$model->position ,'sort'=>$model->sort,'image'=>HTTP_PATH.$model->image,'url'=>$model->url];
                 }
                 $result['code']=200;
                 $result['msg']='获取广告图成功';
-            }
+           }
 
         }else{
             $result['msg']='请求方式错误';

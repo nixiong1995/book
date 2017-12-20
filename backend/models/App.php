@@ -5,11 +5,15 @@ use yii\db\ActiveRecord;
 class App extends ActiveRecord{
 
     public $file;
+    const SCENARIO_ADD ='add';
+
 
     public function rules()
     {
         return [
-            [['version','intro','type','file'],'required']
+            [['version','intro','type'],'required'],
+            ['file','required','on'=>self::SCENARIO_ADD],
+           // ['file', 'file', 'extensions' => 'apk'],
         ];
     }
 

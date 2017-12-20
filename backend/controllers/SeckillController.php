@@ -48,6 +48,19 @@ class SeckillController extends Controller{
         }
     }
 
+    //删除秒杀
+    public function actionDel(){
+        $id=\Yii::$app->request->post('id');
+        $model=Seckill::findOne(['id'=>$id]);
+        $res=$model->delete();
+        if($res){
+            return 'success';
+        }else{
+            return 'error';
+        }
+
+    }
+
     public function behaviors()
     {
         return [
