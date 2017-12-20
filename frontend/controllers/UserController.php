@@ -480,7 +480,7 @@ class UserController extends Controller {
             }else{
                 //接收手机端传过来的数据
                 $user_id=\Yii::$app->request->post('user_id');
-                $time=\Yii::$app->request->post('time');
+                $time=\Yii::$app->request->post('read_time');
                 if($user_id && $time){
                     $model=UserDetails::findOne(['user_id'=>$user_id]);
                     if($model){
