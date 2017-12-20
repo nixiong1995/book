@@ -19,7 +19,7 @@ class  AppController extends Controller{
             'code'=>400,
             'msg'=>'',//错误信息,如果有
         ];
-        if(\Yii::$app->request->isPost){
+        if(\Yii::$app->request->isGet){
            $model=App::find()->orderBy('create_time DESC')->one();
            if($model){
                $result['code']=200;
