@@ -10,6 +10,7 @@
     </p>
 <table class="table">
     <tr>
+        <th>广告标题</th>
         <th>广告图片</th>
         <th>排序</th>
         <th>点击数</th>
@@ -17,6 +18,7 @@
     </tr>
     <?php foreach ($models as $model):?>
         <tr data-id="<?=$model->id?>">
+            <td><?=$model->title?></td>
             <td><?=yii\bootstrap\Html::img(HTTP_PATH.$model->image,['class'=>'img-cricle','style'=>'width:70px'])?></td>
             <td><?=$model->sort?></td>
             <td><?=$model->count?></td>

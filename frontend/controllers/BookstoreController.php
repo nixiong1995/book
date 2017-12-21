@@ -38,7 +38,7 @@ class BookstoreController extends Controller{
                 $position=\Yii::$app->request->post('position');
                 $models=Advert::find()->where(['position'=>$position])->orderBy('create_time DESC')->limit(4)->all();
                 foreach ($models as $model){
-                    $result['data'][]=['position'=>$model->position ,'sort'=>$model->sort,'image'=>HTTP_PATH.$model->image,'url'=>$model->url];
+                    $result['data'][]=['title'=>$model->title,'position'=>$model->position ,'sort'=>$model->sort,'image'=>HTTP_PATH.$model->image,'url'=>$model->url];
                 }
                 $result['code']=200;
                 $result['msg']='获取广告图成功';
@@ -568,7 +568,7 @@ class BookstoreController extends Controller{
             //if($res){
             // $result['msg']= $res;
             //}else{
-            //男生完本限免
+            //根据传入groom查询是什么完本
                 $groom=\Yii::$app->request->post('groom');
                 $type=\Yii::$app->request->post('type');
                 $ManBooks1=Book::find()->where(['groom'=>$groom])->orderBy('groom_time DESC')->limit(6)->all();
@@ -582,7 +582,7 @@ class BookstoreController extends Controller{
                         'create_time'=>$Manbook1->create_time,'update_time'=>$Manbook1->update_time];
                 }
 
-                //男生完本分类推荐
+                //根据传入type判断是男生还是女生,随机查询男生和女生下面的分类
                 $ManIds=\Yii::$app->db->createCommand("SELECT id FROM category WHERE type=$type")->queryColumn();
                 $ManBooks2=Book::find()->where(['category_id'=>$ManIds[array_rand($ManIds,1)],'is_end'=>1])->orderBy('score DESC')->limit(3)->all();
                 foreach ($ManBooks2 as $Manbook2){
