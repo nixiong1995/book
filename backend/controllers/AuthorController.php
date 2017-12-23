@@ -102,9 +102,14 @@ class AuthorController extends Controller{
         //接收id
         $id=\Yii::$app->request->post('id');
         $author=Author::findOne(['id'=>$id]);
-        if( $author){
-            $author->status=0;
-            $author->save();
+        $path=$author->image;//作者头像路径
+        //如果有删除作者头像
+        if($path){
+            $path=UPLOAD_PATH.$path;
+            unlink($path);
+        }
+        $res=$author->delete();
+        if( $res){
             return 'success';
         }else{
             return 'error';

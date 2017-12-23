@@ -15,7 +15,7 @@ class Chapter extends ActiveRecord{
             ['file','required','on'=>self::SCENARIO_Add],
             ['no','integer'],
             ['chapter_name','unique'],
-            //['file', 'file', 'extensions' => ['txt', 'epub']],
+           // ['file', 'file', 'extensions' => ['txt', 'epub']],
             ['chapter_name','string'],
             ['is_end','safe'],
         ];

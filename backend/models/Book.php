@@ -86,4 +86,16 @@ class Book extends ActiveRecord{
         return $this->hasOne(Category::className(),['id'=>'category_id']);
     }
 
+    //转定率查询
+    public static function getData($id){
+        //观看次数
+        $hits=\Yii::$app->db->createCommand("SELECT COUNT(*) FROM reading WHERE DATE_SUB(CURDATE(), INTERVAL 1 MONTH)<=from_unixtime(create_time,'%Y-%m-%d') AND book_id=$id")->queryScalar();
+        //购买次数
+        $purchase_times=\Yii::$app->db->createCommand("SELECT COUNT(*) FROM consume WHERE DATE_SUB(CURDATE(), INTERVAL 1 MONTH)<=from_unixtime(create_time,'%Y-%m-%d') AND book_id=$id")->queryScalar();
+        //转定率计算
+        $relust=round(($purchase_times/$hits)*100,1) .'%';
+
+        return  $relust;
+    }
+
 }

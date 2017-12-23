@@ -24,8 +24,7 @@
             <td><?=$model->count?></td>
             <td>
                 <a href="<?=\yii\helpers\Url::to(['advert/edit','id'=>$model->id])?>"><span class="glyphicon glyphicon-pencil btn btn-default btn-sm"></a>
-                <a href="javascript:;" class="delete"><span class="glyphicon glyphicon-trash btn btn-danger btn-sm" ></a>
-
+                <a href="javascript:;" class="delete"><span class="glyphicon glyphicon-trash btn btn-danger btn-sm" ></span></a>
             </td>
         </tr>
     <?php endforeach;?>

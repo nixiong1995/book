@@ -36,6 +36,7 @@
             <th>封面</th>
             <th>是否免费</th>
             <th>观看数</th>
+            <th>本月转定率</th>
             <th>评分</th>
             <th>销售阅票累计</th>
             <th>上架时间</th>
@@ -53,6 +54,7 @@
                 <td><?=yii\bootstrap\Html::img(HTTP_PATH.$model->image,['class'=>'img-cricle','style'=>'width:70px'])?></td>
                 <td><?php if($model->is_free==1){echo 'vip专属';}elseif($model->is_free==2){echo '收费';}else{echo '免费';}?></td>
                 <td><?=$model->clicks?></td>
+                <td><?php echo @\backend\models\Book::getData($model->id)?></td>
                 <td><?=$model->score?></td>
                 <td><?=$model->ticket?></td>
                 <td><?=date("Y-m-d",$model->create_time)?></td>
@@ -88,17 +90,19 @@ $this->registerJs(new \yii\web\JsExpression(
         $('.delete').on('click',function() {
             var tr=$(this).closest('tr');
             var id=tr.attr('data-id');
-            if(confirm('你确定要下架该书吗?')){
+            if(confirm('你确定要删除该书吗?')){
                $.post("$del_url",{id:id},function(data) {
                    if(data=='success'){
-                       alert('下架成功');
+                       alert('删除成功');
                        tr.hide('slow');
                    }else{
-                       alert('下架失败');
+                       alert('删除失败');
                    }
                }) 
             }
         });
+
+
         $('.today_read').on('click',function() {
             var tr=$(this).closest('tr');
             var id=tr.attr('data-id');

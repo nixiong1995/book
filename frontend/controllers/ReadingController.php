@@ -31,8 +31,6 @@ class ReadingController extends Controller{
                 //接收手机端传递过来的数据
                 $book_id=\Yii::$app->request->post('book_id');
                 $user_id=\Yii::$app->request->post('user_id');
-
-
                 if($book_id && $user_id){
                     //判断数据库是否有该用户和该书
                     $book=Book::findOne(['id'=>$book_id]);

@@ -1,0 +1,52 @@
+项目安排：http://note.youdao.com/share/?id=b92b75620dc24b08afc527a1612c84c7&type=note#/
+
+代码仓库:https://github.com/flyok666/0516PHPyiishop.git
+
+13550576202 四川乐山 刘娇
+
+Bt-Panel: http://116.255.168.11:8888
+username: admin
+password: 999dab25
+mysql:yueku
+password:GJii7AibnZ
+
+
+LTAIypgT6xAIPdMq              tneztyzfbgbMVRB87TFKrBUhMv3HnM 
+
+mysql:yiishop 密:P8rnSk2KiM
+mysql:twothink 密:CFN4NRsBnX
+
+
+
+金山云账号
+用户名：voogaa
+登录密码：Voogaa123
+服务器管理员
+管理员账户:kingsoft 管理员密码：**Voogaa168**
+
+1513239093  size 205036
+
+
+
+
+
+
+
+|book_id |int   |书id  |
+|name |string   |书名  |
+|category |string   |分类名  |
+|author |string  |作者名  |
+|view |int   |观看数  |
+|image |string   |图片链接  |
+|size |int  |文本大小  |
+|score |int   |评分 |
+|intro |string   |简介  |
+|is_end |int   |是否完本:0否;1是  |
+|download |int   |下载数 |
+|collection |int   |收藏数 |
+|author_id |int   |作者id |
+|category_id |int   |分类id |
+|no_free |int   |什么章节开始收费 |
+|type |string  |文本类型 |
+|create_time |int   |上架时间 |
+|update_time |int   |更新时间 |

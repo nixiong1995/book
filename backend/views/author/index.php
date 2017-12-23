@@ -46,7 +46,7 @@ $url_groom=\yii\helpers\Url::to(['author/groom']);
 $this->registerJs(new \yii\web\JsExpression(
     <<<JS
 $('.delete').on('click',function() {
-    if(confirm('你确定要删除吗?')){
+    if(confirm('你确定要删除该作者吗?')){
         var tr=$(this).closest('tr');
         var id=tr.attr('data-id');
         $.post("$url_del",{id:id},function(data) {
