@@ -34,7 +34,7 @@
                 <td><?=date("Ymd",$model->create_time);?></td>
                 <td><?=date("Ymd",$model->update_time);?></td>
                 <td>
-                    <a href="<?=\yii\helpers\Url::to(['chapter/edit','id'=>$model->id])?>"><span class="glyphicon glyphicon-pencil btn btn-default btn-sm"></a>
+                    <a href="<?=\yii\helpers\Url::to(['chapter/edit','id'=>$model->id,'no'=>$model->no])?>"><span class="glyphicon glyphicon-pencil btn btn-default btn-sm"></a>
                     <a href="javascript:;" class="delete"><span class="glyphicon glyphicon-trash btn btn-danger btn-sm" ></a>
                 </td>
             </tr>
@@ -64,7 +64,6 @@ $('.delete').on('click',function() {
             }
         })
     }
-  
 })
 JS
 
