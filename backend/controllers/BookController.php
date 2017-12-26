@@ -4,6 +4,7 @@ use backend\filters\RbacFilter;
 use backend\models\Author;
 use backend\models\Book;
 use backend\models\Category;
+use backend\models\Chapter;
 use backend\models\GroomForm;
 use backend\models\LoginForm;
 use libs\Read;
@@ -180,18 +181,51 @@ class BookController extends Controller{
         return $this->render('add', ['model' => $model]);
     }
 
-    //图书下架
+    //图书删除
     public function actionDel(){
         //接收id
         $id=\Yii::$app->request->post('id');
         $book=Book::findOne(['id'=>$id]);
-        $path=UPLOAD_PATH.$book->image;
-        $res1=$book->delete();
-        $res2=unlink($path);
-        if($res1 && $res2){
+        $author_id=$book->author_id;//作者id
+        $path=$book->image;
+        $transaction=\Yii::$app->db->beginTransaction();//开启事务
+        try{
+            //删除书
+            $book->delete();
+            if($path){
+                $path=UPLOAD_PATH.$path;
+                unlink($path);
+            }
+
+            //删除作者(判断该作者是否还有其他书籍)
+            $relust=Book::findOne(['author_id'=>$author_id]);
+            if(!$relust){
+                $author=Author::findOne(['id'=>$author_id]);
+                //作者照片
+                $path3=$author->image;
+                $author->delete();
+                if($path3){
+                    $path3=UPLOAD_PATH.$path3;
+                    unlink($path3);
+                }
+            }
+
+            //删除该书的所有章节
+            $chapters=Chapter::find()->where(['book_id'=>$id])->all();
+            foreach ($chapters as $chapter){
+                $path2=$chapter->path;//章节文件路径
+                $chapter->delete();
+                if($path2){
+                    $path2=BOOK_PATH.$path2;
+                    unlink($path2);
+                }
+            }
+            $transaction->commit();
             return 'success';
-        }else{
-            return 'error';
+        }catch (Exception $e){
+            //事务回滚
+            $transaction->rollBack();
+
         }
     }
 

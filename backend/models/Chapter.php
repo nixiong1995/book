@@ -7,6 +7,7 @@ class Chapter extends ActiveRecord{
     public $is_end;
     //常量定义场景
     const SCENARIO_Add ='add';
+    const SCENARIO_EDIT ='edit';
 
     public function rules()
     {
@@ -14,8 +15,10 @@ class Chapter extends ActiveRecord{
             [['book_id','no','chapter_name','is_free'],'required'],
             ['file','required','on'=>self::SCENARIO_Add],
             ['no','integer'],
-            ['chapter_name','unique'],
+            //['chapter_name','unique'],
            // ['file', 'file', 'extensions' => ['txt', 'epub']],
+            ['no','validateNo','on'=>self::SCENARIO_Add],
+            ['no','validateEditNo','on'=>self::SCENARIO_EDIT],
             ['chapter_name','string'],
             ['is_end','safe'],
         ];
@@ -48,6 +51,7 @@ class Chapter extends ActiveRecord{
         return $this->hasOne(Book::className(),['id'=>'book_id']);
     }
 
+    //将书文件字节转换成单位
     public static function getSize($filesize) {
         if($filesize >= 1073741824) {
             $filesize = round($filesize / 1073741824 * 100) / 100 . ' gb';
@@ -59,5 +63,24 @@ class Chapter extends ActiveRecord{
             $filesize = $filesize . ' bytes';
         }
         return $filesize;
+    }
+
+    //验证添加章节号唯一性
+    public function validateNo(){
+        $res=Chapter::findOne(['book_id'=>$this->book_id,'no'=>$this->no]);
+        if($res){
+            $this->addError('no','该书已存在该章节');
+        };
+    }
+
+    //验证修改章节号唯一性
+    public function validateEditNo(){
+        if(\Yii::$app->request->get('no')!=$this->no){
+            $res=Chapter::findOne(['book_id'=>$this->book_id,'no'=>$this->no]);
+            if($res){
+                $this->addError('no','该书已存在该章节');
+            };
+        }
+
     }
 }

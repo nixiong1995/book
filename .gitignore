@@ -19,6 +19,8 @@ Thumbs.db
 
 # composer vendor dir
 /vendor
+/books
+/uploads
 
 # composer itself is not needed
 composer.phar

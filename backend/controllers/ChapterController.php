@@ -78,6 +78,7 @@ class ChapterController extends Controller{
     public function actionEdit($id)
     {
         $model = Chapter::findOne(['id' => $id]);
+        $model->scenario=Chapter::SCENARIO_EDIT;
         $model->is_end=$model->book->is_end;
         $old_path=$model->path;
         $request = \Yii::$app->request;
