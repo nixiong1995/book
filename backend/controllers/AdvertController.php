@@ -20,7 +20,7 @@ class AdvertController extends Controller{
                 if (!is_dir($dir)) {
                     mkdir($dir,0777,true);
                 }
-                $fileName = date("HiiHsHis") . '.' . $model->file->extension;
+                $fileName = uniqid() . rand(1, 100000) . '.' . $model->file->extension;
                 $dir = $dir . "/" . $fileName;
                 //移动文件
                 $model->file->saveAs($dir, false);
@@ -67,7 +67,7 @@ class AdvertController extends Controller{
                     if (!is_dir($dir)) {
                         mkdir($dir,0777,true);
                     }
-                    $fileName = date("HiiHsHis") . '.' . $model->file->extension;
+                    $fileName = uniqid() . rand(1, 100000) . '.' . $model->file->extension;
                     $dir = $dir . "/" . $fileName;
                     //移动文件
                     $model->file->saveAs($dir, false);

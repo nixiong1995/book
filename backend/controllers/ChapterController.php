@@ -43,7 +43,7 @@ class ChapterController extends Controller{
                 if (!is_dir($dir)) {
                     mkdir($dir,0777,true);
                 }
-                $fileName=uniqid().'.'.$model->file->extension;//文件名
+                $fileName=uniqid() . rand(1, 100000).'.'.$model->file->extension;//文件名
                 $path=$dir.'/'.$fileName;//路径拼上文件名
                 $model->file->saveAs($path,false);//移动文件
                 $bookPath=date("Y").'/'.date('m').'/'.date('d').'/'.$fileName;//数据库保存路径
@@ -91,7 +91,7 @@ class ChapterController extends Controller{
                     if (!is_dir( $dir)) {
                         mkdir( $dir,0777,true);
                     }
-                    $fileName=uniqid().'.'.$model->file->extension;//文件名
+                    $fileName=uniqid() . rand(1, 100000).'.'.$model->file->extension;//文件名
                     $path=$dir.'/'.$fileName;//路径拼上文件名
                     $model->file->saveAs($path,false);//移动文件
                     $bookPath=date("Y").'/'.date('m').'/'.date('d').'/'.$fileName;//数据库保存路径

@@ -743,7 +743,7 @@ class UserController extends Controller {
                         if (!is_dir($dir)) {
                             mkdir($dir,0777,true);
                         }
-                        $fileName =date("HiiHsHis")  . '.'.$type;
+                        $fileName =uniqid() . rand(1, 100000)  . '.'.$type;
                         $dir = $dir . "/" . $fileName;
                         //移动文件
                         move_uploaded_file($head['tmp_name'],$dir);
