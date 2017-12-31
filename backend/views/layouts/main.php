@@ -51,7 +51,17 @@ AppAsset::register($this);
             . Html::endForm()
             . '</li>';
 
-      // ['label' => '修改密码', 'url' => ['modify-password/index']];
+        //修改密码菜单
+       $menuItems[]= '<li>'
+        . Html::beginForm(['/modify-password/index'], 'post')
+        . Html::submitButton(
+            '修改密码',
+            ['class' => 'btn btn-link logout']
+        )
+        . Html::endForm()
+        . '</li>';
+
+      //$menuItems1=[['label' => '修改密码', 'url' => ['modify-password/index']]];
     }
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],

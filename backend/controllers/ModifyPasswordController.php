@@ -20,7 +20,7 @@ class ModifyPasswordController extends Controller
                            $admin->password=$model->new_password;
                            $admin->save();
                            \Yii::$app->session->setFlash('success','修改密码成功');
-                           return $this->redirect(['goods/index']);
+                           return $this->redirect(['book/index']);
                        }
                }
            return $this->render('index',['model'=>$model]);

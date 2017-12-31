@@ -30,11 +30,11 @@ class BookstoreController extends Controller{
             'msg'=>'',//错误信息,如果有
         ];
         if(\Yii::$app->request->isPost){
-            $obj=new Verification();
-            $res=$obj->check();
-        if($res){
-              $result['msg']= $res;
-         }else{
+            //$obj=new Verification();
+           // $res=$obj->check();
+       // if($res){
+           //   $result['msg']= $res;
+       //  }else{
                 $position=\Yii::$app->request->post('position');
                 $models=Advert::find()->where(['position'=>$position])->orderBy('create_time DESC')->limit(4)->all();
                 foreach ($models as $model){
@@ -42,7 +42,7 @@ class BookstoreController extends Controller{
                 }
                 $result['code']=200;
                 $result['msg']='获取广告图成功';
-           }
+          // }
 
         }else{
             $result['msg']='请求方式错误';

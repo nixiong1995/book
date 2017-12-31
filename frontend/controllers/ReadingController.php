@@ -25,9 +25,9 @@ class ReadingController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-            if($res){
-                $result['msg']= $res;
-            }else{
+           // if($res){
+               // $result['msg']= $res;
+           // }else{
                 //接收手机端传递过来的数据
                 $book_id=\Yii::$app->request->post('book_id');
                 $user_id=\Yii::$app->request->post('user_id');
@@ -48,6 +48,9 @@ class ReadingController extends Controller{
                     if($res){
                         $result['msg']='数据库已存在该书';
                     }else{
+                        $book=Book::findOne(['id'=>$book_id]);
+                        $book->clicks=$book->clicks+1;//该书观看数加1
+                        $book->save();
                         $model=new Reading();
                         $model->user_id=$user_id;
                         $model->book_id=$book_id;
@@ -62,7 +65,7 @@ class ReadingController extends Controller{
                 }else{
                     $result['msg']='缺少参数';
                 }
-            }
+            //}
         }else{
             $result['msg']='请求方式错误';
         }
