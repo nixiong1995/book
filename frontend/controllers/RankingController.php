@@ -125,7 +125,7 @@ class RankingController extends Controller{
                     if($type==1){
                         //畅销
 
-                        $SellingBooks=Book::find()->where(['category_id'=> $ManIds])->orderBy('collection DESC')->limit(10)->all();
+                        $SellingBooks=Book::find()->where(['category_id'=> $ManIds])->orderBy('sale DESC')->limit(10)->all();
                         foreach ( $SellingBooks as $sellingBook) {
                             $result['data'][] = ['book_id' => $sellingBook->id, 'name' => $sellingBook->name,
                                 'category' => $sellingBook->category->name, 'author' => $sellingBook->author->name,
