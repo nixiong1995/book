@@ -35,7 +35,7 @@ class RankingController extends Controller{
                     //查询属于男生的分类id
                     $ManIds=\Yii::$app->db->createCommand("SELECT id FROM category WHERE type=1")->queryColumn();
                     if($type==1){
-                        //畅销
+                        //男生畅销
                         //查询消费记录最多的
 
                         $SellingBooks=Book::find()->where(['category_id'=> $ManIds])->orderBy('sale DESC')->limit(10)->all();
@@ -53,7 +53,7 @@ class RankingController extends Controller{
 
                     }elseif ($type==2){
 
-                        //新书
+                        //男生新书
 
                         $NewBooks=Book::find()->where(['category_id'=> $ManIds])->orderBy('create_time DESC')->limit(10)->all();
 
@@ -69,7 +69,7 @@ class RankingController extends Controller{
 
                     }elseif ($type==3){
 
-                        //热更
+                        //男生热更
 
                         $UpdateBooks=Book::find()->where(['category_id'=> $ManIds])->orderBy('update_time DESC')->limit(10)->all();
 
@@ -86,7 +86,7 @@ class RankingController extends Controller{
 
                     }elseif ($type==4){
 
-                        //完结
+                        //男生完结
 
                         $EndBooks=Book::find()->where(['category_id'=> $ManIds,'is_end'=>1])->orderBy('score DESC')->limit(10)->all();
 
@@ -102,7 +102,7 @@ class RankingController extends Controller{
 
                     }elseif ($type==5){
 
-                        //热搜
+                        //男生热搜
                         $HotsearchBooks=Book::find()->where(['category_id'=> $ManIds,'is_end'=>1])->orderBy('search DESC')->limit(10)->all();
 
 
@@ -120,10 +120,11 @@ class RankingController extends Controller{
 
                 }elseif ($sex==2){
 
-                    //查询属于男生的分类id
+                    //查询属于女生的分类id
                     $ManIds=\Yii::$app->db->createCommand("SELECT id FROM category WHERE type=0")->queryColumn();
                     if($type==1){
-                        //畅销
+                        //女生畅销
+
 
                         $SellingBooks=Book::find()->where(['category_id'=> $ManIds])->orderBy('sale DESC')->limit(10)->all();
                         foreach ( $SellingBooks as $sellingBook) {
@@ -140,7 +141,7 @@ class RankingController extends Controller{
 
                     }elseif ($type==2){
 
-                        //新书
+                        //女生新书
 
                         $NewBooks=Book::find()->where(['category_id'=> $ManIds])->orderBy('create_time DESC')->limit(10)->all();
 
@@ -156,7 +157,7 @@ class RankingController extends Controller{
 
                     }elseif ($type==3){
 
-                        //热更
+                        //女生热更
 
                         $UpdateBooks=Book::find()->where(['category_id'=> $ManIds])->orderBy('update_time DESC')->limit(10)->all();
 
@@ -173,7 +174,7 @@ class RankingController extends Controller{
 
                     }elseif ($type==4){
 
-                        //完结
+                        //女生完结
 
                         $EndBooks=Book::find()->where(['category_id'=> $ManIds,'is_end'=>1])->orderBy('score DESC')->limit(10)->all();
 
@@ -189,7 +190,7 @@ class RankingController extends Controller{
 
                     }elseif ($type==5){
 
-                        //热搜
+                        //女生热搜
                         $HotsearchBooks=Book::find()->where(['category_id'=> $ManIds,'is_end'=>1])->orderBy('search DESC')->limit(10)->all();
 
 

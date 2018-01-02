@@ -23,9 +23,9 @@ class  AppController extends Controller{
         if(\Yii::$app->request->isGet){
            $model=App::find()->orderBy('create_time DESC')->one();
            if($model){
-               $path='D:/WWW/yii2book/backend/web'.$model->url;
-               $size=filesize($path);
-               header("Content-Length: $size");
+              // $path='D:/WWW/yii2book/backend/web'.$model->url;
+               //$size=filesize($path);
+              // header("Content-Length: $size");
                $result['code']=200;
                $result['msg']='获取app成功';
                $result['data']=['version'=>$model->version,'intro'=>$model->intro,
