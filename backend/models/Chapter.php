@@ -12,14 +12,15 @@ class Chapter extends ActiveRecord{
     public function rules()
     {
         return [
-            [['book_id','no','chapter_name','is_free'],'required'],
+            //[['book_id','no','chapter_name','is_free'],'required'],
+            [['book_id','is_free'],'required'],
             ['file','required','on'=>self::SCENARIO_Add],
-            ['no','integer'],
+           // ['no','integer'],
             //['chapter_name','unique'],
            // ['file', 'file', 'extensions' => ['txt', 'epub']],
-            ['no','validateNo','on'=>self::SCENARIO_Add],
-            ['no','validateEditNo','on'=>self::SCENARIO_EDIT],
-            ['chapter_name','string'],
+            //['no','validateNo','on'=>self::SCENARIO_Add],
+           // ['no','validateEditNo','on'=>self::SCENARIO_EDIT],
+            //['chapter_name','string'],
             ['is_end','safe'],
         ];
     }

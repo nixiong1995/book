@@ -5,6 +5,8 @@
 
 # phpstorm project files
 .idea
+/books/
+/uoloads/
 
 # netbeans project files
 nbproject

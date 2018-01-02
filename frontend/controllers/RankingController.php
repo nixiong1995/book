@@ -36,8 +36,9 @@ class RankingController extends Controller{
                     $ManIds=\Yii::$app->db->createCommand("SELECT id FROM category WHERE type=1")->queryColumn();
                     if($type==1){
                         //畅销
+                        //查询消费记录最多的
 
-                        $SellingBooks=Book::find()->where(['category_id'=> $ManIds])->orderBy('collection DESC')->limit(10)->all();
+                        $SellingBooks=Book::find()->where(['category_id'=> $ManIds])->orderBy('sale DESC')->limit(10)->all();
                         foreach ( $SellingBooks as $sellingBook) {
                             $result['data'][] = ['book_id' => $sellingBook->id, 'name' => $sellingBook->name,
                                 'category' => $sellingBook->category->name, 'author' => $sellingBook->author->name,
