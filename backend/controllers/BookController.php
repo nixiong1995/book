@@ -313,6 +313,20 @@ class BookController extends Controller{
         }
     }
 
+    //取消图书推荐
+    public function actionGroomUpdate(){
+        $id=\Yii::$app->request->post('id');
+        $model=Book::findOne(['id'=>$id]);
+        $model->groom=(Null);
+        $model->groom_time=(Null);
+        if($model->save()){
+            return 'success';
+        }else{
+            return 'error';
+        }
+
+    }
+
     public function behaviors()
     {
         return [
