@@ -55,9 +55,7 @@ class CategoryController extends Controller{
         //接收id
         $id=\Yii::$app->request->post('id');
         $category=Category::findOne(['id'=>$id]);
-        if($category){
-            $category->status=0;
-            $category->save();
+        if($category->delete()){
             return 'success';
         }else{
             return 'error';

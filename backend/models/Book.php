@@ -49,7 +49,7 @@ class Book extends ActiveRecord{
 
     //搜索获取分类名
     public static function getCategoryName(){
-        $rows=Category::findAll(['status'=>1]);
+        $rows=Category::find()->all();
         $CategoryName=[];
         $CategoryName[0]='请选择分类';
         foreach ( $rows as $row){
@@ -60,7 +60,7 @@ class Book extends ActiveRecord{
 
     //获取作者名
     public static function getAuthorName(){
-        $authors=Author::findAll(['status'=>1]);
+        $authors=Author::find()->all();
         $AuthorName=[];
         foreach ($authors as $author){
             $AuthorName[$author->id]=$author->name;
