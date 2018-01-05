@@ -32,14 +32,13 @@
             <th></th>
             <th>书名</th>
             <th>作者</th>
-            <th>分类</th>
             <th>封面</th>
             <th>是否免费</th>
             <th>观看数</th>
             <th>本月转定率</th>
             <th>评分</th>
             <th>销售阅票累计</th>
-            <th>上架时间</th>
+            <th>书本大小</th>
             <th>是否完本</th>
             <th>操作</th>
         </tr>
@@ -50,14 +49,13 @@
                 <td> <input type="checkbox" name="items" value="<?=$model->id?>"/></td>
                 <td><?=$model->name?></td>
                 <td><?=$model->author->name?></td>
-                <td><?=$model->category->name?></td>
                 <td><?=yii\bootstrap\Html::img(HTTP_PATH.$model->image,['class'=>'img-cricle','style'=>'width:70px'])?></td>
                 <td><?php if($model->is_free==1){echo 'vip专属';}elseif($model->is_free==2){echo '收费';}else{echo '免费';}?></td>
                 <td><?=$model->clicks?></td>
                 <td><?php echo @\backend\models\Book::getData($model->id)?></td>
                 <td><?=$model->score?></td>
                 <td><?=$model->ticket?></td>
-                <td><?=date("Y-m-d",$model->create_time)?></td>
+                <td><?=$model->size?></td>
                 <td><?=$model->is_end?'是':'否'?></td>
                 <td>
                     <a href="<?=\yii\helpers\Url::to(['book/edit','id'=>$model->id])?>"><span class="glyphicon glyphicon-pencil btn btn-primary btn-sm" ></a>
