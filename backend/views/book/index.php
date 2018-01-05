@@ -32,6 +32,7 @@
             <th></th>
             <th>书名</th>
             <th>作者</th>
+            <th>分类</th>
             <th>封面</th>
             <th>是否免费</th>
             <th>观看数</th>
@@ -49,6 +50,7 @@
                 <td> <input type="checkbox" name="items" value="<?=$model->id?>"/></td>
                 <td><?=$model->name?></td>
                 <td><?=$model->author->name?></td>
+                <td><?=$model->category->name?></td>
                 <td><?=yii\bootstrap\Html::img(HTTP_PATH.$model->image,['class'=>'img-cricle','style'=>'width:70px'])?></td>
                 <td><?php if($model->is_free==1){echo 'vip专属';}elseif($model->is_free==2){echo '收费';}else{echo '免费';}?></td>
                 <td><?=$model->clicks?></td>
