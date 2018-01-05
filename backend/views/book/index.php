@@ -55,7 +55,7 @@
                 <td><?php echo @\backend\models\Book::getData($model->id)?></td>
                 <td><?=$model->score?></td>
                 <td><?=$model->ticket?></td>
-                <td><?=$model->size?></td>
+                <td><?=\backend\models\Chapter::getSize($model->size)?></td>
                 <td><?=$model->is_end?'是':'否'?></td>
                 <td>
                     <a href="<?=\yii\helpers\Url::to(['book/edit','id'=>$model->id])?>"><span class="glyphicon glyphicon-pencil btn btn-primary btn-sm" ></a>
