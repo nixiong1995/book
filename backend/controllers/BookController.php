@@ -50,7 +50,7 @@ class BookController extends Controller{
             'totalCount'=>$count,//总条数
             'defaultPageSize'=>20,//每页显示条数
         ]);
-        $models=Book::findBySql("SELECT * FROM book WHERE status=1 $where ORDER by groom_time DESC lIMIT $pager->offset,$pager->limit")->all();
+        $models=Book::findBySql("SELECT * FROM book WHERE status=1 $where ORDER by create_time DESC lIMIT $pager->offset,$pager->limit")->all();
         //分页查询
         // $models=$query->limit($pager->limit)->offset($pager->offset)->all();
         return $this->render('index',['models'=>$models,'pager'=>$pager,'total'=>$total]);
