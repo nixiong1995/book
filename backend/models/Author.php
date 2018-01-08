@@ -9,7 +9,7 @@ class Author extends ActiveRecord{
     {
         return [
             [['name','intro','type'],'required'],
-            ['file','file','extensions'=>['jpg','png','gif']],
+            ['file','file','extensions'=>['jpg','png','gif','jpeg']],
             ['popularity','number'],
             ['name','unique'],
             ['sign','safe'],
