@@ -15,7 +15,7 @@ class Book extends ActiveRecord{
             ['file','required','on'=>self::SCENARIO_ADD],
             ['name', 'unique','message' => '该书已存在.'],
             //[['size','clicks','score','sale','downloads'],'number'],
-            ['file', 'file', 'extensions' => ['png', 'jpg', 'gif','jpeg']],
+           // ['file', 'file', 'extensions' => ['png', 'jpg', 'gif','jpeg']],
             ['type', 'in', 'range' => ['txt', 'epub'],'message'=>'只能输入txt,epub文本类型'],
             [['no','clicks','score','sale','downloads','search'],'integer'],
             ['score', 'in', 'range' => [1, 2, 3,4,5,6,7,8,9,10],'message'=>'只能输入1-10的整数'],
