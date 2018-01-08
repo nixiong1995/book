@@ -574,7 +574,7 @@ class UserController extends Controller {
                 //接收手机端传过来的数据
                 $imei=$requset->post('imei');//用户手机唯一标示
                 $address=$requset->post('address');//用户地域
-                $source=$requset->post('source');
+                $source=$requset->post('source')?$requset->post('source'):'';
                 //通过imei判断是返回用户信息还是记录用户信息
                 $UserObj=User::findOne(['imei'=>$imei]);
                 if($UserObj){
