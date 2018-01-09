@@ -1,13 +1,6 @@
-<style>
-    .button{
-        margin: 20px 100px 0px 0px;
-    }
-
-</style>
 <?php
 ?>
-    <div><a href="<?=\yii\helpers\Url::to(['book/add'])?>" class="btn btn-primary">新增图书</a></div>
-
+    <h2>版权方图书类表</h2>
     <div class=" button form-inline">
         <button class="btn btn-default" id="checkall">全选</button>
         <button class="btn btn-default" id="nocheck">全不选</button>
@@ -15,76 +8,66 @@
         <?=\yii\bootstrap\Html::dropDownList('category','0',\backend\models\Book::getCategoryName(),['class'=>"form-control"])?>
         <button class="btn btn-succes" id="update">修改分类</button>
     </div>
-
-
     <p class="col-lg-5">
-    <form class="form-inline" method="get" action="<?=\yii\helpers\Url::to(['book/index'])?>">
-    <?=\yii\bootstrap\Html::dropDownList('category','0',\backend\models\Book::getCategoryName(),['class'=>"form-control"])?>
+    <form class="form-inline" method="get" action="<?=\yii\helpers\Url::to(['copyright/index'])?>">
+        <?=\yii\bootstrap\Html::dropDownList('category','0',\backend\models\Book::getCategoryName(),['class'=>"form-control"])?>
         <input type="text" name="book" class="form-control" placeholder="书名"/>
         <input type="text" name="author" class="form-control" placeholder="作者"/>
         <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search">搜索</span></button>
     </form>
     </p>
-
-    <table class="table">
-        <thead>
-        <tr>
-            <th></th>
-            <th>书名</th>
-            <th>作者</th>
-            <th>分类</th>
-            <th>封面</th>
-            <th>是否免费</th>
-            <th>观看数</th>
-            <th>本月转定率</th>
-            <th>评分</th>
-            <th>销售阅票累计</th>
-            <th>书本大小</th>
-            <th>状态</th>
-            <th>操作</th>
+<table class="table">
+    <thead>
+    <tr>
+        <th></th>
+        <th>书名</th>
+        <th>作者</th>
+        <th>分类</th>
+        <th>封面</th>
+        <th>是否免费</th>
+        <th>观看数</th>
+        <th>本月转定率</th>
+        <th>评分</th>
+        <th>销售阅票累计</th>
+        <th>书本大小</th>
+        <th>状态</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($models as $model):?>
+        <tr data-id="<?=$model->id?>">
+            <td> <input type="checkbox" name="items" value="<?=$model->id?>"/></td>
+            <td><?=$model->name?></td>
+            <td><?=$model->author->name?></td>
+            <td><?=$model->category->name?></td>
+            <td><?=yii\bootstrap\Html::img($model->image,['class'=>'img-cricle','style'=>'width:70px'])?></td>
+            <td><?php if($model->is_free==1){echo 'vip专属';}elseif($model->is_free==2){echo '收费';}else{echo '免费';}?></td>
+            <td><?=$model->clicks?></td>
+            <td><?php echo @\backend\models\Book::getData($model->id)?></td>
+            <td><?=$model->score?></td>
+            <td><?=$model->ticket?></td>
+            <td><?=\backend\models\Chapter::getSize($model->size)?></td>
+            <td><?php if($model->is_end==1){echo '连载';}else{echo '完结';}?></td>
+            <td>
+                <a href="<?=\yii\helpers\Url::to(['copyright/edit','id'=>$model->id])?>"><span class="glyphicon glyphicon-pencil btn btn-primary btn-sm" ></a>
+                <a href="javascript:;" class="today_read"><span class="glyphicon glyphicon-star btn btn-success btn-sm"></a>
+                <a href="<?=\yii\helpers\Url::to(['seckill/add','book_id'=>$model->id])?>"><span class="glyphicon glyphicon-time btn btn-info btn-sm"></a>
+                <a href="<?=\yii\helpers\Url::to(['book/groom','book_id'=>$model->id])?>"><span class="glyphicon glyphicon-star-empty btn btn-default btn-sm"></a>
+                <a href="javascript:;" class="delete"><span class="glyphicon glyphicon-remove btn btn-danger btn-sm"></a>
+            </td>
         </tr>
-        </thead>
-        <tbody>
-        <?php foreach ($models as $model):?>
-            <tr data-id="<?=$model->id?>">
-                <td> <input type="checkbox" name="items" value="<?=$model->id?>"/></td>
-                <td><?=$model->name?></td>
-                <td><?=$model->author->name?></td>
-                <td><?=$model->category->name?></td>
-                <td><?=yii\bootstrap\Html::img(HTTP_PATH.$model->image,['class'=>'img-cricle','style'=>'width:70px'])?></td>
-                <td><?php if($model->is_free==1){echo 'vip专属';}elseif($model->is_free==2){echo '收费';}else{echo '免费';}?></td>
-                <td><?=$model->clicks?></td>
-                <td><?php echo @\backend\models\Book::getData($model->id)?></td>
-                <td><?=$model->score?></td>
-                <td><?=$model->ticket?></td>
-                <td><?=\backend\models\Chapter::getSize($model->size)?></td>
-                <td><?php if($model->is_end==1){echo '连载';}else{echo '完结';}?></td>
-                <td>
-                    <a href="<?=\yii\helpers\Url::to(['book/edit','id'=>$model->id])?>"><span class="glyphicon glyphicon-pencil btn btn-primary btn-sm" ></a>
-                    <a href="<?=\yii\helpers\Url::to(['chapter/index','id'=>$model->id])?>"><span class="glyphicon glyphicon-file btn btn-default btn-sm"></a>
-                    <a href="javascript:;" class="today_read"><span class="glyphicon glyphicon-star btn btn-success btn-sm"></a>
-                    <a href="<?=\yii\helpers\Url::to(['seckill/add','book_id'=>$model->id])?>"><span class="glyphicon glyphicon-time btn btn-info btn-sm"></a>
-                    <a href="<?=\yii\helpers\Url::to(['book/groom','book_id'=>$model->id])?>"><span class="glyphicon glyphicon-star-empty btn btn-default btn-sm"></a>
-                    <a href="javascript:;" class="delete"><span class="glyphicon glyphicon-remove btn btn-danger btn-sm"></a>
-                </td>
-            </tr>
-        <?php endforeach;?>
-        </tbody>
-    </table>
-    <p>数据库图书合计:<?=$total1?>/本地图书:<?=$total2?>/该分类图书:<?= $pager->totalCount;?></p>
+    <?php endforeach;?>
+    </tbody>
+</table>
+    <p>数据库图书合计:<?=$total1?>/版权方本地图书:<?=$total2?>/该分类图书:<?= $pager->totalCount;?></p>
 <?php
 echo \yii\widgets\LinkPager::widget([
     'pagination'=>$pager,
 ]);
-/**
- * @var $this \yii\web\View
- */
-$this->registerCssFile("@web/datatables/media/css/jquery.dataTables.css");
-$this->registerJsFile("@web/datatables/media/js/jquery.dataTables.js",['depends'=>\yii\web\JqueryAsset::className()]);
-$del_url=\yii\helpers\Url::to(['book/del']);
+$del_url=\yii\helpers\Url::to(['copyright/del']);
 $sele_url=\yii\helpers\Url::to(['book/selected']);//加入分类精选url
 $update_url=\yii\helpers\Url::to(['book/update']);//批量修改分类url
-
 $this->registerJs(new \yii\web\JsExpression(
     <<<JS
         $('.delete').on('click',function() {

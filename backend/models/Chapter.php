@@ -33,7 +33,7 @@ class Chapter extends ActiveRecord{
             'chapter_name'=>'章节名称(整本书章节名称请输入书名)',
             'is_free'=>'是否免费章节',
             'file'=>'书文件',
-            'is_end'=>'完结请勾选',
+            'is_end'=>'是否完结',
         ];
     }
 

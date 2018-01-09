@@ -39,7 +39,7 @@ class ChapterController extends Controller{
             $model->load($request->post());
             $model->file=UploadedFile::getInstance($model,'file');
             if($model->validate()){
-
+var_dump($model->is_end);exit;
                 $dir=BOOK_PATH.date("Y").'/'.date('m').'/'.date('d').'/';
                 if (!is_dir($dir)) {
                     mkdir($dir,0777,true);

@@ -43,17 +43,18 @@ class BookController extends Controller{
             //$query->andWhere(['category_id'=>$category_id]);
         }
 
-        $total=Book::find()->andWhere(['status' => 1])->count('id');
-        $count=Book::findBySql("SELECT * FROM book WHERE status=1 $where")->count();
+        $total1=Book::find()->count('id');//数据库总书数量
+        $total2=Book::find()->andWhere(['from'=>4])->count('id');//本地书数量
+        $count=Book::findBySql("SELECT * FROM book WHERE `from`=4 $where")->count();
         //实例化分页工具类
         $pager=new Pagination([
             'totalCount'=>$count,//总条数
             'defaultPageSize'=>20,//每页显示条数
         ]);
-        $models=Book::findBySql("SELECT * FROM book WHERE status=1 $where ORDER by create_time DESC lIMIT $pager->offset,$pager->limit")->all();
+        $models=Book::findBySql("SELECT * FROM book WHERE `from`=4 $where ORDER by create_time DESC lIMIT $pager->offset,$pager->limit")->all();
         //分页查询
         // $models=$query->limit($pager->limit)->offset($pager->offset)->all();
-        return $this->render('index',['models'=>$models,'pager'=>$pager,'total'=>$total]);
+        return $this->render('index',['models'=>$models,'pager'=>$pager,'total1'=>$total1,'total2'=>$total2]);
 
     }
 
@@ -235,7 +236,8 @@ class BookController extends Controller{
         $book=Book::findOne(['id'=>$id]);
         if($book){
             $book->groom_time=time();
-            $book->save();
+            $book->groom=7;
+            $book->save(false);
             return 'success';
         }else{
             return 'error';

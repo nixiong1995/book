@@ -9,10 +9,6 @@ echo $form->field($model, 'author_id')->widget(Select2::classname(), [
     'options' => ['placeholder' => '请选择 ...'],
 ]);*/
 echo $form->field($model,'author_name')->textInput();//作者姓名
-echo $form->field($model, 'file')->widget(FileInput::classname(),[
-    'options'=>['multiple'=>false],
-]);//书封面
-echo $model->file?yii\bootstrap\Html::img(HTTP_PATH.$model->image,['class'=>'img-cricle','style'=>'width:200px']):'';
 $data2 = \backend\models\Book::getCategoryName();
 echo $form->field($model, 'category_id')->widget(Select2::classname(), [
     'data' => $data2,

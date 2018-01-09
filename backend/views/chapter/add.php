@@ -11,7 +11,7 @@ echo $form->field($model,'chapter_name')->textInput();
 echo $form->field($model,'file')->fileInput();
 echo "<h2 class=\"filename\" data-name='$model->chapter_name'></h2>";
 echo $form->field($model,'is_free',['inline'=>true])->radioList(['免费','收费']);
-echo $form->field($model,'is_end')->checkbox();
+echo $form->field($model,'is_end',['inline'=>true])->radioList([1=>'连载',2=>'完结']);
 echo '<button type="submit" class="btn btn-info">提交</button>';
 \yii\bootstrap\ActiveForm::end();
 /**

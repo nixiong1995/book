@@ -5,3 +5,4 @@ Yii::setAlias('@backend', dirname(dirname(__DIR__)) . '/backend');
 Yii::setAlias('@console', dirname(dirname(__DIR__)) . '/console');
 Yii::setAlias('@libs', dirname(dirname(__DIR__)) . '/libs');
 Yii::setAlias('@Aliyun', dirname(dirname(__DIR__)) . '/aliyun');
+
