@@ -87,6 +87,7 @@ class BookController extends Controller{
                                 $model->create_time=time();
                                 //保存所有数据
                                 $model->save();
+
                                 \Yii::$app->session->setFlash('success', '添加成功');
                             }else{
                                 //数据库没有该作者
@@ -96,7 +97,9 @@ class BookController extends Controller{
                                 $Author->create_time=time();
                                 $transaction=\Yii::$app->db->beginTransaction();//开启事务
                                 try{
+
                                     $Author->save(false);
+
                                     if($model->file){
                                         $dir =UPLOAD_PATH .date("Y").'/'.date("m").'/'.date("d").'/';
                                         if (!is_dir($dir)) {
@@ -119,11 +122,11 @@ class BookController extends Controller{
 
                                 }catch (Exception $e){
                                     //事务回滚
-                                    $transaction->rollBack();
+                                   $transaction->rollBack();
                                 }
                             }
                 //跳转
-                return $this->redirect(['book/index']);
+               return $this->redirect(['book/index']);
             }
         }
         return $this->render('add',['model'=>$model]);
@@ -142,6 +145,7 @@ class BookController extends Controller{
             $model->load($request->post());
             $model->file = UploadedFile::getInstance($model, 'file');//书封面
             if ($model->validate()) {//验证规则
+
                 $Author->name=$model->author_name;
                 $transaction=\Yii::$app->db->beginTransaction();//开启事务
                 try{

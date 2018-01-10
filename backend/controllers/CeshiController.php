@@ -208,7 +208,7 @@ class CeshiController extends Controller{
     }
 
     //检测爬虫书和版权书是否重复
-    public function actionDetectionRepetition(){
+    public function actionDetectionLocal(){
         $postUrl = 'http://partner.chuangbie.com/partner/booklist';
         $curlPost =['partner_id'=>2130,'partner_sign'=>'b42c36ddd1a5cc2c6895744143f77b7b','page_size'=>100];
         $ch = curl_init();//初始化curl
@@ -220,11 +220,21 @@ class CeshiController extends Controller{
         $data = curl_exec($ch);//运行curl
         curl_close($ch);
         $datas=json_decode($data,true);
+        $rows=[];
         foreach ($datas['content']['data'] as $data){
             $book_name=$data['book_name'];
-            $models=\Yii::$app->db->createCommand("SELECT name FROM book WHERE name='$book_name' AND `from`=4")->queryScalar();
-            var_dump($models);
+            //查询数据库爬虫书中是否有版权书
+            $rows[]=\Yii::$app->db->createCommand("SELECT name FROM book WHERE name='$book_name' AND `from`=4")->queryScalar();
+
         }
+        //删除数组中空元素
+        $rows=array_filter($rows);
+        var_dump($rows);
+    }
+
+    //检测版权方是否存在相同图书
+    public function actionDetectionCopyright($id){
+
     }
 
     public function actionEdit(){

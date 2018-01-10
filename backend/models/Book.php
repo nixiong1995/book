@@ -11,14 +11,13 @@ class Book extends ActiveRecord{
     public function rules()
     {
         return [
-            [['name','is_free','intro','category_id','no','type','from'],'required'],
+            [['name','is_free','intro','category_id','no','type','from','clicks','score','sale','downloads','search','price'],'required'],
             ['file','required','on'=>self::SCENARIO_ADD],
             ['name', 'unique','message' => '该书已存在.'],
-            //[['size','clicks','score','sale','downloads'],'number'],
            // ['file', 'file', 'extensions' => ['png', 'jpg', 'gif','jpeg']],
             ['type', 'in', 'range' => ['txt', 'epub'],'message'=>'只能输入txt,epub文本类型'],
             [['no','clicks','score','sale','downloads','search'],'integer'],
-            ['score', 'in', 'range' => [0,1, 2, 3,4,5,6,7,8,9,10],'message'=>'只能输入1-10的整数'],
+            ['score', 'in', 'range' => [0,1, 2, 3,4,5,6,7,8,9,10],'message'=>'只能输入0-10的整数'],
             [['ascription','author_name','price'],'safe'],
 
         ];
@@ -44,7 +43,7 @@ class Book extends ActiveRecord{
             'sale'=>'该书销售次数',
             'downloads'=>'该书下载次数',
             'search'=>'该书被搜索次数',
-            'price'=>'该书售价/千字'
+            'price'=>'该书售价(阅票/千字)'
         ];
     }
 
