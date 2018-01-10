@@ -108,6 +108,125 @@ class CopyrightController extends Controller{
 
     }
 
+    //批量插入版权方图书
+    public function actionInsert(){
+        $postUrl = 'http://partner.chuangbie.com/partner/booklist';
+        $curlPost =['partner_id'=>2130,'partner_sign'=>'b42c36ddd1a5cc2c6895744143f77b7b','page_size'=>100];
+        $ch = curl_init();//初始化curl
+        curl_setopt($ch, CURLOPT_URL,$postUrl);//抓取指定网页
+        curl_setopt($ch, CURLOPT_HEADER, 0);//设置header
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);//要求结果为字符串且输出到屏幕上
+        curl_setopt($ch, CURLOPT_POST, 1);//post提交方式
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $curlPost);
+        $data = curl_exec($ch);//运行curl
+        curl_close($ch);
+        $datas=json_decode($data,true);
+        //var_dump($datas['content']['data']);exit;
+        foreach ($datas['content']['data'] as $data){
+            $relust=Book::findOne(['name'=>$data['book_name']]);
+            if(!$relust){
+                $author=Author::findOne(['name'=>$data['author_name']]);
+                $author_id='';
+                if($author){
+                    $author_id=$author->id;
+                }else{
+                    $author2=new Author();
+                    $author2->name=$data['author_name'];
+                    $author2->create_time=time();
+                    $author2->save(false);
+                    $author_id=$author2->id;
+                }
+                $category_id='';
+
+                if($data['ftype_id']==10){
+                    $category_id=29;
+                }elseif ($data['ftype_id']==157){
+                    $category_id=36;
+                }elseif($data['ftype_id']==0){
+                    $category_id=38;
+                }elseif ($data['ftype_id']==1){
+                    $category_id=16;
+                }elseif ($data['ftype_id']==2){
+                    $category_id=22;
+                }elseif ($data['ftype_id']==3){
+                    $category_id=28;
+                }elseif ($data['ftype_id']==4){
+                    $category_id=19;
+                }elseif ($data['ftype_id']==5){
+                    $category_id=26;
+                }elseif ($data['ftype_id']==6){
+                    $category_id=18;
+                }elseif ($data['ftype_id']==8){
+                    $category_id=35;
+                }elseif ($data['ftype_id']==9){
+                    $category_id=34;
+                }elseif ($data['ftype_id']==13){
+                    $category_id=30;
+                }elseif($data['ftype_id']==149){
+                    $category_id=33;
+
+                }
+                \Yii::$app->db->createCommand()->batchInsert(Book::tableName(),
+                    ['copyright_book_id','name','author_id','category_id','from','ascription','image','intro','is_free','no','size','type','is_end','clicks','score','collection','downloads','price','last_update_chapter_id','last_update_chapter_name','create_time'],
+                    [
+                        [$data['book_id'],$data['book_name'],$author_id,$category_id,3,4,$data['cover_url'],$data['description'],2,1,$data['word_count']*2,'txt',$data['status'],10000,8,2000,2000,5,$data['last_update_chapter_id'],$data['last_update_chapter_name'],time()],
+                    ])->execute();
+                echo '批量插入成功';
+            }
+
+        }
+    }
+
+    //批量更新版权方图书
+    public function actionUpdate(){
+        $postUrl = 'http://partner.chuangbie.com/partner/booklist';
+        $curlPost =['partner_id'=>2130,'partner_sign'=>'b42c36ddd1a5cc2c6895744143f77b7b','page_size'=>100];
+        $ch = curl_init();//初始化curl
+        curl_setopt($ch, CURLOPT_URL,$postUrl);//抓取指定网页
+        curl_setopt($ch, CURLOPT_HEADER, 0);//设置header
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);//要求结果为字符串且输出到屏幕上
+        curl_setopt($ch, CURLOPT_POST, 1);//post提交方式
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $curlPost);
+        $data = curl_exec($ch);//运行curl
+        curl_close($ch);
+        $datas=json_decode($data,true);
+        foreach ($datas['content']['data'] as $data){
+            Book::updateAll(
+                ['size'=>$data['word_count']*2,'is_end'=>$data['status'],'last_update_chapter_id'=>$data['last_update_chapter_id'],'last_update_chapter_name'=>$data['last_update_chapter_name'],'update_time'=>time()],
+                ['name'=>$data['book_name']]);
+
+        }
+
+        echo '批量更新成功';
+
+    }
+
+    //检测爬虫书和版权书是否重复
+    public function actionDetectionLocal(){
+        $postUrl = 'http://partner.chuangbie.com/partner/booklist';
+        $curlPost =['partner_id'=>2130,'partner_sign'=>'b42c36ddd1a5cc2c6895744143f77b7b','page_size'=>100];
+        $ch = curl_init();//初始化curl
+        curl_setopt($ch, CURLOPT_URL,$postUrl);//抓取指定网页
+        curl_setopt($ch, CURLOPT_HEADER, 0);//设置header
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);//要求结果为字符串且输出到屏幕上
+        curl_setopt($ch, CURLOPT_POST, 1);//post提交方式
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $curlPost);
+        $data = curl_exec($ch);//运行curl
+        curl_close($ch);
+        $datas=json_decode($data,true);
+        $rows=[];
+        foreach ($datas['content']['data'] as $data){
+            $book_name=$data['book_name'];
+            //查询数据库爬虫书中是否有版权书
+            $rows[]=\Yii::$app->db->createCommand("SELECT name FROM book WHERE name='$book_name' AND `from`=4")->queryScalar();
+
+        }
+        //删除数组中空元素
+        $rows=array_filter($rows);
+        var_dump($rows);
+    }
+
+
     public function behaviors()
     {
         return [
