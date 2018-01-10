@@ -1,5 +1,6 @@
 <?php
 namespace frontend\controllers;
+use backend\models\App;
 use backend\models\Book;
 use backend\models\Chapter;
 use libs\Read;
@@ -18,6 +19,7 @@ class DownloadController extends Controller
         parent::init();
     }
 
+    //小说下载
     public function actionDownload()
     {
         $result = [
@@ -70,4 +72,21 @@ class DownloadController extends Controller
             return $result;
         }
 
+
+    //app下载
+    public function actionAppDownload(){
+        $model=App::find()->orderBy('create_time DESC')->one();
+        $file = 'D:/WWW/yii2book/backend/web'.$model->url;
+        $exts = get_loaded_extensions();
+        $mimeType = 'application/octet-stream';
+        if(array_search('fileinfo', $exts)===FALSE)
+        {
+            $sizeInfo = getimagesize($file);
+            $mimeType = $sizeInfo['mime'];
+        }else{
+            $mimeType = mime_content_type($file);
+        }
+        $Read = new Read();
+        $Read->smartReadFile($file,$mimeType);
+    }
 }

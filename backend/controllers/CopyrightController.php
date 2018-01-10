@@ -93,6 +93,7 @@ class CopyrightController extends Controller{
                     //保存作者信息
                     $Author->save(false);
                     $model->author_id=$Author->id;
+                    $model->update_time=time();
                     //保存所有数据
                     $model->save();
                     $transaction->commit();
