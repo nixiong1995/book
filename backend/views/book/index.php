@@ -71,7 +71,7 @@
         <?php endforeach;?>
         </tbody>
     </table>
-    <p>数据库图书合计:<?=$total1?>/本地图书:<?=$total2?>/该分类图书:<?= $pager->totalCount;?></p>
+    <p>数据库图书合计:<?=$total1?>/版权图书<?=$total4?>/本地图书:<?=$total2?>/爬虫图书:<?=$total3?>/该分类图书:<?= $pager->totalCount;?></p>
 <?php
 echo \yii\widgets\LinkPager::widget([
     'pagination'=>$pager,

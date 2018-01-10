@@ -9,10 +9,11 @@ class Advert extends ActiveRecord{
     public function rules()
     {
         return [
-            ['file', 'file', 'extensions' => ['png', 'jpg', 'gif']],
+            ['file', 'file', 'extensions' => ['png', 'jpg', 'gif','jpeg']],
             ['file','required','on'=>self::SCENARIO_ADD],
-            [['position','sort','url','title'],'required'],
-            ['sort','integer']
+            [['position','sort','title','url'],'required'],
+            ['sort','integer'],
+            ['url','string']
         ];
     }
 

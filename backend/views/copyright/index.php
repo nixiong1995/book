@@ -8,6 +8,8 @@
         <?=\yii\bootstrap\Html::dropDownList('category','0',\backend\models\Book::getCategoryName(),['class'=>"form-control"])?>
         <button class="btn btn-succes" id="update">修改分类</button>
     </div>
+
+
     <p class="col-lg-5">
     <form class="form-inline" method="get" action="<?=\yii\helpers\Url::to(['copyright/index'])?>">
         <?=\yii\bootstrap\Html::dropDownList('category','0',\backend\models\Book::getCategoryName(),['class'=>"form-control"])?>
@@ -60,7 +62,7 @@
     <?php endforeach;?>
     </tbody>
 </table>
-    <p>数据库图书合计:<?=$total1?>/版权方本地图书:<?=$total2?>/该分类图书:<?= $pager->totalCount;?></p>
+    <p>数据库图书合计:<?=$total1?>/版权图书<?=$total4?>/本地图书:<?=$total2?>/爬虫图书:<?=$total3?>/该分类图书:<?= $pager->totalCount;?></p>
 <?php
 echo \yii\widgets\LinkPager::widget([
     'pagination'=>$pager,

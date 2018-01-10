@@ -36,7 +36,9 @@ class CopyrightController extends Controller{
         }
 
         $total1=Book::find()->count('id');//数据库总书数量
-        $total2=Book::find()->andWhere(['from'=>3])->count('id');//版权书书数量
+        $total2=Book::find()->andWhere(['!=','from',3])->count('id');//版权书书数量
+        $total3=Book::find()->andWhere(['from'=>4])->count('id');//爬虫图书
+        $total4=Book::find()->andWhere(['from'=>3])->count('id');//版权图书
         $count=Book::findBySql("SELECT * FROM book WHERE `from`=3 $where")->count();
         //实例化分页工具类
         $pager=new Pagination([
@@ -46,7 +48,7 @@ class CopyrightController extends Controller{
         $models=Book::findBySql("SELECT * FROM book WHERE `from`=3 $where ORDER by create_time DESC lIMIT $pager->offset,$pager->limit")->all();
         //分页查询
         // $models=$query->limit($pager->limit)->offset($pager->offset)->all();
-        return $this->render('index',['models'=>$models,'pager'=>$pager,'total1'=>$total1,'total2'=>$total2]);
+        return $this->render('index',['models'=>$models,'pager'=>$pager,'total1'=>$total1,'total2'=>$total2,'total3'=>$total3,'total4'=>$total4]);
 
     }
 
@@ -171,10 +173,11 @@ class CopyrightController extends Controller{
                     [
                         [$data['book_id'],$data['book_name'],$author_id,$category_id,3,4,$data['cover_url'],$data['description'],2,1,$data['word_count']*2,'txt',$data['status'],10000,8,2000,2000,5,$data['last_update_chapter_id'],$data['last_update_chapter_name'],time()],
                     ])->execute();
-                echo '批量插入成功';
+
             }
 
         }
+        echo '批量插入成功';
     }
 
     //批量更新版权方图书
