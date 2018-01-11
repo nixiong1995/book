@@ -10,7 +10,7 @@
     </p>
     <table class="table table-bordered">
         <tr>
-            <th>章节号</th>
+            <th>章节排序ID</th>
             <th>章节名称</th>
             <th>是否收费章节</th>
             <th>章节大小</th>

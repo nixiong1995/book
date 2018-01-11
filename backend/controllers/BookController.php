@@ -86,6 +86,10 @@ class BookController extends Controller{
                                 }
                                 $model->author_id=$Author2->id;
                                 $model->status=1;
+                                $model->score=8;
+                                $model->downloads=2000;
+                                $model->collection=2000;
+                                $model->clicks=10000;
                                 $model->create_time=time();
                                 //保存所有数据
                                 $model->save();
@@ -96,6 +100,10 @@ class BookController extends Controller{
                                 $Author=new Author();
                                 $Author->name=$model->author_name;
                                 $Author->status=1;
+                                $model->score=8;
+                                $model->downloads=2000;
+                                $model->collection=4000;
+                                $model->clicks=10000;
                                 $Author->create_time=time();
                                 $transaction=\Yii::$app->db->beginTransaction();//开启事务
                                 try{
@@ -305,6 +313,19 @@ class BookController extends Controller{
     public function actionGirlEndfree(){
         $models=Book::find()->where(['groom'=>6])->orderBy('groom_time DESC')->limit(6)->all();
         return $this->render('girl-endfree',['models'=>$models]);
+    }
+
+    //精品推荐列表
+    public function actionBoutique(){
+        //接收分类id
+        $category_id=\Yii::$app->request->get('category');
+        //查询推荐分类前1的分类id
+        $id=\Yii::$app->db->createCommand("SELECT id FROM category ORDER BY groom_time DESC ")->queryScalar();
+        $category_id=$category_id?$category_id:$id;
+        $models=Book::find()->where(['category_id'=>$category_id ,'groom'=>7])->orderBy('groom_time desc')->limit(3)->all();
+        return $this->render('boutique',['models'=>$models]);
+
+
     }
 
    //批量修改分类

@@ -29,8 +29,8 @@ class Chapter extends ActiveRecord{
     {
         return [
             'book_id'=>'书名',
-            'no'=>'章节号(整本书章节号请输入0)',
-            'chapter_name'=>'章节名称(整本书章节名称请输入书名)',
+            'no'=>'章节排序id(整本书请输入0,与图书章节号对应)',
+            'chapter_name'=>'章节名称(格式:第X章 XXXXX)',
             'is_free'=>'是否免费章节',
             'file'=>'书文件',
             'is_end'=>'是否完结',

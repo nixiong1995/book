@@ -11,7 +11,8 @@ class Book extends ActiveRecord{
     public function rules()
     {
         return [
-            [['name','is_free','intro','category_id','no','type','from','clicks','score','sale','downloads','search','price'],'required'],
+            //[['name','is_free','intro','category_id','no','type','from','clicks','score','sale','downloads','search','price'],'required'],
+            [['name','is_free','intro','category_id','no','type','from','price'],'required'],
             ['file','required','on'=>self::SCENARIO_ADD],
             ['name', 'unique','message' => '该书已存在.'],
            // ['file', 'file', 'extensions' => ['png', 'jpg', 'gif','jpeg']],
@@ -77,6 +78,18 @@ class Book extends ActiveRecord{
             $listName[$row->id]=$row->name;
         }
         return $listName;
+    }
+
+    //获取推荐分类名称
+    public static function getRecommendCategory(){
+        $categorys=Category::find()->orderBy('groom_time desc')->limit(5)->all();
+        $listName=[];
+        $listName['']='请选择...';
+        foreach ( $categorys as $category){
+            $listName[$category->id]=$category->name;
+        }
+        return $listName;
+
     }
 
     //关联查询作者

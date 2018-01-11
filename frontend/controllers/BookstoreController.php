@@ -100,6 +100,8 @@ class BookstoreController extends Controller{
                 if($userdetail->f_type){
                     //有自己喜欢的类型
                     $category_ids=explode('|',$userdetail->f_type);
+                    //去除数组中空元素
+                    $category_ids=array_filter($category_ids);
                     $index=array_rand($category_ids);
                     //遍历查询书
                     $books=Book::find()->where(['category_id'=>$category_ids[$index]])->orderBy('score DESC')->limit(3)->all();
@@ -425,7 +427,7 @@ class BookstoreController extends Controller{
             $res=$obj->check();
            if($res){
                 $result['msg']= $res;
-          }else{
+           }else{
                //根据时间排序,取出推荐分类前5
                 $categorys=Category::find()->orderBy('groom_time DESC')->limit(5)->all();
 
@@ -435,7 +437,7 @@ class BookstoreController extends Controller{
                 }
                 //var_dump($ids);exit;
                //根据推荐时间取出分类推荐
-                $models1=Book::find()->where(['category_id'=>$ids[0]])->orderBy('groom_time DESC')->limit(3)->all();
+                $models1=Book::find()->where(['category_id'=>$ids[0]])->andWhere(['groom'=>7])->orderBy('groom_time DESC')->limit(3)->all();
                 foreach ($models1 as $model1){
                     $result['data']['category1'][]=['book_id'=>$model1->id,'name'=>$model1->name,
                         'category'=>$model1->category->name,'author'=>$model1->author->name,
@@ -446,7 +448,7 @@ class BookstoreController extends Controller{
                         'create_time'=>$model1->create_time,'update_time'=>$model1->update_time];
                 }
 
-            $models2=Book::find()->where(['category_id'=>$ids[1]])->orderBy('groom_time DESC')->limit(3)->all();
+            $models2=Book::find()->where(['category_id'=>$ids[1]])->andWhere(['groom'=>7])->orderBy('groom_time DESC')->limit(3)->all();
             foreach ($models2 as $model2){
                 $result['data']['category2'][]=['book_id'=>$model2->id,'name'=>$model2->name,
                     'category'=>$model2->category->name,'author'=>$model2->author->name,
@@ -457,7 +459,7 @@ class BookstoreController extends Controller{
                     'create_time'=>$model2->create_time,'update_time'=>$model2->update_time];
             }
 
-            $models3=Book::find()->where(['category_id'=>$ids[2]])->orderBy('groom_time DESC')->limit(3)->all();
+            $models3=Book::find()->where(['category_id'=>$ids[2]])->andWhere(['groom'=>7])->orderBy('groom_time DESC')->limit(3)->all();
             foreach ($models3 as $model3){
                 $result['data']['category3'][]=['book_id'=>$model3->id,'name'=>$model3->name,
                     'category'=>$model3->category->name,'author'=>$model3->author->name,
@@ -468,7 +470,7 @@ class BookstoreController extends Controller{
                     'create_time'=>$model3->create_time,'update_time'=>$model3->update_time];
             }
 
-            $models4=Book::find()->where(['category_id'=>$ids[3]])->orderBy('groom_time DESC')->limit(3)->all();
+            $models4=Book::find()->where(['category_id'=>$ids[3]])->andWhere(['groom'=>7])->orderBy('groom_time DESC')->limit(3)->all();
             foreach ($models4 as $model4){
                 $result['data']['category4'][]=['book_id'=>$model4->id,'name'=>$model4->name,
                     'category'=>$model4->category->name,'author'=>$model4->author->name,
@@ -479,7 +481,7 @@ class BookstoreController extends Controller{
                     'create_time'=>$model4->create_time,'update_time'=>$model4->update_time];
             }
 
-            $models5=Book::find()->where(['category_id'=>$ids[4]])->orderBy('groom_time DESC')->limit(3)->all();
+            $models5=Book::find()->where(['category_id'=>$ids[4]])->andWhere(['groom'=>7])->orderBy('groom_time DESC')->limit(3)->all();
             foreach ($models5 as $model5){
                 $result['data']['category5'][]=['book_id'=>$model5->id,'name'=>$model5->name,
                     'category'=>$model5->category->name,'author'=>$model5->author->name,

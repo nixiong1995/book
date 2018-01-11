@@ -76,7 +76,7 @@ class DownloadController extends Controller
     //app下载
     public function actionAppDownload(){
         $model=App::find()->orderBy('create_time DESC')->one();
-        $file = 'D:/WWW/yii2book/backend/web'.$model->url;
+        $file = \Yii::getAlias('@backend').'/web/'.$model->url;
         $exts = get_loaded_extensions();
         $mimeType = 'application/octet-stream';
         if(array_search('fileinfo', $exts)===FALSE)
