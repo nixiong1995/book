@@ -13,8 +13,8 @@ class ChapterController extends Controller{
 
     //章节列表
     public function actionIndex(){
-        $id=\Yii::$app->request->get('id');
-        $keyword=\Yii::$app->request->get('keyword');
+        $id=\Yii::$app->request->get('id');//章节id
+        $keyword=\Yii::$app->request->get('keyword');//搜索关键字
         $query=Chapter::find()->where(["book_id"=>$id]);
         if($keyword){
             $query=Chapter::find();
@@ -26,13 +26,16 @@ class ChapterController extends Controller{
             'defaultPageSize'=>20,//每页显示条数
         ]);
         $models=$query->limit($pager->limit)->offset($pager->offset)->orderBy('create_time DESC')->all();
-        return $this->render('index',['models'=>$models,'pager'=>$pager]);
+        return $this->render('index',['models'=>$models,'pager'=>$pager,'book_id'=>$id]);
 
     }
 
     //章节添加
     public function actionAdd(){
+        //接收书id
+        $book_id=\Yii::$app->request->get('book_id');
         $model=new Chapter();
+        $model->book_id=$book_id;
         $model->scenario=Chapter::SCENARIO_Add;//指定当前场景为SCENARIO_Add
         $request=\Yii::$app->request;
         if($request->isPost){
@@ -59,6 +62,8 @@ class ChapterController extends Controller{
                     $redis->set($model->book_id,$model->file->size);
                     $book->size=$book->size+$model->file->size;
                     $book->is_end=$model->is_end;
+                    $book->last_update_chapter_id=$model->id;
+                    $book->last_update_chapter_name=$model->chapter_name;
                     $book->update_time=time();
                     $book->save();
                     $transaction->commit();
@@ -116,6 +121,8 @@ class ChapterController extends Controller{
                         $redis->set($model->book_id,$model->file->size);
                     }
                     $book->is_end=$model->is_end;
+                    $book->last_update_chapter_id=$model->id;
+                    $book->last_update_chapter_name=$model->chapter_name;
                     $book->update_time=time();
                     $book->save();
                     $transaction->commit();

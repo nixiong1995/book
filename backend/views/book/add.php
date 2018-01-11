@@ -19,7 +19,7 @@ echo $form->field($model, 'category_id')->widget(Select2::classname(), [
     'options' => ['placeholder' => '请选择 ...'],
 ]);
 echo $form->field($model,'from')->dropDownList([''=>'请选择...',1=>'签约',2=>'定制',3=>'版权方',4=>'爬虫']);
-echo $form->field($model,'ascription')->dropDownList(\backend\models\Book::getInformationName());
+echo $form->field($model,'ascription')->dropDownList([''=>'请选择...',2=>'爬虫工具']);
 echo $form->field($model,'type')->textInput();
 echo $form->field($model,'intro')->textarea(['rows'=>5]);
 echo $form->field($model,'is_free',['inline'=>true])->radioList(['免费','VIP专属','收费']);

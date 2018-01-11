@@ -20,6 +20,7 @@ class Chapter extends ActiveRecord{
             ['file', 'file', 'extensions' => ['txt', 'epub']],
             ['no','validateNo','on'=>self::SCENARIO_Add],
             ['no','validateEditNo','on'=>self::SCENARIO_EDIT],
+            ['is_free','validateIsfreeChapter'],
             ['chapter_name','string'],
             ['is_end','safe'],
         ];
@@ -39,7 +40,7 @@ class Chapter extends ActiveRecord{
 
     //获取书名名
     public static function getBookName(){
-        $rows=Book::findAll(['status'=>1]);
+        $rows=Book::find()->where(['!=','from',3])->all();
         $BookName=[];
         foreach ( $rows as $row){
             $BookName[$row->id]=$row->name;
@@ -82,6 +83,19 @@ class Chapter extends ActiveRecord{
                 $this->addError('no','该书已存在该章节');
             };
         }
+    }
 
+    //验证选择收费章节是否准确
+    public function validateIsfreeChapter(){
+        //查询该书从多少章开始收费
+        $IsfreeChapter=\Yii::$app->db->createCommand("SELECT no FROM book WHERE id=$this->book_id")->queryScalar();
+        //如果当前章节小于开始收费章节,说明是免费章节
+        if($this->no<$IsfreeChapter && $this->is_free==1){
+            $this->addError('is_free','该书从第'.$IsfreeChapter.'章节开始收费');
+
+        //如果当前章节大于开始收费章节,说明是收费章节
+        }elseif ($this->no>=$IsfreeChapter && $this->is_free==0){
+            $this->addError('is_free','该书从第'.$IsfreeChapter.'章节开始收费');
+        }
     }
 }

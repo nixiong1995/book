@@ -1,7 +1,7 @@
 <?php
 ?>
 <h2>章节信息列表</h2>
-    <p><a href="<?=\yii\helpers\Url::to(['chapter/add'])?>" class="btn btn-primary">新增章节</a></p>
+    <p><a href="<?=\yii\helpers\Url::to(['chapter/add','book_id'=>$book_id])?>" class="btn btn-primary">新增章节</a></p>
     <p class="col-lg-9">
     <form class="form-inline" method="get" action="<?=\yii\helpers\Url::to(['chapter/index'])?>">
         <input type="text" name="keyword" class="form-control" placeholder="章节名称/章节号"/>

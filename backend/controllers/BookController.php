@@ -244,6 +244,14 @@ class BookController extends Controller{
         }
     }
 
+    //图书详情
+    public function actionDetails(){
+        $book_id=\Yii::$app->request->get('book_id');
+        $model=Book::find()->where(['id'=>$book_id])->one();
+        return $this->render('details',['model'=>$model]);
+
+    }
+
     //加入分类精选
     public function actionSelected(){
         $id=\Yii::$app->request->post('id');

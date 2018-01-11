@@ -12,7 +12,7 @@ class Book extends ActiveRecord{
     {
         return [
             //[['name','is_free','intro','category_id','no','type','from','clicks','score','sale','downloads','search','price'],'required'],
-            [['name','is_free','intro','category_id','no','type','from','price'],'required'],
+            [['name','is_free','intro','category_id','no','type','from','price','ascription'],'required'],
             ['file','required','on'=>self::SCENARIO_ADD],
             ['name', 'unique','message' => '该书已存在.'],
            // ['file', 'file', 'extensions' => ['png', 'jpg', 'gif','jpeg']],
@@ -52,7 +52,6 @@ class Book extends ActiveRecord{
     public static function getCategoryName(){
         $rows=Category::find()->all();
         $CategoryName=[];
-        $CategoryName[0]='请选择分类';
         foreach ( $rows as $row){
             $CategoryName[$row->id]=$row->name;
         }
@@ -70,7 +69,7 @@ class Book extends ActiveRecord{
     }
 
     //获取归属出版社或业务员名
-    public static function getInformationName(){
+    /*public static function getInformationName(){
         $rows=Information::find()->where(['<','type',2])->all();
         $listName=[];
         $listName['']='请选择...';
@@ -78,7 +77,7 @@ class Book extends ActiveRecord{
             $listName[$row->id]=$row->name;
         }
         return $listName;
-    }
+    }*/
 
     //获取推荐分类名称
     public static function getRecommendCategory(){
@@ -95,6 +94,11 @@ class Book extends ActiveRecord{
     //关联查询作者
     public function getAuthor(){
         return $this->hasOne(Author::className(),['id'=>'author_id']);
+    }
+
+    //关联查询图书归属
+    public function getAscription(){
+        return $this->hasMany(Information::className(),['id'=>'ascription']);
     }
 
     //关联查询分类名
