@@ -20,7 +20,7 @@ class Chapter extends ActiveRecord{
             ['file', 'file', 'extensions' => ['txt', 'epub']],
             ['no','validateNo','on'=>self::SCENARIO_Add],
             ['no','validateEditNo','on'=>self::SCENARIO_EDIT],
-            ['is_free','validateIsfreeChapter'],
+           // ['is_free','validateIsfreeChapter'],
             ['chapter_name','string'],
             ['is_end','safe'],
         ];
