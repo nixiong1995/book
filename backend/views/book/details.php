@@ -9,7 +9,7 @@
             <td><?=$model->id?></td>
         </tr>
         <tr>
-            <td>版权方ID</td>
+            <td>版权方ID:</td>
             <td><?=$model->copyright_book_id?></td>
         </tr>
         <tr>
@@ -29,48 +29,48 @@
             <td><?php if($model->from==1){echo '签约';}elseif($model->from==2){echo '定制';}elseif($model->from==3){echo '版权方';}elseif($model->from==4){echo '爬虫';}?></td>
         </tr>
         <tr>
-            <td>图书归属于</td>
-            <td></td>
+            <td>图书归属于:</td>
+            <td><?=$model->information->name?></td>
         </tr>
         <tr>
-            <td>图书简介</td>
+            <td>图书简介:</td>
             <td><?=$model->intro?></td>
         </tr>
         <tr>
-            <td>收费类型</td>
+            <td>收费类型:</td>
             <td><?php if($model->is_free==1){echo 'vip专属';}elseif($model->is_free==2){echo '收费';}else{echo '免费';}?></td>
         </tr>
         <tr>
-            <td>价格(阅票/千字)</td>
+            <td>价格(阅票/千字):</td>
             <td><?=$model->price?></td>
         </tr>
         <tr>
-            <td>多少章节开始收费</td>
+            <td>多少章节开始收费:</td>
             <td><?=$model->no?></td>
         </tr>
         <tr>
-            <td>图书观看次数</td>
+            <td>图书观看次数:</td>
             <td><?=$model->clicks?></td>
         </tr>
         <tr>
-            <td>图书收藏次数</td>
+            <td>图书收藏次数:</td>
             <td><?=$model->collection?></td>
         </tr>
         <tr>
-            <td>图书下载次数</td>
+            <td>图书下载次数:</td>
             <td><?=$model->downloads?></td>
         </tr>
         <tr>
-            <td>图书搜索次数</td>
+            <td>图书搜索次数:</td>
             <td><?=$model->search?></td>
         </tr>
         <tr>
-            <td>图书销售次数</td>
+            <td>图书销售次数:</td>
             <td><?=$model->sale?></td>
         </tr>
         <tr>
             <td>图书大小:</td>
-            <td><?=$model->size?></td>
+            <td><?=\backend\models\Chapter::getSize($model->size)?></td>
         </tr>
         <tr>
             <td>图书评分:</td>
@@ -81,16 +81,16 @@
             <td><?php if($model->is_end==1){echo '连载';}else{echo '完结';}?></td>
         </tr>
         <tr>
-            <td>最新章节ID</td>
+            <td>最新章节ID:</td>
             <td><?=$model->last_update_chapter_id?></td>
         </tr>
         <tr>
-            <td>最新章节名称</td>
+            <td>最新章节名称:</td>
             <td><?=$model->last_update_chapter_name?></td>
         </tr>
         <tr>
             <td>图书累计销售阅票:</td>
-            <td><?=$model->ticket?></td>
+            <td><?=$model->ticket?>.00</td>
         </tr>
         <tr>
             <td>最后更新时间:</td>

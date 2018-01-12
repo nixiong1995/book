@@ -97,8 +97,8 @@ class Book extends ActiveRecord{
     }
 
     //关联查询图书归属
-    public function getAscription(){
-        return $this->hasMany(Information::className(),['id'=>'ascription']);
+    public function getInformation(){
+        return $this->hasOne(Information::className(),['id'=>'ascription']);
     }
 
     //关联查询分类名

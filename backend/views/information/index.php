@@ -14,7 +14,7 @@
         <tr data-id="<?=$model->id?>">
             <td><?=$model->id?></td>
             <td><?=$model->name?></td>
-            <td><?php if($model->type==0){echo '业务';}elseif($model->type==1){echo '版权方';}else{echo '作者';}?></td>
+            <td><?php if($model->type==0){echo '业务';}elseif($model->type==1){echo '版权方';}elseif($model->type==2){echo '作者';}elseif($model->type==3){echo '网络爬虫';}?></td>
             <td>
                 <a href="<?=\yii\helpers\Url::to(['information/edit','id'=>$model->id])?>"><span class="glyphicon glyphicon-pencil btn btn-primary btn-sm" ></a>
                 <a href="javascript:;" class="delete"><span class="glyphicon glyphicon-trash btn btn-danger btn-sm"></a>
