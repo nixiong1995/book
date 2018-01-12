@@ -1,6 +1,10 @@
 <?php
 ?>
-<p><a href="<?=\yii\helpers\Url::to(['user/index'])?>" class="btn btn-primary btn-lg active" role="button">返回用户列表</a></p>
+<p>
+    <a href="<?=\yii\helpers\Url::to(['book/index'])?>" class="btn btn-primary btn-lg active" role="button">返回本地图书列表</a>
+    <a href="<?=\yii\helpers\Url::to(['copyright/index'])?>" class="btn btn-primary btn-lg active" role="button">返回版权图书列表</a>
+</p>
+
 <h2>图书详细信息</h2>
 <div>
     <table class="table">

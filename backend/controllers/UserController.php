@@ -54,7 +54,7 @@ class UserController extends Controller{
         //实例化分页工具类
         $pager=new Pagination([
             'totalCount'=>$count,//总条数
-            'defaultPageSize'=>20,//每页显示条数
+            'defaultPageSize'=>30,//每页显示条数
         ]);
         //分页查询
         $models=User::findBySql("SELECT * FROM user WHERE 1=1 $where limit $pager->offset,$pager->limit")->all();

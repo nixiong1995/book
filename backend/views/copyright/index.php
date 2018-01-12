@@ -57,6 +57,7 @@
                 <a href="<?=\yii\helpers\Url::to(['seckill/add','book_id'=>$model->id])?>"><span class="glyphicon glyphicon-time btn btn-info btn-sm"></a>
                 <a href="<?=\yii\helpers\Url::to(['book/groom','book_id'=>$model->id])?>"><span class="glyphicon glyphicon-star-empty btn btn-default btn-sm"></a>
                 <a href="javascript:;" class="delete"><span class="glyphicon glyphicon-remove btn btn-danger btn-sm"></a>
+                <a href="<?=\yii\helpers\Url::to(['book/details','book_id'=>$model->id])?>"><span class="glyphicon glyphicon-list-alt btn btn-info btn-sm"></a>
             </td>
         </tr>
     <?php endforeach;?>
