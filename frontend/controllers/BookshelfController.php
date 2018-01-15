@@ -37,6 +37,8 @@ class BookshelfController extends Controller{
 
                         //将收藏过的书分割成数组
                         $CollectIds=explode('|',$collect);
+                        //去除数组中空元素
+                        $CollectIds=array_filter($CollectIds);
                         //根据书id查询书信息
                         $Books1=Book::find()->where(['id'=>$CollectIds])->all();
                         if($Books1){
@@ -47,7 +49,11 @@ class BookshelfController extends Controller{
                                     'score'=>$book1->score,'intro'=>$book1->intro,'is_end'=>$book1->is_end,
                                     'download'=>$book1->downloads,'collection'=>$book1->collection,'author_id'=>$book1->author_id,
                                     'category_id'=>$book1->category_id,'no_free'=>$book1->no,'type'=>$book1->type,
-                                    'create_time'=>$book1->create_time,'update_time'=>$book1->update_time];
+                                    'create_time'=>$book1->create_time,'update_time'=>$book1->update_time,'from'=>$book1->from,
+                                    'is_free'=>$book1->is_free,'price'=>$book1->price,'search'=>$book1->search,'sale'=>$book1->search,
+                                    'ascription_name'=>$book1->information->name,'ascription_id'=>$book1->ascription,
+                                    'copyright_book_id'=>$book1->copyright_book_id,'last_update_chapter_id'=>$book1->last_update_chapter_id,
+                                    'last_update_chapter_name'=>$book1->last_update_chapter_name];
                             }
                             $result['code']=200;
                             $result['msg']='获取收藏书信息成功';
@@ -71,7 +77,11 @@ class BookshelfController extends Controller{
                                     'score'=>$book2->score,'intro'=>$book2->intro,'is_end'=>$book2->is_end,
                                     'download'=>$book2->downloads,'collection'=>$book2->collection,'author_id'=>$book2->author_id,
                                     'category_id'=>$book2->category_id,'no_free'=>$book2->no,'type'=>$book2->type,
-                                    'create_time'=>$book2->create_time,'update_time'=>$book2->update_time];
+                                    'create_time'=>$book2->create_time,'update_time'=>$book2->update_time,'from'=>$book2->from,
+                                    'is_free'=>$book2->is_free,'price'=>$book2->price,'search'=>$book2->search,'sale'=>$book2->search,
+                                    'ascription_name'=>$book2->information->name,'ascription_id'=>$book2->ascription,
+                                    'copyright_book_id'=>$book2->copyright_book_id,'last_update_chapter_id'=>$book2->last_update_chapter_id,
+                                    'last_update_chapter_name'=>$book2->last_update_chapter_name];
                             }
                             $result['code']=200;
                             $result['msg']='获取默认推荐书信息成功';
@@ -89,7 +99,6 @@ class BookshelfController extends Controller{
         }
         return $result;
     }
-
 
     //删除书架的书
     public function actionDel(){

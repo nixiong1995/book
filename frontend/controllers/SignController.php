@@ -11,6 +11,8 @@ class SignController extends Controller
 
     public function actionSign()
     {
+        $sql=\Yii::$app->db->createCommand('SELECT id FROM book WHERE id >= ((SELECT MAX(id) FROM book)-(SELECT MIN(id) FROM book)) * RAND() + (SELECT MIN(id) FROM book)  LIMIT 7')->queryColumn();
+        var_dump($sql);exit;
         $time=strtotime("2017-12-22");
         var_dump($time);exit;
        // $p = ['keyword' =>'大佬', 'time' => 1513220354];

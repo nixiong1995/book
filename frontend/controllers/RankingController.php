@@ -46,7 +46,11 @@ class RankingController extends Controller{
                                 'score' => $sellingBook->score, 'intro' => $sellingBook->intro, 'is_end' => $sellingBook->is_end,
                                 'download' => $sellingBook->downloads, 'collection' => $sellingBook->collection, 'author_id' => $sellingBook->author_id,
                                 'category_id' => $sellingBook->category_id, 'no_free' => $sellingBook->no, 'type' => $sellingBook->type,
-                                'create_time' => $sellingBook->create_time, 'update_time' => $sellingBook->update_time];
+                                'create_time' => $sellingBook->create_time, 'update_time' => $sellingBook->update_time,'from'=>$sellingBook->from,
+                                'is_free'=>$sellingBook->is_free,'price'=>$sellingBook->price,'search'=>$sellingBook->search,'sale'=>$sellingBook->search,
+                                'ascription_name'=>$sellingBook->information->name,'ascription_id'=>$sellingBook->ascription,
+                                'copyright_book_id'=>$sellingBook->copyright_book_id,'last_update_chapter_id'=>$sellingBook->last_update_chapter_id,
+                                'last_update_chapter_name'=>$sellingBook->last_update_chapter_name];
                         }
 
 
@@ -64,7 +68,11 @@ class RankingController extends Controller{
                                 'score' => $newBook->score, 'intro' => $newBook->intro, 'is_end' =>$newBook->is_end,
                                 'download' => $newBook->downloads, 'collection' => $newBook->collection, 'author_id' => $newBook->author_id,
                                 'category_id' => $newBook->category_id, 'no_free' => $newBook->no, 'type' => $newBook->type,
-                                'create_time' => $newBook->create_time, 'update_time' => $newBook->update_time];
+                                'create_time' => $newBook->create_time, 'update_time' => $newBook->update_time,'from'=>$newBook->from,
+                                'is_free'=>$newBook->is_free,'price'=>$newBook->price,'search'=>$newBook->search,'sale'=>$newBook->search,
+                                'ascription_name'=>$newBook->information->name,'ascription_id'=>$newBook->ascription,
+                                'copyright_book_id'=>$newBook->copyright_book_id,'last_update_chapter_id'=>$newBook->last_update_chapter_id,
+                                'last_update_chapter_name'=>$newBook->last_update_chapter_name];
                         }
 
                     }elseif ($type==3){
@@ -80,7 +88,11 @@ class RankingController extends Controller{
                                 'score' => $updateBook->score, 'intro' => $updateBook->intro, 'is_end' =>$updateBook->is_end,
                                 'download' => $updateBook->downloads, 'collection' => $updateBook->collection, 'author_id' => $updateBook->author_id,
                                 'category_id' => $updateBook->category_id, 'no_free' => $updateBook->no, 'type' => $updateBook->type,
-                                'create_time' => $updateBook->create_time, 'update_time' => $updateBook->update_time];
+                                'create_time' => $updateBook->create_time, 'update_time' => $updateBook->update_time,'from'=>$updateBook->from,
+                                'is_free'=>$updateBook->is_free,'price'=>$updateBook->price,'search'=>$updateBook->search,'sale'=>$updateBook->search,
+                                'ascription_name'=>$updateBook->information->name,'ascription_id'=>$updateBook->ascription,
+                                'copyright_book_id'=>$updateBook->copyright_book_id,'last_update_chapter_id'=>$updateBook->last_update_chapter_id,
+                                'last_update_chapter_name'=>$updateBook->last_update_chapter_name];
                         }
 
 
@@ -97,7 +109,11 @@ class RankingController extends Controller{
                                 'score' => $endBook->score, 'intro' => $endBook->intro, 'is_end' =>$endBook->is_end,
                                 'download' => $endBook->downloads, 'collection' => $endBook->collection, 'author_id' => $endBook->author_id,
                                 'category_id' => $endBook->category_id, 'no_free' => $endBook->no, 'type' => $endBook->type,
-                                'create_time' => $endBook->create_time, 'update_time' => $endBook->update_time];
+                                'create_time' => $endBook->create_time, 'update_time' => $endBook->update_time,'from'=>$endBook->from,
+                                'is_free'=>$endBook->is_free,'price'=>$endBook->price,'search'=>$endBook->search,'sale'=>$endBook->search,
+                                'ascription_name'=>$endBook->information->name,'ascription_id'=>$endBook->ascription,
+                                'copyright_book_id'=>$endBook->copyright_book_id,'last_update_chapter_id'=>$endBook->last_update_chapter_id,
+                                'last_update_chapter_name'=>$endBook->last_update_chapter_name];
                         }
 
                     }elseif ($type==5){
@@ -113,7 +129,11 @@ class RankingController extends Controller{
                                 'score' => $hotsearchBook->score, 'intro' => $hotsearchBook->intro, 'is_end' =>$hotsearchBook->is_end,
                                 'download' => $hotsearchBook->downloads, 'collection' => $hotsearchBook->collection, 'author_id' => $hotsearchBook->author_id,
                                 'category_id' => $hotsearchBook->category_id, 'no_free' => $hotsearchBook->no, 'type' => $hotsearchBook->type,
-                                'create_time' => $hotsearchBook->create_time, 'update_time' => $hotsearchBook->update_time];
+                                'create_time' => $hotsearchBook->create_time, 'update_time' => $hotsearchBook->update_time,'from'=>$hotsearchBook->from,
+                                'is_free'=>$hotsearchBook->is_free,'price'=>$hotsearchBook->price,'search'=>$hotsearchBook->search,'sale'=>$hotsearchBook->search,
+                                'ascription_name'=>$hotsearchBook->information->name,'ascription_id'=>$hotsearchBook->ascription,
+                                'copyright_book_id'=>$hotsearchBook->copyright_book_id,'last_update_chapter_id'=>$hotsearchBook->last_update_chapter_id,
+                                'last_update_chapter_name'=>$hotsearchBook->last_update_chapter_name];
                         }
                     }
 
@@ -134,7 +154,11 @@ class RankingController extends Controller{
                                 'score' => $sellingBook->score, 'intro' => $sellingBook->intro, 'is_end' => $sellingBook->is_end,
                                 'download' => $sellingBook->downloads, 'collection' => $sellingBook->collection, 'author_id' => $sellingBook->author_id,
                                 'category_id' => $sellingBook->category_id, 'no_free' => $sellingBook->no, 'type' => $sellingBook->type,
-                                'create_time' => $sellingBook->create_time, 'update_time' => $sellingBook->update_time];
+                                'create_time' => $sellingBook->create_time, 'update_time' => $sellingBook->update_time,'from'=>$sellingBook->from,
+                                'is_free'=>$sellingBook->is_free,'price'=>$sellingBook->price,'search'=>$sellingBook->search,'sale'=>$sellingBook->search,
+                                'ascription_name'=>$sellingBook->information->name,'ascription_id'=>$sellingBook->ascription,
+                                'copyright_book_id'=>$sellingBook->copyright_book_id,'last_update_chapter_id'=>$sellingBook->last_update_chapter_id,
+                                'last_update_chapter_name'=>$sellingBook->last_update_chapter_name];
                         }
 
 
@@ -152,7 +176,11 @@ class RankingController extends Controller{
                                 'score' => $newBook->score, 'intro' => $newBook->intro, 'is_end' =>$newBook->is_end,
                                 'download' => $newBook->downloads, 'collection' => $newBook->collection, 'author_id' => $newBook->author_id,
                                 'category_id' => $newBook->category_id, 'no_free' => $newBook->no, 'type' => $newBook->type,
-                                'create_time' => $newBook->create_time, 'update_time' => $newBook->update_time];
+                                'create_time' => $newBook->create_time, 'update_time' => $newBook->update_time,'from'=> $newBook->from,
+                                'is_free'=> $newBook->is_free,'price'=> $newBook->price,'search'=> $newBook->search,'sale'=> $newBook->search,
+                                'ascription_name'=> $newBook->information->name,'ascription_id'=> $newBook->ascription,
+                                'copyright_book_id'=> $newBook->copyright_book_id,'last_update_chapter_id'=> $newBook->last_update_chapter_id,
+                                'last_update_chapter_name'=> $newBook->last_update_chapter_name];
                         }
 
                     }elseif ($type==3){
@@ -168,7 +196,11 @@ class RankingController extends Controller{
                                 'score' => $updateBook->score, 'intro' => $updateBook->intro, 'is_end' =>$updateBook->is_end,
                                 'download' => $updateBook->downloads, 'collection' => $updateBook->collection, 'author_id' => $updateBook->author_id,
                                 'category_id' => $updateBook->category_id, 'no_free' => $updateBook->no, 'type' => $updateBook->type,
-                                'create_time' => $updateBook->create_time, 'update_time' => $updateBook->update_time];
+                                'create_time' => $updateBook->create_time, 'update_time' => $updateBook->update_time,'from'=>$updateBook->from,
+                                'is_free'=>$updateBook->is_free,'price'=>$updateBook->price,'search'=>$updateBook->search,'sale'=>$updateBook->search,
+                                'ascription_name'=>$updateBook->information->name,'ascription_id'=>$updateBook->ascription,
+                                'copyright_book_id'=>$updateBook->copyright_book_id,'last_update_chapter_id'=>$updateBook->last_update_chapter_id,
+                                'last_update_chapter_name'=>$updateBook->last_update_chapter_name];
                         }
 
 
@@ -179,13 +211,17 @@ class RankingController extends Controller{
                         $EndBooks=Book::find()->where(['category_id'=> $ManIds,'is_end'=>1])->orderBy('score DESC')->limit(10)->all();
 
                         foreach ($EndBooks as $endBook) {
-                            $result['data'][] = ['book_id' => $endBook->id, 'name' => $endBook->name,
+                            $result['data'][] =  ['book_id' => $endBook->id, 'name' => $endBook->name,
                                 'category' => $endBook->category->name, 'author' => $endBook->author->name,
                                 'view' => $endBook->clicks, 'image' => HTTP_PATH . $endBook->image, 'size' => $endBook->size,
                                 'score' => $endBook->score, 'intro' => $endBook->intro, 'is_end' =>$endBook->is_end,
                                 'download' => $endBook->downloads, 'collection' => $endBook->collection, 'author_id' => $endBook->author_id,
                                 'category_id' => $endBook->category_id, 'no_free' => $endBook->no, 'type' => $endBook->type,
-                                'create_time' => $endBook->create_time, 'update_time' => $endBook->update_time];
+                                'create_time' => $endBook->create_time, 'update_time' => $endBook->update_time,'from'=>$endBook->from,
+                                'is_free'=>$endBook->is_free,'price'=>$endBook->price,'search'=>$endBook->search,'sale'=>$endBook->search,
+                                'ascription_name'=>$endBook->information->name,'ascription_id'=>$endBook->ascription,
+                                'copyright_book_id'=>$endBook->copyright_book_id,'last_update_chapter_id'=>$endBook->last_update_chapter_id,
+                                'last_update_chapter_name'=>$endBook->last_update_chapter_name];
                         }
 
                     }elseif ($type==5){
@@ -201,7 +237,11 @@ class RankingController extends Controller{
                                 'score' => $hotsearchBook->score, 'intro' => $hotsearchBook->intro, 'is_end' =>$hotsearchBook->is_end,
                                 'download' => $hotsearchBook->downloads, 'collection' => $hotsearchBook->collection, 'author_id' => $hotsearchBook->author_id,
                                 'category_id' => $hotsearchBook->category_id, 'no_free' => $hotsearchBook->no, 'type' => $hotsearchBook->type,
-                                'create_time' => $hotsearchBook->create_time, 'update_time' => $hotsearchBook->update_time];
+                                'create_time' => $hotsearchBook->create_time, 'update_time' => $hotsearchBook->update_time,'from'=>$hotsearchBook->from,
+                                'is_free'=>$hotsearchBook->is_free,'price'=>$hotsearchBook->price,'search'=>$hotsearchBook->search,'sale'=>$hotsearchBook->search,
+                                'ascription_name'=>$hotsearchBook->information->name,'ascription_id'=>$hotsearchBook->ascription,
+                                'copyright_book_id'=>$hotsearchBook->copyright_book_id,'last_update_chapter_id'=>$hotsearchBook->last_update_chapter_id,
+                                'last_update_chapter_name'=>$hotsearchBook->last_update_chapter_name];
                         }
                     }
 
