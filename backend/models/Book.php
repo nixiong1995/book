@@ -20,6 +20,7 @@ class Book extends ActiveRecord{
             [['no','clicks','score','sale','downloads','search'],'integer'],
             ['score', 'in', 'range' => [0,1, 2, 3,4,5,6,7,8,9,10],'message'=>'只能输入0-10的整数'],
             [['ascription','author_name','price'],'safe'],
+            ['ascription','validateFromAscription'],
 
         ];
     }
@@ -52,6 +53,7 @@ class Book extends ActiveRecord{
     public static function getCategoryName(){
         $rows=Category::find()->all();
         $CategoryName=[];
+        $CategoryName['']='请选择...';
         foreach ( $rows as $row){
             $CategoryName[$row->id]=$row->name;
         }
@@ -116,6 +118,22 @@ class Book extends ActiveRecord{
         $relust=round(($purchase_times/$hits)*100,1) .'%';
 
         return  $relust;
+    }
+
+    //验证来自和归属选择是否正确
+    public function validateFromAscription(){
+
+        $data=Information::findOne(['id'=>$this->ascription]);
+        //$this->addError('ascription',$data->type);
+        if($this->from==1 && $data->type!=2){
+            $this->addError('ascription','该书属于签约图书,请选择对应作者');
+        }elseif ($this->from==2 && $data->type!=2){
+            $this->addError('ascription','该书属于定制图书,请选择对应作者');
+        }elseif ($this->from==3 && $data->type!=1){
+            $this->addError('ascription','该书属于版权方图书,请选择对应版权方');
+        }elseif ($this->from==4 && $data->type!=3){
+            $this->addError('ascription','该书属于网络爬虫图书,请选择网络爬虫');
+        }
     }
 
 }

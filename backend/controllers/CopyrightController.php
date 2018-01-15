@@ -3,6 +3,7 @@ namespace backend\controllers;
 use backend\filters\RbacFilter;
 use backend\models\Author;
 use backend\models\Book;
+use libs\PostRequest;
 use yii\data\Pagination;
 use yii\db\Exception;
 use yii\web\Controller;
@@ -115,16 +116,10 @@ class CopyrightController extends Controller{
     public function actionInsert(){
         $postUrl = 'http://partner.chuangbie.com/partner/booklist';
         $curlPost =['partner_id'=>2130,'partner_sign'=>'b42c36ddd1a5cc2c6895744143f77b7b','page_size'=>100];
-        $ch = curl_init();//初始化curl
-        curl_setopt($ch, CURLOPT_URL,$postUrl);//抓取指定网页
-        curl_setopt($ch, CURLOPT_HEADER, 0);//设置header
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);//要求结果为字符串且输出到屏幕上
-        curl_setopt($ch, CURLOPT_POST, 1);//post提交方式
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $curlPost);
-        $data = curl_exec($ch);//运行curl
-        curl_close($ch);
+        $post=new PostRequest();
+        $data=$post->request_post( $postUrl,$curlPost);
         $datas=json_decode($data,true);
-        //var_dump($datas['content']['data']);exit;
+
         foreach ($datas['content']['data'] as $data){
             $relust=Book::findOne(['name'=>$data['book_name']]);
             if(!$relust){
@@ -185,14 +180,8 @@ class CopyrightController extends Controller{
     public function actionUpdate(){
         $postUrl = 'http://partner.chuangbie.com/partner/booklist';
         $curlPost =['partner_id'=>2130,'partner_sign'=>'b42c36ddd1a5cc2c6895744143f77b7b','page_size'=>100];
-        $ch = curl_init();//初始化curl
-        curl_setopt($ch, CURLOPT_URL,$postUrl);//抓取指定网页
-        curl_setopt($ch, CURLOPT_HEADER, 0);//设置header
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);//要求结果为字符串且输出到屏幕上
-        curl_setopt($ch, CURLOPT_POST, 1);//post提交方式
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $curlPost);
-        $data = curl_exec($ch);//运行curl
-        curl_close($ch);
+        $post=new PostRequest();
+        $data=$post->request_post($postUrl,$curlPost);
         $datas=json_decode($data,true);
         foreach ($datas['content']['data'] as $data){
             Book::updateAll(
@@ -209,14 +198,8 @@ class CopyrightController extends Controller{
     public function actionDetectionLocal(){
         $postUrl = 'http://partner.chuangbie.com/partner/booklist';
         $curlPost =['partner_id'=>2130,'partner_sign'=>'b42c36ddd1a5cc2c6895744143f77b7b','page_size'=>100];
-        $ch = curl_init();//初始化curl
-        curl_setopt($ch, CURLOPT_URL,$postUrl);//抓取指定网页
-        curl_setopt($ch, CURLOPT_HEADER, 0);//设置header
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);//要求结果为字符串且输出到屏幕上
-        curl_setopt($ch, CURLOPT_POST, 1);//post提交方式
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $curlPost);
-        $data = curl_exec($ch);//运行curl
-        curl_close($ch);
+        $post=new PostRequest();
+        $data=$post->request_post($postUrl,$curlPost);
         $datas=json_decode($data,true);
         $rows=[];
         foreach ($datas['content']['data'] as $data){
