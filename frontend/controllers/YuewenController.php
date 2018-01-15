@@ -23,9 +23,9 @@ class YuewenController extends \yii\web\Controller{
             //验证
             $obj=new Verification();
             $res=$obj->check();
-           if($res){
-               $result['msg']= $res;
-            }else{
+           //if($res){
+              // $result['msg']= $res;
+           // }else{
 
                 //接收手机端传递参数
                 $copyright_book_id=\Yii::$app->request->post('copyright_book_id');//版权书id
@@ -47,7 +47,7 @@ class YuewenController extends \yii\web\Controller{
                 $data=$post->request_post($postUrl,$curlPost);
                 return json_decode($data);
 
-           }
+          // }
 
 
         }else{
