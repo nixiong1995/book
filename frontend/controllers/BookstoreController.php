@@ -125,7 +125,8 @@ class BookstoreController extends Controller{
                     $category_ids=array_filter($category_ids);
                     $index=array_rand($category_ids);
                     //遍历查询书
-                    $books=Book::find()->where(['category_id'=>$category_ids[$index]])->orderBy('score DESC')->limit(3)->all();
+                   // $books=Book::find()->where(['category_id'=>$category_ids[$index]])->orderBy('score DESC')->limit(3)->all();
+                    $books=Book::findBySql("SELECT * FROM book WHERE category_id=$category_ids[$index] and id >= ((SELECT MAX(id) FROM book)-(SELECT MIN(id) FROM book)) * RAND() + (SELECT MIN(id) FROM book)  LIMIT 3")->all();
                    foreach ($books as $book){
                        //判断是否版权图书,不是拼接图片域名
                        $ImgUrl= $book->image;
@@ -151,13 +152,14 @@ class BookstoreController extends Controller{
 
             }
             //没有注册以及没有喜欢的类型
-            $ids=[];
+            /*$ids=[];
             $categorys=Category::findBySql("select id from category")->all();
             foreach ($categorys as $category){
                 $ids[$category->id]=$category->id;
             }
             $index2=array_rand($ids);
-            $books=Book::find()->where(['category_id'=>$index2])->orderBy('score DESC')->limit(3)->all();
+            $books=Book::find()->where(['category_id'=>$index2])->orderBy('score DESC')->limit(3)->all();*/
+            $books=Book::findBySql("SELECT * FROM book WHERE id >= ((SELECT MAX(id) FROM book)-(SELECT MIN(id) FROM book)) * RAND() + (SELECT MIN(id) FROM book)  LIMIT 3")->all();
             foreach ($books as $book){
                 //判断是否版权图书,不是拼接图片域名
                 $ImgUrl= $book->image;

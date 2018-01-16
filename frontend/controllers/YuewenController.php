@@ -143,4 +143,32 @@ class YuewenController extends \yii\web\Controller{
         return $result;
     }
 
+    //获取版权图书列表
+    public function actionIndex(){
+        $result = [
+            'flag'=>false,
+        ];
+        if(\Yii::$app->request->isPost){
+            $books=Book::find()->where(['from'=>3])->all();
+            foreach ($books as $book){
+                $result['data'][]=['book_id'=>$book->id,'name'=>$book->name,
+                    'category'=>$book->category->name,'author'=>$book->author->name,
+                    'view'=>$book->clicks,'image'=>$book->image,'size'=>$book->size,
+                    'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
+                    'download'=>$book->downloads,'collection'=>$book->collection,'author_id'=>$book->author_id,
+                    'category_id'=>$book->category_id,'no_free'=>$book->no,'type'=>$book->type,
+                    'create_time'=>$book->create_time,'update_time'=>$book->update_time,'from'=>$book->from,
+                    'is_free'=>$book->is_free,'price'=>$book->price,'search'=>$book->search,'sale'=>$book->search,
+                    'ascription_name'=>$book->information->name,'ascription_id'=>$book->ascription,
+                    'copyright_book_id'=>$book->copyright_book_id,'last_update_chapter_id'=>$book->last_update_chapter_id,
+                    'last_update_chapter_name'=>$book->last_update_chapter_name];
+                $result['flag']=true;
+                $result['msg']='获取图书列表成功';
+            }
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
+    }
+
 }

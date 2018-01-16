@@ -69,7 +69,7 @@ class BookshelfController extends Controller{
                         //查询数据库有没有该用户
                         $model=UserDetails::findOne(['user_id'=>$user_id]);
                         if($model){
-                            $GroomIds=\Yii::$app->db->createCommand("SELECT id FROM book ORDER BY downloads DESC LIMIT 7")->queryColumn();
+                            $GroomIds=\Yii::$app->db->createCommand('SELECT id FROM book WHERE id >= ((SELECT MAX(id) FROM book)-(SELECT MIN(id) FROM book)) * RAND() + (SELECT MIN(id) FROM book)  LIMIT 7')->queryColumn();
                             $Books2=Book::find()->where(['id'=>$GroomIds])->all();
                             //将推荐的书的通过|符号转成字符串存入数据库
                             $collect=implode('|',$GroomIds);
