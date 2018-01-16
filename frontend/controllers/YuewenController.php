@@ -50,6 +50,9 @@ class YuewenController extends \yii\web\Controller{
 
             //查询该书从什么章节开始开始收费
             $book = Book::findOne(['id' => $book_id]);
+            //该书观看数加1
+            $book->clicks=$book->clicks+1;
+            $book->save();
 
             //请求地址
             $postUrl = 'http://partner.chuangbie.com/partner/chapterlist';
@@ -105,18 +108,23 @@ class YuewenController extends \yii\web\Controller{
          //   }else{
 
                 //接收手机端传递参数
-                $copyright_book_id=\Yii::$app->request->post('copyright_book_id');//版权书id
+                $book_id=\Yii::$app->request->post('book_id');//本地图书id
                 $copyright_chapter_ids=\Yii::$app->request->post('copyright_chapter_id');//版权书章节id
                 //var_dump($copyright_chapter_ids);exit;
                 //请求地址
                 $postUrl = 'http://partner.chuangbie.com/partner/chaptercontent';
+                //查找该本书
+                $book=Book::findOne(['id'=>$book_id]);
+                $book->downloads=$book->downloads+1;
+                $book->save();
+
                 //遍历获取多章节内容
                 $datas=[];
                 foreach ( $copyright_chapter_ids as  $copyright_chapter_id){
                     $curlPost =[
                         'partner_id'=>2130,
                         'partner_sign'=>'b42c36ddd1a5cc2c6895744143f77b7b',
-                        'book_id'=>$copyright_book_id,
+                        'book_id'=>$book->copyright_book_id,
                         'chapter_id'=>$copyright_chapter_id,
                     ];
                     $post=new PostRequest();
