@@ -64,11 +64,16 @@ class BookstoreController extends Controller{
            // }else{
             //今日必读
             $models1=Book::find()->where(['groom'=>1])->orderBy('groom_time DESC')->limit(5)->all();
-                //var_dump($models1);exit;
+
             foreach ($models1 as $model1){
+                //判断是否版权图书,不是拼接图片域名
+                $ImgUrl=$model1->image;
+                if($model1->from!=3){
+                    $ImgUrl=HTTP_PATH.$ImgUrl;
+                }
                 $result['data']['read-today'][]=['book_id'=>$model1->id,'name'=>$model1->name,
                     'category'=>$model1->category->name,'author'=>$model1->author->name,
-                    'view'=>$model1->clicks,'image'=>HTTP_PATH.$model1->image,'size'=>$model1->size,
+                    'view'=>$model1->clicks,'image'=>$ImgUrl,'size'=>$model1->size,
                     'score'=>$model1->score,'intro'=>$model1->intro,'is_end'=>$model1->is_end,
                     'download'=>$model1->downloads,'collection'=>$model1->collection,'author_id'=>$model1->author_id,
                     'category_id'=>$model1->category_id,'no_free'=>$model1->no,'type'=>$model1->type,
@@ -83,11 +88,16 @@ class BookstoreController extends Controller{
             $models2=Seckill::find()->orderBy('create_time DESC')->limit(4)->all();
             if($models2){
                 foreach ($models2 as $model2){
+                    //判断是否版权图书,不是拼接图片域名
+                    $ImgUrl=$model2->book->image;
+                    if($model2->book->from!=3){
+                        $ImgUrl=HTTP_PATH.$ImgUrl;
+                    }
                     $categoty=Category::findOne(['id'=>$model2->book->category_id]);
                     $author=Author::findOne(['id'=>$model2->book->author_id]);
                     $result['data']['seckill'][]=['book_id'=>$model2->book->id,'name'=>$model2->book->name,
                         'category'=> $categoty->name,'author'=>$author->name,
-                        'view'=>$model2->book->clicks,'image'=>HTTP_PATH.$model2->book->image,'size'=>$model2->book->size,
+                        'view'=>$model2->book->clicks,'image'=>$ImgUrl,'size'=>$model2->book->size,
                         'score'=>$model2->book->score,'intro'=>$model2->book->intro,'is_end'=>$model2->book->is_end,
                         'download'=>$model2->book->downloads,'collection'=>$model2->book->collection,'begin_time'=>$model2->begin_time,
                         'end_time'=>$model2->end_time,'people'=>$model2->people,'author_id'=>$model2->book->author_id,
@@ -117,9 +127,14 @@ class BookstoreController extends Controller{
                     //遍历查询书
                     $books=Book::find()->where(['category_id'=>$category_ids[$index]])->orderBy('score DESC')->limit(3)->all();
                    foreach ($books as $book){
+                       //判断是否版权图书,不是拼接图片域名
+                       $ImgUrl= $book->image;
+                       if( $book->from!=3){
+                           $ImgUrl=HTTP_PATH.$ImgUrl;
+                       }
                        $result['data']['like'][]=['book_id'=>$book->id,'name'=>$book->name,
                            'category'=>$book->category->name,'author'=>$book->author->name,
-                           'view'=>$book->clicks,'image'=>HTTP_PATH.$book->image,'size'=>$book->size,
+                           'view'=>$book->clicks,'image'=>$ImgUrl,'size'=>$book->size,
                            'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
                            'download'=>$book->downloads,'collection'=>$book->collection,'author_id'=>$book->author_id,
                            'category_id'=>$book->category_id,'no_free'=>$book->no,'type'=>$book->type,
@@ -144,9 +159,14 @@ class BookstoreController extends Controller{
             $index2=array_rand($ids);
             $books=Book::find()->where(['category_id'=>$index2])->orderBy('score DESC')->limit(3)->all();
             foreach ($books as $book){
+                //判断是否版权图书,不是拼接图片域名
+                $ImgUrl= $book->image;
+                if( $book->from!=3){
+                    $ImgUrl=HTTP_PATH.$ImgUrl;
+                }
                 $result['data']['like'][]=['book_id'=>$book->id,'name'=>$book->name,
                     'category'=>$book->category->name,'author'=>$book->author->name,
-                    'view'=>$book->clicks,'image'=>HTTP_PATH.$book->image,'size'=>$book->size,
+                    'view'=>$book->clicks,'image'=>$ImgUrl,'size'=>$book->size,
                     'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
                     'download'=>$book->downloads,'collection'=>$book->collection,'author_id'=>$book->author_id,
                     'category_id'=>$book->category_id,'no_free'=>$book->no,'type'=>$book->type,
@@ -175,13 +195,13 @@ class BookstoreController extends Controller{
         if (\Yii::$app->request->post()){
             $obj=new Verification();
             $res=$obj->check();
-            if($res){
+           if($res){
                $result['msg']= $res;
            }else{
             //查询男频分类
                 $categorys1=Category::find()->where(['type'=>1])->all();
                 foreach ($categorys1 as $category){
-                    $image=\Yii::$app->db->createCommand("select image from book WHERE category_id=$category->id")->queryScalar();
+                    $image=\Yii::$app->db->createCommand("select image from book WHERE category_id=$category->id AND `from`!=3 ORDER BY create_time DESC ")->queryScalar();
                     $count1=Book::find()->andWhere(['category_id'=>$category->id])->count('id');//查询分类书的数量
                     $result['data']['male'][]=['name'=>$category->name,'intro'=>$category->intro,
                         'status'=>$category->status,'count'=>$category->count,'type'=>$category->type,
@@ -190,7 +210,7 @@ class BookstoreController extends Controller{
                 //查询女频
             $categorys2=Category::find()->where(['type'=>0])->all();
             foreach ($categorys2 as $category){
-                $image=\Yii::$app->db->createCommand("select image from book WHERE category_id=$category->id")->queryScalar();
+                $image=\Yii::$app->db->createCommand("select image from book WHERE category_id=$category->id AND `from`!=3 ORDER BY create_time DESC ")->queryScalar();
                 $count2=Book::find()->andWhere(['category_id'=>$category->id])->count('id');//查询分类书的数量
                 $result['data']['female'][]=['name'=>$category->name,'intro'=>$category->intro,
                     'status'=>$category->status,'count'=>$category->count,'type'=>$category->type,
@@ -198,7 +218,7 @@ class BookstoreController extends Controller{
             }
             $result['code']=200;
             $result['msg']='获取分类信息成功';
-           }
+          }
 
         }else{
             $result['msg']='请求方式错误';
@@ -240,9 +260,14 @@ class BookstoreController extends Controller{
                 }
 
             foreach ($models as $model){
+                //判断是否版权图书,不是拼接图片域名
+                $ImgUrl=$model->image;
+                if($model->from!=3){
+                    $ImgUrl=HTTP_PATH.$ImgUrl;
+                }
                 $result['data'][]=['book_id'=>$model->id,'name'=>$model->name,
                     'category'=>$model->category->name,'author'=>$model->author->name,
-                    'view'=>$model->clicks,'image'=>HTTP_PATH.$model->image,'size'=>$model->size,
+                    'view'=>$model->clicks,'image'=>$ImgUrl,'size'=>$model->size,
                     'score'=>$model->score,'intro'=>$model->intro,'is_end'=>$model->is_end,
                     'download'=>$model->downloads,'collection'=>$model->collection,'author_id'=>$model->author_id,
                     'category_id'=>$model->category_id,'no_free'=>$model->no,'type'=>$model->type,
@@ -280,9 +305,14 @@ class BookstoreController extends Controller{
                 //查找同类书
                 $books1=Book::find()->where(['category_id'=>$category_id])->orderBy('score DESC')->limit(4)->all();
                 foreach ($books1 as $book1){
+                    //判断是否版权图书,不是拼接图片域名
+                    $ImgUrl=$book1->image;
+                    if($book1->from!=3){
+                        $ImgUrl=HTTP_PATH.$ImgUrl;
+                    }
                     $result['data']['similar'][]=['book_id'=>$book1->id,'name'=>$book1->name,
                         'category'=>$book1->category->name,'author'=>$book1->author->name,
-                        'view'=>$book1->clicks,'image'=>HTTP_PATH.$book1->image,'size'=>$book1->size,
+                        'view'=>$book1->clicks,'image'=>$ImgUrl,'size'=>$book1->size,
                         'score'=>$book1->score,'intro'=>$book1->intro,'is_end'=>$book1->is_end,
                         'download'=>$book1->downloads,'collection'=>$book1->collection,'author_id'=>$book1->author_id,
                         'category_id'=>$book1->category_id,'no_free'=>$book1->no,'type'=>$book1->type,
@@ -295,9 +325,14 @@ class BookstoreController extends Controller{
                 //查找作者图书推荐
                 $books2=Book::find()->where(['author_id'=>$author_id])->orderBy('score DESC')->limit(4)->all();
                 foreach ($books2 as $book2){
+                    //判断是否版权图书,不是拼接图片域名
+                    $ImgUrl=$book2->image;
+                    if($book2->from!=3){
+                        $ImgUrl=HTTP_PATH.$ImgUrl;
+                    }
                     $result['data']['author'][]=['book_id'=>$book2->id,'name'=>$book2->name,
                         'category'=>$book2->category->name,'author'=>$book2->author->name,
-                        'view'=>$book2->clicks,'image'=>HTTP_PATH.$book2->image,'size'=>$book2->size,
+                        'view'=>$book2->clicks,'image'=>$ImgUrl,'size'=>$book2->size,
                         'score'=>$book2->score,'intro'=>$book2->intro,'is_end'=>$book2->is_end,
                         'download'=>$book2->downloads,'collection'=>$book2->collection,'author_id'=>$book2->author_id,
                         'category_id'=>$book2->category_id,'no_free'=>$book2->no,'type'=>$book2->type,
@@ -330,9 +365,14 @@ class BookstoreController extends Controller{
             }else{
                 $book_id=\Yii::$app->request->post('book_id');
                 $book=Book::findOne(['id'=>$book_id]);
+               //判断是否版权图书,不是拼接图片域名
+               $ImgUrl=$book->image;
+               if($book->from!=3){
+                   $ImgUrl=HTTP_PATH.$ImgUrl;
+               }
                     $result['data']=['book_id'=>$book->id,'name'=>$book->name,
                         'category'=>$book->category->name,'author'=>$book->author->name,
-                        'view'=>$book->clicks,'image'=>HTTP_PATH.$book->image,'size'=>$book->size,
+                        'view'=>$book->clicks,'image'=>$ImgUrl,'size'=>$book->size,
                         'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
                         'download'=>$book->downloads,'collection'=>$book->collection,'author_id'=>$book->author_id,
                         'category_id'=>$book->category_id,'no_free'=>$book->no,'type'=>$book->type,
@@ -402,9 +442,14 @@ class BookstoreController extends Controller{
 
                 if($books){
                     foreach ($books as $book){
+               //判断是否版权图书,不拼接图片域名
+               $ImgUrl=$book->image;
+               if($book->from!=3){
+                   $ImgUrl=HTTP_PATH.$ImgUrl;
+               }
                         $result['data']['book'][]=['book_id'=>$book->id,'name'=>$book->name,
                             'category'=>$book->category->name,'author'=>$book->author->name,
-                            'view'=>$book->clicks,'image'=>HTTP_PATH.$book->image,'size'=>$book->size,
+                            'view'=>$book->clicks,'image'=>$ImgUrl,'size'=>$book->size,
                             'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
                             'download'=>$book->downloads,'collection'=>$book->collection,'author_id'=>$book->author_id,
                             'category_id'=>$book->category_id,'no_free'=>$book->no,'type'=>$book->type,
@@ -467,7 +512,7 @@ class BookstoreController extends Controller{
             $obj=new Verification();
             $res=$obj->check();
          if($res){
-                $result['msg']= $res;
+               $result['msg']= $res;
            }else{
                //根据时间排序,取出推荐分类前5
                 $categorys=Category::find()->orderBy('groom_time DESC')->limit(5)->all();
@@ -480,9 +525,14 @@ class BookstoreController extends Controller{
                //根据推荐时间取出分类推荐
                 $models1=Book::find()->where(['category_id'=>$ids[0]])->andWhere(['groom'=>7])->orderBy('groom_time DESC')->limit(3)->all();
                 foreach ($models1 as $model1){
+                    //判断是否版权图书,不拼接图片域名
+                    $ImgUrl=$model1->image;
+                    if($model1->from!=3){
+                        $ImgUrl=HTTP_PATH.$ImgUrl;
+                    }
                     $result['data']['category1'][]=['book_id'=>$model1->id,'name'=>$model1->name,
                         'category'=>$model1->category->name,'author'=>$model1->author->name,
-                        'view'=>$model1->clicks,'image'=>HTTP_PATH.$model1->image,'size'=>$model1->size,
+                        'view'=>$model1->clicks,'image'=> $ImgUrl,'size'=>$model1->size,
                         'score'=>$model1->score,'intro'=>$model1->intro,'is_end'=>$model1->is_end,
                         'download'=>$model1->downloads,'collection'=>$model1->collection,'author_id'=>$model1->author_id,
                         'category_id'=>$model1->category_id,'no_free'=>$model1->no,'type'=>$model1->type,
@@ -495,9 +545,14 @@ class BookstoreController extends Controller{
 
             $models2=Book::find()->where(['category_id'=>$ids[1]])->andWhere(['groom'=>7])->orderBy('groom_time DESC')->limit(3)->all();
             foreach ($models2 as $model2){
+                //判断是否版权图书,不拼接图片域名
+                $ImgUrl=$model2->image;
+                if($model2->from!=3){
+                    $ImgUrl=HTTP_PATH.$ImgUrl;
+                }
                 $result['data']['category2'][]=['book_id'=>$model2->id,'name'=>$model2->name,
                     'category'=>$model2->category->name,'author'=>$model2->author->name,
-                    'view'=>$model2->clicks,'image'=>HTTP_PATH.$model2->image,'size'=>$model2->size,
+                    'view'=>$model2->clicks,'image'=>$ImgUrl,'size'=>$model2->size,
                     'score'=>$model2->score,'intro'=>$model2->intro,'is_end'=>$model2->is_end,
                     'download'=>$model2->downloads,'collection'=>$model2->collection,'author_id'=>$model2->author_id,
                     'category_id'=>$model2->category_id,'no_free'=>$model2->no,'type'=>$model2->type,
@@ -510,9 +565,14 @@ class BookstoreController extends Controller{
 
             $models3=Book::find()->where(['category_id'=>$ids[2]])->andWhere(['groom'=>7])->orderBy('groom_time DESC')->limit(3)->all();
             foreach ($models3 as $model3){
+                //判断是否版权图书,不拼接图片域名
+                $ImgUrl=$model3->image;
+                if($model3->from!=3){
+                    $ImgUrl=HTTP_PATH.$ImgUrl;
+                }
                 $result['data']['category3'][]=['book_id'=>$model3->id,'name'=>$model3->name,
                     'category'=>$model3->category->name,'author'=>$model3->author->name,
-                    'view'=>$model3->clicks,'image'=>HTTP_PATH.$model3->image,'size'=>$model3->size,
+                    'view'=>$model3->clicks,'image'=>$ImgUrl,'size'=>$model3->size,
                     'score'=>$model3->score,'intro'=>$model3->intro,'is_end'=>$model3->is_end,
                     'download'=>$model3->downloads,'collection'=>$model3->collection,'author_id'=>$model3->author_id,
                     'category_id'=>$model3->category_id,'no_free'=>$model3->no,'type'=>$model3->type,
@@ -525,9 +585,14 @@ class BookstoreController extends Controller{
 
             $models4=Book::find()->where(['category_id'=>$ids[3]])->andWhere(['groom'=>7])->orderBy('groom_time DESC')->limit(3)->all();
             foreach ($models4 as $model4){
+                //判断是否版权图书,不拼接图片域名
+                $ImgUrl=$model4->image;
+                if($model4->from!=3){
+                    $ImgUrl=HTTP_PATH.$ImgUrl;
+                }
                 $result['data']['category4'][]=['book_id'=>$model4->id,'name'=>$model4->name,
                     'category'=>$model4->category->name,'author'=>$model4->author->name,
-                    'view'=>$model4->clicks,'image'=>HTTP_PATH.$model4->image,'size'=>$model4->size,
+                    'view'=>$model4->clicks,'image'=>$ImgUrl,'size'=>$model4->size,
                     'score'=>$model4->score,'intro'=>$model4->intro,'is_end'=>$model4->is_end,
                     'download'=>$model4->downloads,'collection'=>$model4->collection,'author_id'=>$model4->author_id,
                     'category_id'=>$model4->category_id,'no_free'=>$model4->no,'type'=>$model4->type,
@@ -540,9 +605,14 @@ class BookstoreController extends Controller{
 
             $models5=Book::find()->where(['category_id'=>$ids[4]])->andWhere(['groom'=>7])->orderBy('groom_time DESC')->limit(3)->all();
             foreach ($models5 as $model5){
+                //判断是否版权图书,不拼接图片域名
+                $ImgUrl=$model5->image;
+                if($model5->from!=3){
+                    $ImgUrl=HTTP_PATH.$ImgUrl;
+                }
                 $result['data']['category5'][]=['book_id'=>$model5->id,'name'=>$model5->name,
                     'category'=>$model5->category->name,'author'=>$model5->author->name,
-                    'view'=>$model5->clicks,'image'=>HTTP_PATH.$model5->image,'size'=>$model5->size,
+                    'view'=>$model5->clicks,'image'=>$ImgUrl,'size'=>$model5->size,
                     'score'=>$model5->score,'intro'=>$model5->intro,'is_end'=>$model5->is_end,
                     'download'=>$model5->downloads,'collection'=>$model5->collection,'author_id'=>$model5->author_id,
                     'category_id'=>$model5->category_id,'no_free'=>$model5->no,'type'=>$model5->type,
@@ -570,15 +640,20 @@ class BookstoreController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-            if($res){
+           if($res){
               $result['msg']= $res;
             }else{
             //今日限免
                 $books1=Book::find()->where(['groom'=>2])->orderBy('groom_time DESC')->limit(3)->all();
                 foreach ( $books1 as $book1){
+                    //判断是否版权图书,不拼接图片域名
+                    $ImgUrl=$book1->image;
+                    if($book1->from!=3){
+                        $ImgUrl=HTTP_PATH.$ImgUrl;
+                    }
                     $result['data']['today-free'][]=['book_id'=>$book1->id,'name'=>$book1->name,
                         'category'=>$book1->category->name,'author'=>$book1->author->name,
-                        'view'=>$book1->clicks,'image'=>HTTP_PATH.$book1->image,'size'=>$book1->size,
+                        'view'=>$book1->clicks,'image'=>$ImgUrl,'size'=>$book1->size,
                         'score'=>$book1->score,'intro'=>$book1->intro,'is_end'=>$book1->is_end,
                         'download'=>$book1->downloads,'collection'=>$book1->collection,'author_id'=>$book1->author_id,
                         'category_id'=>$book1->category_id,'no_free'=>$book1->no,'type'=>$book1->type,
@@ -592,9 +667,14 @@ class BookstoreController extends Controller{
                 //女生限免
                 $books2=Book::find()->where(['groom'=>3])->orderBy('groom_time DESC')->limit(8)->all();
                 foreach ( $books2 as $book2){
+                    //判断是否版权图书,不拼接图片域名
+                    $ImgUrl=$book2->image;
+                    if($book2->from!=3){
+                        $ImgUrl=HTTP_PATH.$ImgUrl;
+                    }
                     $result['data']['female-free'][]=['book_id'=>$book2->id,'name'=>$book2->name,
                         'category'=>$book2->category->name,'author'=>$book2->author->name,
-                        'view'=>$book2->clicks,'image'=>HTTP_PATH.$book2->image,'size'=>$book2->size,
+                        'view'=>$book2->clicks,'image'=>$ImgUrl,'size'=>$book2->size,
                         'score'=>$book2->score,'intro'=>$book2->intro,'is_end'=>$book2->is_end,
                         'download'=>$book2->downloads,'collection'=>$book2->collection,'author_id'=>$book2->author_id,
                         'category_id'=>$book2->category_id,'no_free'=>$book2->no,'type'=>$book2->type,
@@ -608,9 +688,14 @@ class BookstoreController extends Controller{
                 //男生限免
                 $books3=Book::find()->where(['groom'=>4])->orderBy('groom_time DESC')->limit(3)->all();
                 foreach ( $books3 as $book3){
+                    //判断是否版权图书,不拼接图片域名
+                    $ImgUrl=$book3->image;
+                    if($book3->from!=3){
+                        $ImgUrl=HTTP_PATH.$ImgUrl;
+                    }
                     $result['data']['male-free'][]=['book_id'=>$book3->id,'name'=>$book3->name,
                         'category'=>$book3->category->name,'author'=>$book3->author->name,
-                        'view'=>$book3->clicks,'image'=>HTTP_PATH.$book3->image,'size'=>$book3->size,
+                        'view'=>$book3->clicks,'image'=>$ImgUrl,'size'=>$book3->size,
                         'score'=>$book3->score,'intro'=>$book3->intro,'is_end'=>$book3->is_end,
                         'download'=>$book3->downloads,'collection'=>$book3->collection,'author_id'=>$book3->author_id,
                         'category_id'=>$book3->category_id,'no_free'=>$book3->no,'type'=>$book3->type,
@@ -648,9 +733,14 @@ class BookstoreController extends Controller{
                 $type=\Yii::$app->request->post('type');
                 $ManBooks1=Book::find()->where(['groom'=>$groom])->orderBy('groom_time DESC')->limit(6)->all();
                 foreach ($ManBooks1 as $Manbook1){
+                    //判断是否版权图书,不拼接图片域名
+                    $ImgUrl=$Manbook1->image;
+                    if($Manbook1->from!=3){
+                        $ImgUrl=HTTP_PATH.$ImgUrl;
+                    }
                     $result['data']['end_book'][]=['book_id'=>$Manbook1->id,'name'=>$Manbook1->name,
                         'category'=>$Manbook1->category->name,'author'=>$Manbook1->author->name,
-                        'view'=>$Manbook1->clicks,'image'=>HTTP_PATH.$Manbook1->image,'size'=>$Manbook1->size,
+                        'view'=>$Manbook1->clicks,'image'=>$ImgUrl,'size'=>$Manbook1->size,
                         'score'=>$Manbook1->score,'intro'=>$Manbook1->intro,'is_end'=>$Manbook1->is_end,
                         'download'=>$Manbook1->downloads,'collection'=>$Manbook1->collection,'author_id'=>$Manbook1->author_id,
                         'category_id'=>$Manbook1->category_id,'no_free'=>$Manbook1->no,'type'=>$Manbook1->type,
@@ -665,9 +755,14 @@ class BookstoreController extends Controller{
                 $ManIds=\Yii::$app->db->createCommand("SELECT id FROM category WHERE type=$type")->queryColumn();
                 $ManBooks2=Book::find()->where(['category_id'=>$ManIds[array_rand($ManIds,1)],'is_end'=>1])->orderBy('score DESC')->limit(3)->all();
                 foreach ($ManBooks2 as $Manbook2){
+                    //判断是否版权图书,不拼接图片域名
+                    $ImgUrl=$Manbook2->image;
+                    if($Manbook2->from!=3){
+                        $ImgUrl=HTTP_PATH.$ImgUrl;
+                    }
                     $result['data']['end_category'][]=['book_id'=>$Manbook2->id,'name'=>$Manbook2->name,
                         'category'=>$Manbook2->category->name,'author'=>$Manbook2->author->name,
-                        'view'=>$Manbook2->clicks,'image'=>HTTP_PATH.$Manbook2->image,'size'=>$Manbook2->size,
+                        'view'=>$Manbook2->clicks,'image'=>$ImgUrl,'size'=>$Manbook2->size,
                         'score'=>$Manbook2->score,'intro'=>$Manbook2->intro,'is_end'=>$Manbook2->is_end,
                         'download'=>$Manbook2->downloads,'collection'=>$Manbook2->collection,'author_id'=>$Manbook2->author_id,
                         'category_id'=>$Manbook2->category_id,'no_free'=>$Manbook2->no,'type'=>$Manbook2->type,
@@ -701,9 +796,14 @@ class BookstoreController extends Controller{
                 $author_id=\Yii::$app->request->post('author_id');
                 $books=Book::find()->where(['author_id'=>$author_id])->orderBy('score DESC')->limit(4)->all();
                 foreach ($books as $book){
+                    //判断是否版权图书,不拼接图片域名
+                    $ImgUrl=$book->image;
+                    if($book->from!=3){
+                        $ImgUrl=HTTP_PATH.$ImgUrl;
+                    }
                     $result['data'][]=['book_id'=>$book->id,'name'=>$book->name,
                         'category'=>$book->category->name,'author'=>$book->author->name,
-                        'view'=>$book->clicks,'image'=>HTTP_PATH.$book->image,'size'=>$book->size,
+                        'view'=>$book->clicks,'image'=> $ImgUrl,'size'=>$book->size,
                         'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
                         'download'=>$book->downloads,'collection'=>$book->collection,'author_id'=>$book->author_id,
                         'category_id'=>$book->category_id,'no_free'=>$book->no,'type'=>$book->type,

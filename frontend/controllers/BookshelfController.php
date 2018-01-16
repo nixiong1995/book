@@ -43,9 +43,14 @@ class BookshelfController extends Controller{
                         $Books1=Book::find()->where(['id'=>$CollectIds])->all();
                         if($Books1){
                             foreach ($Books1 as $book1){
+                                //判断是否版权图书,不拼接图片域名
+                                $ImgUrl=$book1->image;
+                                if($book1->from!=3){
+                                    $ImgUrl=HTTP_PATH.$ImgUrl;
+                                }
                                 $result['data'][]=['book_id'=>$book1->id,'name'=>$book1->name,
                                     'category'=>$book1->category->name,'author'=>$book1->author->name,
-                                    'view'=>$book1->clicks,'image'=>HTTP_PATH.$book1->image,'size'=>$book1->size,
+                                    'view'=>$book1->clicks,'image'=>$ImgUrl,'size'=>$book1->size,
                                     'score'=>$book1->score,'intro'=>$book1->intro,'is_end'=>$book1->is_end,
                                     'download'=>$book1->downloads,'collection'=>$book1->collection,'author_id'=>$book1->author_id,
                                     'category_id'=>$book1->category_id,'no_free'=>$book1->no,'type'=>$book1->type,
@@ -71,9 +76,14 @@ class BookshelfController extends Controller{
                             $model->collect=$collect;
                             $model->save();
                             foreach ( $Books2 as $book2){
+                                //判断是否版权图书,不拼接图片域名
+                                $ImgUrl=$book2->image;
+                                if($book2->from!=3){
+                                    $ImgUrl=HTTP_PATH.$ImgUrl;
+                                }
                                 $result['data'][]=['book_id'=>$book2->id,'name'=>$book2->name,
                                     'category'=>$book2->category->name,'author'=>$book2->author->name,
-                                    'view'=>$book2->clicks,'image'=>HTTP_PATH.$book2->image,'size'=>$book2->size,
+                                    'view'=>$book2->clicks,'image'=>$ImgUrl,'size'=>$book2->size,
                                     'score'=>$book2->score,'intro'=>$book2->intro,'is_end'=>$book2->is_end,
                                     'download'=>$book2->downloads,'collection'=>$book2->collection,'author_id'=>$book2->author_id,
                                     'category_id'=>$book2->category_id,'no_free'=>$book2->no,'type'=>$book2->type,

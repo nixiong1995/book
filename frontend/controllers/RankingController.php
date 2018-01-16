@@ -40,9 +40,14 @@ class RankingController extends Controller{
 
                         $SellingBooks=Book::find()->where(['category_id'=> $ManIds])->orderBy('sale DESC')->limit(10)->all();
                         foreach ( $SellingBooks as $sellingBook) {
+                            //判断是否版权图书,不拼接图片域名
+                            $ImgUrl=$sellingBook->image;
+                            if($sellingBook->from!=3){
+                                $ImgUrl=HTTP_PATH.$ImgUrl;
+                            }
                             $result['data'][] = ['book_id' => $sellingBook->id, 'name' => $sellingBook->name,
                                 'category' => $sellingBook->category->name, 'author' => $sellingBook->author->name,
-                                'view' => $sellingBook->clicks, 'image' => HTTP_PATH . $sellingBook->image, 'size' => $sellingBook->size,
+                                'view' => $sellingBook->clicks, 'image' => $ImgUrl, 'size' => $sellingBook->size,
                                 'score' => $sellingBook->score, 'intro' => $sellingBook->intro, 'is_end' => $sellingBook->is_end,
                                 'download' => $sellingBook->downloads, 'collection' => $sellingBook->collection, 'author_id' => $sellingBook->author_id,
                                 'category_id' => $sellingBook->category_id, 'no_free' => $sellingBook->no, 'type' => $sellingBook->type,
@@ -62,9 +67,14 @@ class RankingController extends Controller{
                         $NewBooks=Book::find()->where(['category_id'=> $ManIds])->orderBy('create_time DESC')->limit(10)->all();
 
                         foreach (  $NewBooks as $newBook) {
+                            //判断是否版权图书,不拼接图片域名
+                            $ImgUrl=$newBook->image;
+                            if($newBook->from!=3){
+                                $ImgUrl=HTTP_PATH.$ImgUrl;
+                            }
                             $result['data'][]= ['book_id' => $newBook->id, 'name' => $newBook->name,
                                 'category' => $newBook->category->name, 'author' => $newBook->author->name,
-                                'view' => $newBook->clicks, 'image' => HTTP_PATH . $newBook->image, 'size' => $newBook->size,
+                                'view' => $newBook->clicks, 'image' =>  $ImgUrl, 'size' => $newBook->size,
                                 'score' => $newBook->score, 'intro' => $newBook->intro, 'is_end' =>$newBook->is_end,
                                 'download' => $newBook->downloads, 'collection' => $newBook->collection, 'author_id' => $newBook->author_id,
                                 'category_id' => $newBook->category_id, 'no_free' => $newBook->no, 'type' => $newBook->type,
@@ -82,9 +92,14 @@ class RankingController extends Controller{
                         $UpdateBooks=Book::find()->where(['category_id'=> $ManIds])->orderBy('update_time DESC')->limit(10)->all();
 
                         foreach ( $UpdateBooks as $updateBook) {
+                            //判断是否版权图书,不拼接图片域名
+                            $ImgUrl=$updateBook->image;
+                            if($updateBook->from!=3){
+                                $ImgUrl=HTTP_PATH.$ImgUrl;
+                            }
                             $result['data'][] = ['book_id' => $updateBook->id, 'name' => $updateBook->name,
                                 'category' => $updateBook->category->name, 'author' => $updateBook->author->name,
-                                'view' => $updateBook->clicks, 'image' => HTTP_PATH . $updateBook->image, 'size' => $updateBook->size,
+                                'view' => $updateBook->clicks, 'image' => $ImgUrl, 'size' => $updateBook->size,
                                 'score' => $updateBook->score, 'intro' => $updateBook->intro, 'is_end' =>$updateBook->is_end,
                                 'download' => $updateBook->downloads, 'collection' => $updateBook->collection, 'author_id' => $updateBook->author_id,
                                 'category_id' => $updateBook->category_id, 'no_free' => $updateBook->no, 'type' => $updateBook->type,
@@ -103,9 +118,14 @@ class RankingController extends Controller{
                         $EndBooks=Book::find()->where(['category_id'=> $ManIds,'is_end'=>1])->orderBy('score DESC')->limit(10)->all();
 
                         foreach ($EndBooks as $endBook) {
+                            //判断是否版权图书,不拼接图片域名
+                            $ImgUrl=$endBook->image;
+                            if($endBook->from!=3){
+                                $ImgUrl=HTTP_PATH.$ImgUrl;
+                            }
                             $result['data'][] = ['book_id' => $endBook->id, 'name' => $endBook->name,
                                 'category' => $endBook->category->name, 'author' => $endBook->author->name,
-                                'view' => $endBook->clicks, 'image' => HTTP_PATH . $endBook->image, 'size' => $endBook->size,
+                                'view' => $endBook->clicks, 'image' => $ImgUrl, 'size' => $endBook->size,
                                 'score' => $endBook->score, 'intro' => $endBook->intro, 'is_end' =>$endBook->is_end,
                                 'download' => $endBook->downloads, 'collection' => $endBook->collection, 'author_id' => $endBook->author_id,
                                 'category_id' => $endBook->category_id, 'no_free' => $endBook->no, 'type' => $endBook->type,
@@ -123,9 +143,14 @@ class RankingController extends Controller{
 
 
                         foreach ($HotsearchBooks as $hotsearchBook){
+                            //判断是否版权图书,不拼接图片域名
+                            $ImgUrl=$hotsearchBook->image;
+                            if($hotsearchBook->from!=3){
+                                $ImgUrl=HTTP_PATH.$ImgUrl;
+                            }
                             $result['data'][] = ['book_id' => $hotsearchBook->id, 'name' => $hotsearchBook->name,
                                 'category' => $hotsearchBook->category->name, 'author' => $hotsearchBook->author->name,
-                                'view' => $hotsearchBook->clicks, 'image' => HTTP_PATH .$hotsearchBook->image, 'size' => $hotsearchBook->size,
+                                'view' => $hotsearchBook->clicks, 'image' => $ImgUrl, 'size' => $hotsearchBook->size,
                                 'score' => $hotsearchBook->score, 'intro' => $hotsearchBook->intro, 'is_end' =>$hotsearchBook->is_end,
                                 'download' => $hotsearchBook->downloads, 'collection' => $hotsearchBook->collection, 'author_id' => $hotsearchBook->author_id,
                                 'category_id' => $hotsearchBook->category_id, 'no_free' => $hotsearchBook->no, 'type' => $hotsearchBook->type,
@@ -148,9 +173,14 @@ class RankingController extends Controller{
 
                         $SellingBooks=Book::find()->where(['category_id'=> $ManIds])->orderBy('sale DESC')->limit(10)->all();
                         foreach ( $SellingBooks as $sellingBook) {
+                            //判断是否版权图书,不拼接图片域名
+                            $ImgUrl=$sellingBook->image;
+                            if($sellingBook->from!=3){
+                                $ImgUrl=HTTP_PATH.$ImgUrl;
+                            }
                             $result['data'][] = ['book_id' => $sellingBook->id, 'name' => $sellingBook->name,
                                 'category' => $sellingBook->category->name, 'author' => $sellingBook->author->name,
-                                'view' => $sellingBook->clicks, 'image' => HTTP_PATH . $sellingBook->image, 'size' => $sellingBook->size,
+                                'view' => $sellingBook->clicks, 'image' => $ImgUrl, 'size' => $sellingBook->size,
                                 'score' => $sellingBook->score, 'intro' => $sellingBook->intro, 'is_end' => $sellingBook->is_end,
                                 'download' => $sellingBook->downloads, 'collection' => $sellingBook->collection, 'author_id' => $sellingBook->author_id,
                                 'category_id' => $sellingBook->category_id, 'no_free' => $sellingBook->no, 'type' => $sellingBook->type,
@@ -170,9 +200,14 @@ class RankingController extends Controller{
                         $NewBooks=Book::find()->where(['category_id'=> $ManIds])->orderBy('create_time DESC')->limit(10)->all();
 
                         foreach (  $NewBooks as $newBook) {
+                            //判断是否版权图书,不拼接图片域名
+                            $ImgUrl=$newBook->image;
+                            if($newBook->from!=3){
+                                $ImgUrl=HTTP_PATH.$ImgUrl;
+                            }
                             $result['data'][] = ['book_id' => $newBook->id, 'name' => $newBook->name,
                                 'category' => $newBook->category->name, 'author' => $newBook->author->name,
-                                'view' => $newBook->clicks, 'image' => HTTP_PATH . $newBook->image, 'size' => $newBook->size,
+                                'view' => $newBook->clicks, 'image' => $ImgUrl, 'size' => $newBook->size,
                                 'score' => $newBook->score, 'intro' => $newBook->intro, 'is_end' =>$newBook->is_end,
                                 'download' => $newBook->downloads, 'collection' => $newBook->collection, 'author_id' => $newBook->author_id,
                                 'category_id' => $newBook->category_id, 'no_free' => $newBook->no, 'type' => $newBook->type,
@@ -190,9 +225,14 @@ class RankingController extends Controller{
                         $UpdateBooks=Book::find()->where(['category_id'=> $ManIds])->orderBy('update_time DESC')->limit(10)->all();
 
                         foreach ( $UpdateBooks as $updateBook) {
+                            //判断是否版权图书,不拼接图片域名
+                            $ImgUrl=$updateBook->image;
+                            if($updateBook->from!=3){
+                                $ImgUrl=HTTP_PATH.$ImgUrl;
+                            }
                             $result['data'][] = ['book_id' => $updateBook->id, 'name' => $updateBook->name,
                                 'category' => $updateBook->category->name, 'author' => $updateBook->author->name,
-                                'view' => $updateBook->clicks, 'image' => HTTP_PATH . $updateBook->image, 'size' => $updateBook->size,
+                                'view' => $updateBook->clicks, 'image' =>  $ImgUrl, 'size' => $updateBook->size,
                                 'score' => $updateBook->score, 'intro' => $updateBook->intro, 'is_end' =>$updateBook->is_end,
                                 'download' => $updateBook->downloads, 'collection' => $updateBook->collection, 'author_id' => $updateBook->author_id,
                                 'category_id' => $updateBook->category_id, 'no_free' => $updateBook->no, 'type' => $updateBook->type,
@@ -211,9 +251,14 @@ class RankingController extends Controller{
                         $EndBooks=Book::find()->where(['category_id'=> $ManIds,'is_end'=>1])->orderBy('score DESC')->limit(10)->all();
 
                         foreach ($EndBooks as $endBook) {
+                            //判断是否版权图书,不拼接图片域名
+                            $ImgUrl=$endBook->image;
+                            if($endBook->from!=3){
+                                $ImgUrl=HTTP_PATH.$ImgUrl;
+                            }
                             $result['data'][] =  ['book_id' => $endBook->id, 'name' => $endBook->name,
                                 'category' => $endBook->category->name, 'author' => $endBook->author->name,
-                                'view' => $endBook->clicks, 'image' => HTTP_PATH . $endBook->image, 'size' => $endBook->size,
+                                'view' => $endBook->clicks, 'image' =>  $ImgUrl, 'size' => $endBook->size,
                                 'score' => $endBook->score, 'intro' => $endBook->intro, 'is_end' =>$endBook->is_end,
                                 'download' => $endBook->downloads, 'collection' => $endBook->collection, 'author_id' => $endBook->author_id,
                                 'category_id' => $endBook->category_id, 'no_free' => $endBook->no, 'type' => $endBook->type,
@@ -231,9 +276,14 @@ class RankingController extends Controller{
 
 
                         foreach ($HotsearchBooks as $hotsearchBook){
+                            //判断是否版权图书,不拼接图片域名
+                            $ImgUrl=$hotsearchBook->image;
+                            if($hotsearchBook->from!=3){
+                                $ImgUrl=HTTP_PATH.$ImgUrl;
+                            }
                             $result['data'][] = ['book_id' => $hotsearchBook->id, 'name' => $hotsearchBook->name,
                                 'category' => $hotsearchBook->category->name, 'author' => $hotsearchBook->author->name,
-                                'view' => $hotsearchBook->clicks, 'image' => HTTP_PATH .$hotsearchBook->image, 'size' => $hotsearchBook->size,
+                                'view' => $hotsearchBook->clicks, 'image' => $ImgUrl, 'size' => $hotsearchBook->size,
                                 'score' => $hotsearchBook->score, 'intro' => $hotsearchBook->intro, 'is_end' =>$hotsearchBook->is_end,
                                 'download' => $hotsearchBook->downloads, 'collection' => $hotsearchBook->collection, 'author_id' => $hotsearchBook->author_id,
                                 'category_id' => $hotsearchBook->category_id, 'no_free' => $hotsearchBook->no, 'type' => $hotsearchBook->type,
