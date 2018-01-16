@@ -36,6 +36,13 @@ class YuewenController extends \yii\web\Controller{
             $page_now = \Yii::$app->request->post('page_now');//分页显示时，为当前第几页，默认为 1
             $page_size = \Yii::$app->request->post('page_size');//分页显示时，为每页大小，默认全部显示
 
+            //判断用户是否传入书id和用户id
+            if(!$user_id || !$book_id){
+                $result['code']=400;
+                $result['msg']='请输入用户id和图书id';
+                return $result;
+            }
+
             //查询用户已购书
             $purchased=Purchased::findOne(['user_id'=>$user_id,'book_id'=>$book_id]);
             $chapter_no=explode('|',$purchased->chapter_no);//分割成数组
