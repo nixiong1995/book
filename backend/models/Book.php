@@ -12,7 +12,7 @@ class Book extends ActiveRecord{
     {
         return [
             //[['name','is_free','intro','category_id','no','type','from','clicks','score','sale','downloads','search','price'],'required'],
-            [['name','is_free','intro','category_id','no','type','from','price','ascription'],'required'],
+            [['name','is_free','intro','category_id','no','type','from','price','ascription','clicks','downloads','score','collection'],'required'],
             ['file','required','on'=>self::SCENARIO_ADD],
             ['name', 'unique','message' => '该书已存在.'],
            // ['file', 'file', 'extensions' => ['png', 'jpg', 'gif','jpeg']],
@@ -45,7 +45,8 @@ class Book extends ActiveRecord{
             'sale'=>'该书销售次数',
             'downloads'=>'该书下载次数',
             'search'=>'该书被搜索次数',
-            'price'=>'该书售价(阅票/千字)'
+            'collection'=>'该书被收藏次数',
+            'price'=>'该书售价(阅票/千字)',
         ];
     }
 

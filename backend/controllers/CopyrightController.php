@@ -165,9 +165,54 @@ class CopyrightController extends Controller{
 
                 }
                 \Yii::$app->db->createCommand()->batchInsert(Book::tableName(),
-                    ['copyright_book_id','name','author_id','category_id','from','ascription','image','intro','is_free','no','size','type','is_end','clicks','score','collection','downloads','price','last_update_chapter_id','last_update_chapter_name','status','create_time'],
                     [
-                        [$data['book_id'],$data['book_name'],$author_id,$category_id,3,1,$data['cover_url'],$data['description'],2,1,$data['word_count']*2,'txt',$data['status'],10000,8,2000,2000,5,$data['last_update_chapter_id'],$data['last_update_chapter_name'],1,time()],
+                        'copyright_book_id',
+                        'name','author_id',
+                        'category_id',
+                        'from',
+                        'ascription',
+                        'image',
+                        'intro',
+                        'is_free',
+                        'no',
+                        'size',
+                        'type',
+                        'is_end',
+                        'clicks',
+                        'score',
+                        'collection',
+                        'downloads',
+                        'price',
+                        'last_update_chapter_id',
+                        'last_update_chapter_name',
+                        'status',
+                        'create_time'
+                    ],
+                    [
+                        [
+                            $data['book_id'],
+                            $data['book_name'],
+                            $author_id,
+                            $category_id,
+                            3,
+                            1,
+                            $data['cover_url'],
+                            $data['description'],
+                            2,
+                            1,
+                            $data['word_count']*2,
+                            'txt',
+                            $data['status'],
+                            rand(5000,10000),
+                            rand(7,10),
+                            rand(5000,10000),
+                            rand(5000,10000),
+                            5,
+                            $data['last_update_chapter_id'],
+                            $data['last_update_chapter_name'],
+                            1,
+                            time()
+                        ],
                     ])->execute();
 
             }

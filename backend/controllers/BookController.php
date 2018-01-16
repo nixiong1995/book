@@ -86,10 +86,6 @@ class BookController extends Controller{
                                 }
                                 $model->author_id=$Author2->id;
                                 $model->status=1;
-                                $model->score=8;
-                                $model->downloads=2000;
-                                $model->collection=2000;
-                                $model->clicks=10000;
                                 $model->create_time=time();
                                 //保存所有数据
                                 $model->save();
@@ -100,10 +96,6 @@ class BookController extends Controller{
                                 $Author=new Author();
                                 $Author->name=$model->author_name;
                                 $Author->status=1;
-                                $model->score=8;
-                                $model->downloads=2000;
-                                $model->collection=4000;
-                                $model->clicks=10000;
                                 $Author->create_time=time();
                                 $transaction=\Yii::$app->db->beginTransaction();//开启事务
                                 try{

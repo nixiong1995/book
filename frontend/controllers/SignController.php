@@ -91,15 +91,5 @@ class SignController extends Controller
         return $response;
     }
 
-    public function actionApppay(){
-        $config_value=[
-            'app_id' => '2018010501599590',
-           'private_key'=>'MIICXAIBAAKBgQCpXTXIGlRgP/KuR2k3fxzH3GlzX/eTuMJoq+iSpMPYmEMQPEnE9tBMI2/daoahQ4ntObCdXPTJrUcFA1dGMlaGnLg9yZCJy87brMsPRbVYNeCsnX1XyJKs9747Qy8t+f4n6R+jO6eU9rFKtkyJveoHaAy+4GrIITzPRZNGLksZzQIDAQABAoGATz+oTMvVM3x4yAfuOeOmyfZe+XesV1kazvOxzfx/D7ifmNc9BYcgDKCAVbDk8kyyG2jlNZ0rhbspAjV//v7K8Usx2P74XdiDtpKffNQUPJdyZHedhPRCo+JXs8FlJLMOiNSCJ/KsiQJrY2wxKtaeLdyErPuqotCTm3IYwP2V2JkCQQDVm+ZUVi1K1sBjQrAdCnv3iXR4Tw6JMZKZI48zUFwRzxvM+aN+IgBpYjm3wv9KPYp9NuuRG7+Gjw2S/FLtMOKjAkEAyvmDHHXownioJhHiegSpn7QiI8uOzhVip7PqaZZXfXggb97nTp9x7uTMLUO1oSl0ISBPfe1bn5V2t+FwUkJIzwJAY4wqBTe8F9qJAjk79ezC5RNr8f112r39gdyuic1zeuE4JYhZhxi1dGdQWrFHZAPWHJCRq6hw03arbsqkouFbXQJAF5APoGYvtyO6oXDCEdgouNl4fR9MXLAu27kPJWLGlVI0scf2ojHwUANPkJGjrCnbyVyu3beIQ2Zeeco599KqEQJBAMaACGkuziSZgsutzIVewJx5ajDWdFgOuVu0jl533GNKM+nJlQkwJUoScPOusV6oil47RA+ttOQOmzTK4YVm4q8=',
-            'public_key'=>'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCpXTXIGlRgP/KuR2k3fxzH3GlzX/eTuMJoq+iSpMPYmEMQPEnE9tBMI2/daoahQ4ntObCdXPTJrUcFA1dGMlaGnLg9yZCJy87brMsPRbVYNeCsnX1XyJKs9747Qy8t+f4n6R+jO6eU9rFKtkyJveoHaAy+4GrIITzPRZNGLksZzQIDAQAB',
-        ];
-        $order=['order_sn'=>'00001','order_amount'=>100];
-        var_dump($this->actionGetAppcode($order,$config_value));
 
-
-    }
 }
