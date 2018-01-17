@@ -95,6 +95,9 @@ class BookshelfController extends Controller{
                             }
                             $result['code']=200;
                             $result['msg']='获取默认推荐书信息成功';
+                        }else{
+                            $result['code']=200;
+                            $result['msg']='您的书架为空';
                         }
                     }
                 }else{
