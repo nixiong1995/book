@@ -66,9 +66,9 @@ class BookshelfController extends Controller{
                         }
                     }else{
                         //没有收藏过书,默认推荐(查询推荐书id)
-                        //查询数据库有没有该用户
-                        $model=UserDetails::findOne(['user_id'=>$user_id]);
-                        if($model){
+                        //判断用户是否阅读过书,阅读过书不在推荐
+                        $model=Reading::find()->where(['user_id'=>$user_id])->one();
+                        if(!$model){
                             $GroomIds=\Yii::$app->db->createCommand('SELECT id FROM book WHERE id >= ((SELECT MAX(id) FROM book)-(SELECT MIN(id) FROM book)) * RAND() + (SELECT MIN(id) FROM book)  LIMIT 7')->queryColumn();
                             $Books2=Book::find()->where(['id'=>$GroomIds])->all();
                             //将推荐的书的通过|符号转成字符串存入数据库
@@ -95,8 +95,6 @@ class BookshelfController extends Controller{
                             }
                             $result['code']=200;
                             $result['msg']='获取默认推荐书信息成功';
-                        }else{
-                            $result['msg']='数据库没有该用户';
                         }
                     }
                 }else{
