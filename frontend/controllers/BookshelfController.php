@@ -26,14 +26,16 @@ class BookshelfController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-            if($res){
-           $result['msg']= $res;
-            }else{
+           // if($res){
+           //$result['msg']= $res;
+          //  }else{
                 $user_id=\Yii::$app->request->post('user_id');
                 if($user_id){
                     //查询用户收藏过的书id
                     $collect=\Yii::$app->db->createCommand("SELECT collect FROM user_details WHERE user_id=$user_id")->queryScalar();
-                    if($collect){
+                    $user=UserDetails::find()->where(['user_id'=>$user_id])->one();
+
+                    if($user->collect){
 
                         //将收藏过的书分割成数组
                         $CollectIds=explode('|',$collect);
@@ -68,13 +70,14 @@ class BookshelfController extends Controller{
                         //没有收藏过书,默认推荐(查询推荐书id)
                         //判断用户是否阅读过书,阅读过书不在推荐
                         $model=Reading::find()->where(['user_id'=>$user_id])->one();
+
                         if(!$model){
                             $GroomIds=\Yii::$app->db->createCommand('SELECT id FROM book WHERE id >= ((SELECT MAX(id) FROM book)-(SELECT MIN(id) FROM book)) * RAND() + (SELECT MIN(id) FROM book)  LIMIT 7')->queryColumn();
                             $Books2=Book::find()->where(['id'=>$GroomIds])->all();
                             //将推荐的书的通过|符号转成字符串存入数据库
                             $collect=implode('|',$GroomIds);
-                            $model->collect=$collect;
-                            $model->save();
+                            $user->collect=$collect;
+                            $user->save();
                             foreach ( $Books2 as $book2){
                                 //判断是否版权图书,不拼接图片域名
                                 $ImgUrl=$book2->image;
@@ -103,7 +106,7 @@ class BookshelfController extends Controller{
                 }else{
                     $result['msg']='请传入用户id';
                 }
-           }
+          // }
 
         }else{
             $result['msg']='请求方式错误';
