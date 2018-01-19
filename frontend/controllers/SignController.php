@@ -91,5 +91,36 @@ class SignController extends Controller
         return $response;
     }
 
+    public function actionAlipayNotify(){
+        //验证签名
+        $aop = new AopClient();
+        $aop->alipayrsaPublicKey = 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCpXTXIGlRgP/KuR2k3fxzH3GlzX/eTuMJoq+iSpMPYmEMQPEnE9tBMI2/daoahQ4ntObCdXPTJrUcFA1dGMlaGnLg9yZCJy87brMsPRbVYNeCsnX1XyJKs9747Qy8t+f4n6R+jO6eU9rFKtkyJveoHaAy+4GrIITzPRZNGLksZzQIDAQAB';
+        $flag = $aop->rsaCheckV1($_POST, NULL, "RSA2");
+        //验签
+        if($flag){
+            //校验通知数据的正确性
+            $out_trade_no = $_POST['out_trade_no'];//商户订单号
+            $trade_no = $_POST['trade_no'];//支付宝交易号
+            $trade_status = $_POST['trade_status'];//交易状态trade_status
+            $total_amount = $_POST['total_amount'];//订单的实际金额
+            $app_id = $_POST['app_id'];
+            if($app_id!=$this->config['app_id'])exit('fail');//验证app_id是否为该商户本身
+            //只有交易通知状态为TRADE_SUCCESS或TRADE_FINISHED时，支付宝才会认定为买家付款成功。
+            if($trade_status != 'TRADE_FINISHED' && $trade_status != 'TRADE_SUCCESS')exit('fail');
+            //校验订单的正确性
+            if(!empty($out_trade_no)){
+                //1、商户需要验证该通知数据中的out_trade_no是否为商户系统中创建的订单号;
+               //2、判断total_amount是否确实为该订单的实际金额（即商户订单创建时的金额）；
+              //3、校验通知中的seller_id（或者seller_email) 是否为out_trade_no这笔单据的对应的操作方（有的时候，一个商户可能有多个seller_id/seller_email）。
+            //上述1、2、3有任何一个验证不通过，则表明本次通知是异常通知，务必忽略。在上述验证通过后商户必须根据支付宝不同类型的业务通知，正确的进行不同的业务处理，并且过滤重复的通知结果数据。
+            //校验成功后在response中返回success，校验失败返回failure
+            }
+            exit('fail');
+        }
+
+        echo"fail"; //验证签名失败
+
+    }
+
 
 }

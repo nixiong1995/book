@@ -72,15 +72,21 @@ class YuewenController extends \yii\web\Controller{
             $ArrayLength=count($data['content']['data']);
             //循环更改is_vip和加入no(从多少章节开始收费)
             for ($i=0;$i<$ArrayLength;$i++){
-                //把全部章节更改为收费章节
-                $data['content']['data'][$i]['is_vip']=1;
-                //加入从多少章节开始收费
-                $data['content']['data'][$i]['no']=$book->no;
-                //判断用户是否更改该章节,该书从多少章节开始收费.用户购买该章节或者该章节是免费章节,is_vip改成0
-                if(in_array($data['content']['data'][$i]['chapter_id'],$chapter_no) || $data['content']['data'][$i]['sortid']<$book->no ){
+                //判断该书是否是收费书
+                if($book==0){
                     $data['content']['data'][$i]['is_vip']=0;
+                }else{
+                    //把全部章节更改为收费章节
+                    $data['content']['data'][$i]['is_vip']=1;
+                    //加入从多少章节开始收费
+                    $data['content']['data'][$i]['no']=$book->no;
+                    //判断用户是否已购买该章节,该书从多少章节开始收费.用户购买该章节或者该章节是免费章节,is_vip改成0
+                    if(in_array($data['content']['data'][$i]['chapter_id'],$chapter_no) || ($data['content']['data'][$i]['sortid']<$book->no && $book->no!=0) ){
+                        $data['content']['data'][$i]['is_vip']=0;
 
+                    }
                 }
+
             }
 
             // }
@@ -111,6 +117,8 @@ class YuewenController extends \yii\web\Controller{
                 $book_id=\Yii::$app->request->post('book_id');//本地图书id
                 $copyright_chapter_ids=\Yii::$app->request->post('copyright_chapter_id');//版权书章节id
                 //var_dump($copyright_chapter_ids);exit;
+                //解析json
+                $copyright_chapter_ids=json_decode($copyright_chapter_ids);
                 //请求地址
                 $postUrl = 'http://partner.chuangbie.com/partner/chaptercontent';
                 //查找该本书
@@ -120,7 +128,7 @@ class YuewenController extends \yii\web\Controller{
 
                 //遍历获取多章节内容
                 $datas=[];
-                foreach ( $copyright_chapter_ids as  $copyright_chapter_id){
+                foreach ( $copyright_chapter_ids->copyright_chapter_id as  $copyright_chapter_id){
                     $curlPost =[
                         'partner_id'=>2130,
                         'partner_sign'=>'b42c36ddd1a5cc2c6895744143f77b7b',

@@ -14,7 +14,7 @@
         </tr>
         <tr>
             <td>头像:</td>
-            <td><?=yii\bootstrap\Html::img('http://upload.book.com/'.$model->head,['class'=>'img-cricle','style'=>'width:70px;border-radius:50%'])?></td>
+            <td><?=yii\bootstrap\Html::img(HTTP_PATH.$model->head,['class'=>'img-cricle','style'=>'width:70px;border-radius:50%'])?></td>
         </tr>
         <tr>
             <td>生日:</td>

@@ -717,7 +717,6 @@ class BookstoreController extends Controller{
         return $result;
     }
 
-
     //书城完本限免
     public function actionEndBook(){
         $result = [

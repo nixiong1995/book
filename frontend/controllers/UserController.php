@@ -49,29 +49,36 @@ class UserController extends Controller {
             //验证接口
             $obj=new Verification();
             $res=$obj->check();
-           if($res){
+            if($res){
                 $result['msg']= $res;
             }else{
                 //接收数据
                 $request=\Yii::$app->request;
                 $data=$request->post();
-                $tel=$data['tel'];
-                $imei=$data['imei'];
-                $captcha=$data['captcha'];
+                $tel=isset($data['tel'])?$data['tel']:'';
+                $imei=isset($data['imei'])?$data['imei']:'';
+                $captcha=isset($data['captcha'])?$data['captcha']:'';
+                $source=isset($data['source'])?$data['source']:'';
+                $address=isset($data['address'])?$data['address']:'';
                 $redis=new \Redis();
                 $redis->connect('127.0.0.1');
                 $phone=$redis->get('tel'.$tel);
-                $sms=$redis->get('captcha');
+                $sms=$redis->get('captcha'.$tel);
                 $time=$redis->get('time'.$tel);
+                //判断是否有imei
+                if(!$imei){
+                    $result['msg']='没有IMEI号';
+                    return $result;
+                }
                 if(!$phone){
-                    $result['msg']='请先发送验证';
+                    $result['msg']='验证码错误';
                     return $result;
                 }
-                if($phone!=$tel && $captcha!=$sms){
-                    $result['msg']='验证码与手机号不匹配';
+                if($captcha==null || $captcha!=$sms){
+                    $result['msg']='验证码错误';
                     return $result;
                 }
-                if($time&&(time()-$time>2000)){
+                if($time==null || (time()-$time>300)){
                     $result['msg']='验证码已过期';
                     return $result;
                 }
@@ -81,93 +88,67 @@ class UserController extends Controller {
                     $result['msg']='电话已存在';
                     return $result;
                 }
-                $rows=\Yii::$app->db->createCommand("SELECT imei,tel FROM user WHERE imei='$imei'")->queryOne();
 
-                if($rows['imei'] && $rows['tel']==null){
-                    $model=User::findOne(['imei'=>$imei]);
-                    $model->tel=$data['tel'];
-                    $model->password_hash=\Yii::$app->security->generatePasswordHash($data['password']);
-                    $model->auth_key=\Yii::$app->security->generateRandomString();
-                    $model->save();
-                    $result['code']=200;
-                    $result['msg']='注册成功';
-                    $result['data']=['user_id'=>$model->id];
-                }elseif($rows['imei'] && $rows['tel']){
-                    //有手机号必须imei已经被注册(同一个手机,手机号不一样)
-                    $User=new User();
-                    $uid=$this->getuid();
-                    $res=\Yii::$app->db->createCommand("SELECT uid FROM user WHERE uid='$uid'")->queryOne();
-                    while ($res){
+                //根据IMEI查询记录的用户信息
+               $model1=User::findOne(['imei'=>$imei]);
+                if($model1){
+                    if($model1->tel){
+                        //该imei已绑定手机号,说明参数手机号未被注册,新建一条用户记录
+                        $User=new User();
                         $uid=$this->getuid();
                         $res=\Yii::$app->db->createCommand("SELECT uid FROM user WHERE uid='$uid'")->queryOne();
-                    }
-                    $User->uid=$uid;
-                    $User->tel=$data['tel'];
-                    $User->password_hash=\Yii::$app->security->generatePasswordHash($data['password']);
-                    $User->auth_key=\Yii::$app->security->generateRandomString();
-                    $User->address=$data['address'];
-                    $User->created_at=time();
-                    $User->imei='';
-                    $User->status=1;
-                    $transaction=\Yii::$app->db->beginTransaction();//开启事务
-                    try{
-                        $User->save();
-                        //实例化UserDetails
-                        $model=new UserDetails();
-                        $model->user_id=$User->id;
-                        if ($model->validate()) {//验证规则
-                            //保存所有数据
-                            $model->save();
-                            $result['code']=200;
-                            $result['msg']='注册成功';
-                            $result['data']=['user_id'=>$model->user_id];
+                        while ($res){
+                            $uid=$this->getuid();
+                            $res=\Yii::$app->db->createCommand("SELECT uid FROM user WHERE uid='$uid'")->queryOne();
                         }
-                        $transaction->commit();
-                    }catch ( Exception $e){
-                        //事务回滚
-                        $transaction->rollBack();
-                    }
-
-                }elseif($rows['imei']==null && $rows['tel']==null){
-                    //手机号和imei都没有被使用
-                    //实例化User
-                    $User=new User();
-                    $uid=$this->getuid();
-                    $res=\Yii::$app->db->createCommand("SELECT uid FROM user WHERE uid='$uid'")->queryOne();
-                    while ($res){
-                        $uid=$this->getuid();
-                        $res=\Yii::$app->db->createCommand("SELECT uid FROM user WHERE uid='$uid'")->queryOne();
-                    }
-                    $User->uid=$uid;
-                    $User->tel=$data['tel'];
-                    $User->password_hash=\Yii::$app->security->generatePasswordHash($data['password']);
-                    $User->auth_key=\Yii::$app->security->generateRandomString();
-                    $User->imei=$data['imei'];
-                    $User->address=$data['address'];
-                    $User->created_at=time();
-                    $User->status=1;
-                    $transaction=\Yii::$app->db->beginTransaction();//开启事务
-                    try{
-                        $User->save();
-                        //实例化UserDetails
-                        $model=new UserDetails();
-                        $model->user_id=$User->id;
-                        if ($model->validate()) {//验证规则
-                            //保存所有数据
-                            $model->save();
-                            $result['code']=200;
-                            $result['msg']='注册成功';
-                            $result['data']=['user_id'=>$model->user_id];
+                        $User->uid=$uid;
+                        $User->tel=$tel;
+                        $User->password_hash=\Yii::$app->security->generatePasswordHash($data['password']);
+                        $User->auth_key=\Yii::$app->security->generateRandomString();
+                        $User->address=$address;
+                        $User->source=$source;
+                        $User->created_at=time();
+                        $User->imei='';
+                        $User->status=1;
+                        $transaction=\Yii::$app->db->beginTransaction();//开启事务
+                        try{
+                            $User->save();
+                            //实例化UserDetails
+                            $model=new UserDetails();
+                            $model->user_id=$User->id;
+                            if ($model->validate()) {//验证规则
+                                //保存所有数据
+                                $model->save();
+                                $result['code']=200;
+                                $result['msg']='注册成功';
+                                $result['data']=['user_id'=>$model->user_id];
+                            }
+                            $transaction->commit();
+                        }catch ( Exception $e){
+                            //事务回滚
+                            $transaction->rollBack();
                         }
-                        $transaction->commit();
-                    }catch ( Exception $e){
-                        //事务回滚
-                        $transaction->rollBack();
+
+                    }else{
+                        //数据库已有用户信息,完成用户信息
+                        $model1->tel=$tel;
+                        if($address){
+                            $model1->address=$address;
+                        }
+                        if($source && !$model1->source){
+                            $model1->source=$source;
+                        }
+                        $model1->password_hash=\Yii::$app->security->generatePasswordHash($data['password']);
+                        $model1->auth_key=\Yii::$app->security->generateRandomString();
+                        $model1->save();
+                        $result['code']=200;
+                        $result['msg']='注册成功';
+                        $result['data']=['user_id'=>$model1->id];
                     }
 
-
+                }else{
+                    $result['msg']='数据库没该IMEI,请重新记录用户IMEI';
                 }
-
             }
         }else{
             $result['msg']='请求方式错误';
@@ -192,22 +173,16 @@ class UserController extends Controller {
 
                 $tel=\Yii::$app->request->post('tel');
                 $password=\Yii::$app->request->post('password');
-                $imei=\Yii::$app->request->post('imei');
                 $address=\Yii::$app->request->post('address');
                 $User=User::findOne(['tel'=>$tel,'status'=>1]);
                 if($User){
                     //查到用户
                     if(\Yii::$app->security->validatePassword($password,$User->password_hash)){
-                        //判断imei有adress是否为空
-                        if($User->imei==null && $imei){
-                            $User->imei=$imei;
-                        }
-
-                        if($User->address=='(null)' && $address){
+                        //如果address不为空,更新地址
+                        if($address){
                             $User->address=$address;
+                            $User->save();
                         }
-
-                        $User->save();
 
                         $model = UserDetails::findOne(['user_id' => $User->id]);
                         if($model->f_type){
@@ -360,43 +335,50 @@ class UserController extends Controller {
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-            if($res){
+           if($res){
                 //接口验证不通过
                 $result['msg']= $res;
-            }else{
+           }else{
                 $tel=\Yii::$app->request->post('tel');
                 $captcha=\Yii::$app->request->post('captcha');
                 $password=\Yii::$app->request->post('password');
-                $model=User::findOne(['tel'=>$tel]);
-                if($model){
-                    $redis=new \Redis();
-                    $redis->connect('127.0.0.1');
-                    $phone=$redis->get('tel'.$tel);
-                    $sms=$redis->get('captcha');
-                    $time=$redis->get('time'.$tel);
-                    if(!$phone){
-                        $result['msg']='请先发送验证嘛';
-                        return $result;
-                    }
-                    if($phone!=$tel && $captcha!=$sms){
-                        $result['msg']='验证码与手机号不匹配';
-                        return $result;
-                    }
-                    if($time&&(time()-$time>5000)){
-                        $result['msg']='验证码已过期';
-                        return $result;
-                    }
-                    $model->password_hash=\Yii::$app->security->generatePasswordHash($password);
-                    $model->auth_key=\Yii::$app->security->generateRandomString();
-                    if($model->save()){
-                        $result['code']=200;
-                        $result['msg']='找回密码成功';
-                    }else{
-                        $result['msg']='找回密码失败';
-                    }
-                }else{
-                    $result['msg']='没有该用户';
+                //检测是否传入变量
+                if(empty($tel) || empty($captcha) ||empty($password)){
+                    $result['msg']='请传入指定参数';
+                    return $result;
                 }
+                //获取短信验证码和手机,进行对比
+                 $redis=new \Redis();
+                 $redis->connect('127.0.0.1');
+                 $phone=$redis->get('tel'.$tel);
+                 $sms=$redis->get('captcha'.$tel);
+                 $time=$redis->get('time'.$tel);
+                 if(!$phone){
+                     $result['msg']='验证码错误';
+                     return $result;
+                 }
+                 if($captcha==null || $captcha!=$sms){
+                     $result['msg']='验证码错误';
+                     return $result;
+                 }
+                 if($time==null ||(time()-$time>300)){
+                     $result['msg']='验证码已过期';
+                     return $result;
+                 }
+                    $model=User::findOne(['tel'=>$tel]);
+                    if($model){
+                        $model->password_hash=\Yii::$app->security->generatePasswordHash($password);
+                        $model->auth_key=\Yii::$app->security->generateRandomString();
+                        if($model->save()){
+                            $result['code']=200;
+                            $result['msg']='找回密码成功';
+                        }else{
+                            $result['msg']='找回密码失败';
+                        }
+
+                    }else{
+                        $result['msg']='没有该用户';
+                    }
             }
         }else{
             $result['msg']='请求方式错误';
@@ -463,7 +445,6 @@ class UserController extends Controller {
         }
         //print_r($response->Message);
     }
-
 
     //用户读书时间累加
     public function actionReadTime(){
@@ -573,8 +554,19 @@ class UserController extends Controller {
                 $requset=\Yii::$app->request;
                 //接收手机端传过来的数据
                 $imei=$requset->post('imei');//用户手机唯一标示
+                //判断是否有imei
+                if(!$imei){
+                    $result['msg']='请传入手机IMEI号';
+                    return $result;
+                }
+
+                //参数处理
                 $address=$requset->post('address');//用户地域
-                $source=$requset->post('source')?$requset->post('source'):'';
+                $source=$requset->post('source');
+                $address=isset($address)?$address:'';
+                $source=isset($source)?$source:'';
+
+
                 //通过imei判断是返回用户信息还是记录用户信息
                 $UserObj=User::findOne(['imei'=>$imei]);
                 if($UserObj){
@@ -698,7 +690,7 @@ class UserController extends Controller {
                             'status'=>$User->status,'created_at'=>$User->created_at,'birthday'=>null,
                             'sex'=>$model->sex,'head'=>null,'time'=>0,'author'=> null,
                             'Rbook'=>null,'type'=>null,'ticket'=>0,'voucher'=>0,
-                            'address'=>$User->address,'source'=>null,'vip'=>$model->vip,'collect_book'=>null,
+                            'address'=>$User->address,'source'=>$User->source,'vip'=>$model->vip,'collect_book'=>null,
                             'purchased_book'=>null,'nickname'=>null];
                         $transaction->commit();
                     }catch ( Exception $e){

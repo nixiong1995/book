@@ -21,6 +21,8 @@ class Book extends ActiveRecord{
             ['score', 'in', 'range' => [0,1, 2, 3,4,5,6,7,8,9,10],'message'=>'只能输入0-10的整数'],
             [['ascription','author_name','price'],'safe'],
             ['ascription','validateFromAscription'],
+            ['no','validateNO'],
+            ['price','validatePrice'],
 
         ];
     }
@@ -124,16 +126,39 @@ class Book extends ActiveRecord{
     //验证来自和归属选择是否正确
     public function validateFromAscription(){
 
+        //根据选择的书归属,查询这本书的出处
         $data=Information::findOne(['id'=>$this->ascription]);
         //$this->addError('ascription',$data->type);
+        //如果选择得是1,说明这本书来自1(定制).判断他的type是否等于2(作者)
         if($this->from==1 && $data->type!=2){
             $this->addError('ascription','该书属于签约图书,请选择对应作者');
+            //如果选择得是2,说明这本书来自2(签约).判断他的type是否等于2(作者)
         }elseif ($this->from==2 && $data->type!=2){
             $this->addError('ascription','该书属于定制图书,请选择对应作者');
+            //如果选择得是3,说明这本书来自3(版权).判断他的type是否等于1(版权方)
         }elseif ($this->from==3 && $data->type!=1){
             $this->addError('ascription','该书属于版权方图书,请选择对应版权方');
+            //如果选择得是4,说明这本书来自4(爬虫).判断他的type是否等于3(网络爬虫)
         }elseif ($this->from==4 && $data->type!=3){
             $this->addError('ascription','该书属于网络爬虫图书,请选择网络爬虫');
+        }
+    }
+
+    //验证为收费书和vip专属书书,no不能为0
+    public function validateNO(){
+        if($this->is_free==1 ||$this->is_free==2){
+            if($this->no==0){
+                $this->addError('no','收费书,收费章节开始数不能为0');
+            }
+        }
+    }
+
+    //验证为收费书和vip专属书书,price不能为0
+    public function validatePrice(){
+        if($this->is_free==1 ||$this->is_free==2){
+            if($this->price==0){
+                $this->addError('price','收费书,收费章节开始数不能为0');
+            }
         }
     }
 
