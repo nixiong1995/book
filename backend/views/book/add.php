@@ -25,7 +25,7 @@ echo $form->field($model,'type')->textInput();
 echo $form->field($model,'is_free',['inline'=>true])->radioList(['免费','VIP专属','收费']);
 echo $form->field($model,'price')->textInput();
 echo $form->field($model,'no')->textInput();
-echo '<a class="btn btn-info"> 点击生成以下数值</a>';
+echo '<a class="btn btn-danger"> 点击生成以下数值</a>';
 echo $form->field($model,'clicks')->textInput();
 //echo $form->field($model,'sale')->textInput();
 echo $form->field($model,'downloads')->textInput();
@@ -41,7 +41,7 @@ echo '<button type="submit" class="btn btn-info">提交</button>';
 $this->registerJs(new \yii\web\JsExpression(
     <<<JS
     //观看随机数
-    $('.btn-info').on('click',function() {
+    $('.btn-danger').on('click',function() {
         //观看随机数
         var clicks=randomNum(5000,10000);
        $('#book-clicks').val(clicks);

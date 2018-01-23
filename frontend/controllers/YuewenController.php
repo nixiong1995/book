@@ -146,7 +146,6 @@ class YuewenController extends \yii\web\Controller{
         }else{
             $result['code']=400;
             $result['msg']='请求方式错误';
-
         }
         return $result;
     }
