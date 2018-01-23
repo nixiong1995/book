@@ -1,6 +1,9 @@
 <?php
 ?>
-    <p><a href="<?=\yii\helpers\Url::to(['book/index'])?>" class="btn btn-primary">添加秒杀</a></p>
+    <p>
+        <a href="<?=\yii\helpers\Url::to(['book/index'])?>" class="btn btn-primary">加入本地书籍</a>
+        <a href="<?=\yii\helpers\Url::to(['copyright/index'])?>" class="btn btn-primary">加入版权书籍</a>
+    </p>
 <h2>限时秒杀列表</h2>
 <table class="table">
     <tr>

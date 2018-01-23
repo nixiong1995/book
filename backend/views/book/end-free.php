@@ -1,7 +1,10 @@
 <?php
 ?>
 <h2>男生完本限免列表</h2>
-<p><a href="<?=\yii\helpers\Url::to(['book/index'])?>" class="btn btn-primary">加入书籍</a></p>
+    <p>
+        <a href="<?=\yii\helpers\Url::to(['book/index'])?>" class="btn btn-primary">加入本地书籍</a>
+        <a href="<?=\yii\helpers\Url::to(['copyright/index'])?>" class="btn btn-primary">加入版权书籍</a>
+    </p>
 <table class="table">
     <tr>
         <th>书名</th>

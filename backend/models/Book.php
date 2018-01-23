@@ -150,6 +150,10 @@ class Book extends ActiveRecord{
             if($this->no==0){
                 $this->addError('no','收费书,收费章节开始数不能为0');
             }
+        }elseif($this->is_free==0){
+            if($this->no>0){
+                $this->addError('no','免费书,收费章节开始数应该为0');
+            }
         }
     }
 
@@ -157,7 +161,11 @@ class Book extends ActiveRecord{
     public function validatePrice(){
         if($this->is_free==1 ||$this->is_free==2){
             if($this->price==0){
-                $this->addError('price','收费书,收费章节开始数不能为0');
+                $this->addError('price','收费书,价格不能为0');
+            }
+        }elseif($this->is_free==0){
+            if($this->price>0){
+                $this->addError('price','免费书,价格应该为0');
             }
         }
     }

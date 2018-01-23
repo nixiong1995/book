@@ -1,7 +1,10 @@
 <?php
 ?>
 <h2>精品推荐列表</h2>
-<p><a href="<?=\yii\helpers\Url::to(['book/index'])?>" class="btn btn-primary">加入书籍</a></p>
+    <p>
+        <a href="<?=\yii\helpers\Url::to(['book/index'])?>" class="btn btn-primary">加入本地书籍</a>
+        <a href="<?=\yii\helpers\Url::to(['copyright/index'])?>" class="btn btn-primary">加入版权书籍</a>
+    </p>
 <p class="col-lg-9">
 <form class="form-inline" method="get" action="<?=\yii\helpers\Url::to(['book/boutique'])?>">
     <?=\yii\bootstrap\Html::dropDownList('category','0',\backend\models\Book::getRecommendCategory(),['class'=>"form-control"])?>

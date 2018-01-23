@@ -273,7 +273,20 @@ class BookController extends Controller{
                 $book->groom_time=time();
                 $book->save(false);
                 \Yii::$app->session->setFlash('success', '添加推荐成功');
-                return $this->redirect(['book/index']);
+                if($book->groom==1){
+                    return $this->redirect(['book/today-read']);
+                }elseif ($book->groom==2){
+                    return $this->redirect(['book/today-free']);
+                }elseif ($book->groom==3){
+                    return $this->redirect(['book/girl-free']);
+                }elseif ($book->groom==4){
+                    return $this->redirect(['book/boy-free']);
+                }elseif ($book->groom==5){
+                    return $this->redirect(['book/end-free']);
+                }elseif ($book->groom==6){
+                    return $this->redirect(['book/girl-endfree']);
+                }
+
             }
         }
         return $this->render('groom-add',['model'=>$model]);
