@@ -49,25 +49,36 @@ class UserController extends Controller {
             //验证接口
             $obj=new Verification();
             $res=$obj->check();
-            if($res){
-                $result['msg']= $res;
-            }else{
+           // if($res){
+              //  $result['msg']= $res;
+          //  }else{
                 //接收数据
                 $request=\Yii::$app->request;
-                $data=$request->post();
-                $tel=isset($data['tel'])?$data['tel']:'';
+
+               /* $tel=isset($data['tel'])?$data['tel']:'';
                 $imei=isset($data['imei'])?$data['imei']:'';
                 $captcha=isset($data['captcha'])?$data['captcha']:'';
                 $source=isset($data['source'])?$data['source']:'';
-                $address=isset($data['address'])?$data['address']:'';
+                $address=isset($data['address'])?$data['address']:'';*/
+                $tel=\Yii::$app->request->post('tel');//电话
+                $captcha=\Yii::$app->request->post('captcha');//验证码
+                $imei=\Yii::$app->request->post('imei');//手机唯一标示
+                $source=\Yii::$app->request->post('source');//来源
+                $address=\Yii::$app->request->post('address');//地域
+                $password=\Yii::$app->request->post('password');//地域
                 $redis=new \Redis();
                 $redis->connect('127.0.0.1');
                 $phone=$redis->get('tel'.$tel);
                 $sms=$redis->get('captcha'.$tel);
                 $time=$redis->get('time'.$tel);
                 //判断是否有imei
-                if(!$imei){
+                if(empty($imei)){
                     $result['msg']='没有IMEI号';
+                    return $result;
+                }
+                //判断是否输入密码
+                if(empty($password)){
+                    $result['msg']='没有密码';
                     return $result;
                 }
                 if(!$phone){
@@ -78,13 +89,13 @@ class UserController extends Controller {
                     $result['msg']='验证码错误';
                     return $result;
                 }
-                if($time==null || (time()-$time>300)){
+                if($time==null || (time()-$time>30000)){
                     $result['msg']='验证码已过期';
                     return $result;
                 }
                 //验证电话唯一性
-                $tel=User::findOne(['tel'=>$tel]);
-                if($tel){
+                $res=User::findOne(['tel'=>$tel]);
+                if($res){
                     $result['msg']='电话已存在';
                     return $result;
                 }
@@ -103,7 +114,7 @@ class UserController extends Controller {
                         }
                         $User->uid=$uid;
                         $User->tel=$tel;
-                        $User->password_hash=\Yii::$app->security->generatePasswordHash($data['password']);
+                        $User->password_hash=\Yii::$app->security->generatePasswordHash($password);
                         $User->auth_key=\Yii::$app->security->generateRandomString();
                         $User->address=$address;
                         $User->source=$source;
@@ -138,7 +149,7 @@ class UserController extends Controller {
                         if($source && !$model1->source){
                             $model1->source=$source;
                         }
-                        $model1->password_hash=\Yii::$app->security->generatePasswordHash($data['password']);
+                        $model1->password_hash=\Yii::$app->security->generatePasswordHash($password);
                         $model1->auth_key=\Yii::$app->security->generateRandomString();
                         $model1->save();
                         $result['code']=200;
@@ -149,7 +160,7 @@ class UserController extends Controller {
                 }else{
                     $result['msg']='数据库没该IMEI,请重新记录用户IMEI';
                 }
-            }
+            //}
         }else{
             $result['msg']='请求方式错误';
         }
