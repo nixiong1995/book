@@ -71,11 +71,12 @@ class YuewenController extends \yii\web\Controller{
             //统计数组长度
             $ArrayLength=count($data['content']['data']);
             //循环更改is_vip和加入no(从多少章节开始收费)
+
             for ($i=0;$i<$ArrayLength;$i++){
                 //判断该书是否是收费书
-                if($book->is_free==0){
+                //if($book->is_free==0){
                     $data['content']['data'][$i]['is_vip']=0;
-                }else{
+               /* }else{
                     //把全部章节更改为收费章节
                     $data['content']['data'][$i]['is_vip']=1;
                     //加入从多少章节开始收费
@@ -85,7 +86,7 @@ class YuewenController extends \yii\web\Controller{
                         $data['content']['data'][$i]['is_vip']=0;
 
                     }
-                }
+                }*/
 
             }
 
