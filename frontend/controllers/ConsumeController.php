@@ -224,7 +224,7 @@ class  ConsumeController extends Controller{
         return $relust;
     }
 
-    //单章购买计算
+    //单章购买
     public function actionSingleChapter(){
         $relust=[
           'code'=>400,
@@ -321,6 +321,52 @@ class  ConsumeController extends Controller{
         return $relust;
     }
 
-    //消费扣除
+    //多章购买消费计算
+    public function actionMultiCalculation(){
+        $relust=[
+          'code'=>400,
+           'msg'=>''
+        ];
+        if(\Yii::$app->request->isPost){
+            $obj = new Verification();
+            $res = $obj->check();
+             //if($res){
+                 //$result['msg']= $res;
+            // }else{
+                 //接收参数
+                 $book_id=\Yii::$app->request->post('book_id');//书id
+                 $user_id=\Yii::$app->request->post('user_id');//用户id
+                 //判断是否传入指定参数
+                 if(empty($book_id) || empty($user_id)){
+                     $relust['msg']='未传入指定参数';
+                     return $relust;
+                 }
+                 //查询该书基本信息
+                 $book=Book::findOne(['id'=>$book_id]);
+                 //查询用户基本信息
+                 $user=User::findOne(['id'=>$user_id]);
+                 //请求版权方书本信息接口
+                 $postUrl = 'http://partner.chuangbie.com/partner/bookinfo';
+                 $curlPost =[
+                     'partner_id'=>2130,
+                     'partner_sign'=>'b42c36ddd1a5cc2c6895744143f77b7b',
+                     'book_id'=>$book->copyright_book_id,
+                 ];
+                 $post=new PostRequest();
+                 $record=json_decode($post->request_post($postUrl,$curlPost));
+                 var_dump($record);exit;
+                 //查询用户已购章节
+                 $purchased=Purchased::find()->where(['user_id'=>$user_id])->one();
+                 if($purchased){
+
+                 }
+
+
+            // }
+        }else{
+            $relust['msg']='请求方式错误';
+        }
+        return $relust;
+    }
 
 }

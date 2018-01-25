@@ -49,17 +49,10 @@ class UserController extends Controller {
             //验证接口
             $obj=new Verification();
             $res=$obj->check();
-           // if($res){
-              //  $result['msg']= $res;
-          //  }else{
+            if($res){
+               $result['msg']= $res;
+            }else{
                 //接收数据
-                $request=\Yii::$app->request;
-
-               /* $tel=isset($data['tel'])?$data['tel']:'';
-                $imei=isset($data['imei'])?$data['imei']:'';
-                $captcha=isset($data['captcha'])?$data['captcha']:'';
-                $source=isset($data['source'])?$data['source']:'';
-                $address=isset($data['address'])?$data['address']:'';*/
                 $tel=\Yii::$app->request->post('tel');//电话
                 $captcha=\Yii::$app->request->post('captcha');//验证码
                 $imei=\Yii::$app->request->post('imei');//手机唯一标示
@@ -160,7 +153,7 @@ class UserController extends Controller {
                 }else{
                     $result['msg']='数据库没该IMEI,请重新记录用户IMEI';
                 }
-            //}
+            }
         }else{
             $result['msg']='请求方式错误';
         }

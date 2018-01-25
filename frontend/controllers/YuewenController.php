@@ -73,7 +73,7 @@ class YuewenController extends \yii\web\Controller{
             //循环更改is_vip和加入no(从多少章节开始收费)
             for ($i=0;$i<$ArrayLength;$i++){
                 //判断该书是否是收费书
-                if($book==0){
+                if($book->no==0){
                     $data['content']['data'][$i]['is_vip']=0;
                 }else{
                     //把全部章节更改为收费章节
