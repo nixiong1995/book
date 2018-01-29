@@ -225,7 +225,7 @@ class  ConsumeController extends Controller{
 
 
                 //计算用户账户余额加书券是否大于图书价格
-                if($user->ticket<$price){
+                if($user->ticket< $DiscountedPrice){
                     $relust['code']=401;
                     $relust['data']=['RealPrice'=>$RealPrice,'discount'=>$discount,'deduction'=>$voucher,'DiscountedPrice'=>$DiscountedPrice,'VoucherBalance'=>$voucher_balance,'TicketBalance'=>$ticket_balance,'chapter_name'=>$chapter_name];
                     $relust['msg']='余额不足';
@@ -273,10 +273,7 @@ class  ConsumeController extends Controller{
                 $book=Book::findOne(['id'=>$book_id]);
                 //根据版权章节id查询出章节字数
                 //请求地址
-
                 $postUrl = 'http://partner.chuangbie.com/partner/chapterinfo';
-                //遍历查询章节字数
-
                 $curlPost =[
                     'partner_id'=>2130,
                     'partner_sign'=>'b42c36ddd1a5cc2c6895744143f77b7b',
@@ -323,7 +320,7 @@ class  ConsumeController extends Controller{
                 }
 
                 //计算用户账户余额加书券是否大于图书价格
-                if($user->ticket<$price){
+                if($user->ticket<$DiscountedPrice){
                     $relust['code']=401;
                     $relust['msg']='余额不足';
                     $relust['data']=['RealPrice'=>$RealPrice,'discount'=>$RealPrice,'deduction'=>$voucher,'DiscountedPrice'=>$DiscountedPrice,'VoucherBalance'=>$voucher_balance,'TicketBalance'=>$ticket_balance];
@@ -333,18 +330,6 @@ class  ConsumeController extends Controller{
                     $relust['data']=['RealPrice'=>$RealPrice,'discount'=>$RealPrice,'deduction'=>$voucher,'DiscountedPrice'=>$DiscountedPrice,'VoucherBalance'=>$voucher_balance,'TicketBalance'=>$ticket_balance];
                     $relust['msg']='结算价格计算成功';
                 }
-
-
-
-
-
-
-
-
-
-
-
-
 
            // }
 
