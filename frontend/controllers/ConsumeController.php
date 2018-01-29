@@ -74,7 +74,8 @@ class  ConsumeController extends Controller{
                     $chapter_no=array_filter($chapter_no);//去除数组空元素
                     $no=count($chapter_no);//统计购买章节数量
                     $new_chapter_no=max($chapter_no);//最新章节号
-
+                    //获取购买的章节名称
+                    $chapter_name=$records->content->data[$new_chapter_no]->chapter_name;
 
                     //循环获取章节字数
                     for ($i=$new_chapter_no;$i<$total_chapter;$i++){
@@ -84,6 +85,8 @@ class  ConsumeController extends Controller{
                 }else{
                     //用户没有购买过该书,默认从收费章节开始购买
                     $charge=$book->no-1;//在数组中开始收费章节
+                    //获取购买的章节名称
+                    $chapter_name=$records->content->data[$charge]->chapter_name;
                     for ($i=$charge;$i<$total_chapter;$i++){
                         // $datas[]=$records->content->data[$i]->word_count;
                         $word_count+=$records->content->data[$i]->word_count;
@@ -95,21 +98,19 @@ class  ConsumeController extends Controller{
                 //计算购书价格
                 $price=round($book->price*($word_count/1000));
                 $RealPrice=$price;//实际价格
-                $discount=0;//折扣
+                $discount=0.00;//折扣后价格
 
 
 
                 //图书折扣
-                if(($total_chapter-$no)>=20 && ($total_chapter-$no)<60){//购买20章98折
-                    $price=$price*0.98;
-                    $discount=0.98;
-                    //var_dump($price);exit;
+                if(($total_chapter-$no)<20){
+                    $discount=round($price*1);
+                }elseif(($total_chapter-$no)>=20 && ($total_chapter-$no)<60){//购买20章98折
+                    $discount=round($price*0.98);
                 }elseif (($total_chapter-$no)>=60 && ($total_chapter-$no)<100){//购买60章9折
-                    $price=$price*0.9;
-                    $discount=0.9;
+                    $discount=round($price*0.9);
                 }elseif (($total_chapter-$no)>100){//购买100章以上
-                    $price=$price*0.8;
-                    $discount=0.8;
+                    $discount=round($price*0.8);
                 }
                 //查询用户账户
                 $user=User::findOne(['id'=>$user_id]);
@@ -118,36 +119,55 @@ class  ConsumeController extends Controller{
                 $voucher=0;
                 if($user->voucher){
                     //计算书券抵扣金额(最多只能抵扣25%)
-                    $deduction=round($price*0.25);//最多抵扣的金额
+                    $deduction=round($discount*0.25);//最多抵扣的金额
                     if($user->voucher>$deduction){//如果账户书券大于最多抵扣书券,减去抵扣书券
                         $voucher=$deduction.'.00';
+                        //账户书券余额
+                        $voucher_balance=$user->voucher-$voucher;
+
 
                     }else{//如果账户书券小于最多抵扣书券,减去账户所有书券
                         $voucher=$user->voucher;
+                        $voucher_balance=0;
                     }
                 }
                 //最终价格
-                $DiscountedPrice=round($price-$voucher);
+                $DiscountedPrice=round($discount-$voucher);
+                //账户阅票余额
+                $ticket_balance=$user->ticket-$DiscountedPrice;
+                if($ticket_balance>0){
+                    $ticket_balance=$ticket_balance;
+                }else{
+                    $ticket_balance=0.00;
+                }
+
+                //
+
+
+
                 //计算用户账户余额加书券是否大于图书价格
-                if($user->ticket<$price){
+                if($user->ticket<$DiscountedPrice){
                     $relust['code']=401;
                     $relust['msg']='余额不足';
+                    $relust['data']=['RealPrice'=>$RealPrice,'discount'=>$discount,'deduction'=>$voucher,'DiscountedPrice'=>$DiscountedPrice,'VoucherBalance'=>$voucher_balance,'TicketBalance'=>$ticket_balance,'chapter_name'=>$chapter_name];
                     return $relust;
                 }else{
                     $relust['code']=200;
-                    $relust['data']=['RealPrice'=>$RealPrice.'.00','discount'=>$discount,'deduction'=>$voucher,'DiscountedPrice'=>$DiscountedPrice.'.00'];
+                    $relust['data']=['RealPrice'=>$RealPrice,'discount'=>$discount,'deduction'=>$voucher,'DiscountedPrice'=>$DiscountedPrice,'VoucherBalance'=>$voucher_balance,'TicketBalance'=>$ticket_balance,'chapter_name'=>$chapter_name];
                     $relust['msg']='结算价格计算成功';
 
                 }
 
 
             }else{
-                if($purchased){
-                    //用户已经购买过该书章节,这次购买默认根据最后购买的章节购买
+                //根据传入的章节数量计算价格
+                if($purchased){//用户已经购买了该章节
                     //将已购章节字符串分割成数组
                     $chapter_no=explode('|',$purchased->chapter_no);
                     //最大章节(也就是最后购买章节)
                     $new_chapter_no=max($chapter_no);
+                    //用户购买章节的起始章节名称
+                    $chapter_name=$records->content->data[$new_chapter_no]->chapter_name;
                     //var_dump($new_chapter_no);exit;
                     //循环获取章节字数
                     for ($i=$new_chapter_no;$i<($chapter_number+$new_chapter_no);$i++){
@@ -158,6 +178,8 @@ class  ConsumeController extends Controller{
                 }else{
                     //用户没有购买过该书,默认从收费章节开始购买
                     $charge=$book->no-1;//在数组中开始收费章节
+                    //用户购买章节的起始章节名称
+                    $chaptet_name=$records->content->data[$charge]->chapter_name;
                     for ($i=$charge;$i<($chapter_number+$charge);$i++){
                         // $datas[]=$records->content->data[$i]->word_count;
                         $word_count+=$records->content->data[$i]->word_count;
@@ -168,20 +190,18 @@ class  ConsumeController extends Controller{
                 //计算购书价格
                 $price=round($book->price*($word_count/1000));
                 $RealPrice=$price;//实际价格
-                $discount=0;//折扣
+                $discount=0.00;//定义折扣后价格
 
 
                 //图书折扣
-                if($chapter_number>=20 &&$chapter_number<60){//购买20章98折
-                    $price=$price*0.98;
-                    $discount=0.98;
-                    //var_dump($price);exit;
+                if($chapter_number<20){
+                    $discount=round($price*1);
+                }elseif($chapter_number>=20 &&$chapter_number<60){//购买20章98折
+                    $discount=round($price*0.98);
                 }elseif ($chapter_number>=60 && $chapter_number<100){//购买60章9折
-                    $price=$price*0.9;
-                    $discount=0.9;
+                    $discount=round($price*0.9);
                 }elseif ($chapter_number>=100){//购买100章以上
-                    $price=$price*0.85;
-                    $discount=0.85;
+                    $discount=round($price*0.85);
                 }
                 //查询用户账户
                 $user=User::findOne(['id'=>$user_id]);
@@ -193,22 +213,35 @@ class  ConsumeController extends Controller{
                     $deduction=round($price*0.25);//最多抵扣的金额
                     if($user->voucher>$deduction){//如果账户书券大于最多抵扣书券,减去抵扣书券
                         $voucher=$deduction.'.00';
+                        //用户书券余额
+                        $voucher_balance=$user->voucher-$voucher;
+
 
                     }else{//如果账户书券小于最多抵扣书券,减去账户所有书券
                         $voucher=$user->voucher;
+                        $voucher_balance=0.00;
                     }
                 }
                 //最终价格
-                $DiscountedPrice=round($price-$voucher);
+                $DiscountedPrice=round($discount-$voucher);
+                //用户阅票余额
+                $ticket_balance=$user->ticket-$DiscountedPrice;
+                if($ticket_balance>0){
+                    $ticket_balance=$ticket_balance;
+                }else{
+                    $ticket_balance=0.00;
+                }
+
 
                 //计算用户账户余额加书券是否大于图书价格
                 if($user->ticket<$price){
                     $relust['code']=401;
+                    $relust['data']=['RealPrice'=>$RealPrice,'discount'=>$discount,'deduction'=>$voucher,'DiscountedPrice'=>$DiscountedPrice,'VoucherBalance'=>$voucher_balance,'TicketBalance'=>$ticket_balance,'chapter_name'=>$chapter_name];
                     $relust['msg']='余额不足';
                     return $relust;
                 }else{
                     $relust['code']=200;
-                    $relust['data']=['RealPrice'=>$RealPrice.'.00','discount'=>$discount,'deduction'=>$voucher,'DiscountedPrice'=>$DiscountedPrice.'.00'];
+                    $relust['data']=['RealPrice'=>$RealPrice,'discount'=>$discount,'deduction'=>$voucher,'DiscountedPrice'=>$DiscountedPrice,'VoucherBalance'=>$voucher_balance,'TicketBalance'=>$ticket_balance,'chapter_name'=>$chapter_name];
                     $relust['msg']='结算价格计算成功';
 
                 }
