@@ -37,16 +37,11 @@ class YuewenController extends \yii\web\Controller{
             $page_size = \Yii::$app->request->post('page_size');//分页显示时，为每页大小，默认全部显示
 
             //判断用户是否传入书id和用户id
-            if(!$user_id || !$book_id){
+            if(empty($user_id) || empty($book_id)){
                 $result['code']=400;
-                $result['msg']='请输入用户id和图书id';
+                $result['msg']='未传入指定参数';
                 return $result;
             }
-
-            //查询用户已购书
-            $purchased=Purchased::findOne(['user_id'=>$user_id,'book_id'=>$book_id]);
-            $chapter_no=explode('|',$purchased->chapter_no);//分割成数组
-            $chapter_no=array_filter($chapter_no);//删除数组中空元素
 
             //查询该书从什么章节开始开始收费
             $book = Book::findOne(['id' => $book_id]);
@@ -70,25 +65,43 @@ class YuewenController extends \yii\web\Controller{
             $data = json_decode($data, true);
             //统计数组长度
             $ArrayLength=count($data['content']['data']);
-            //循环更改is_vip和加入no(从多少章节开始收费)
-
-            for ($i=0;$i<$ArrayLength;$i++){
-                //判断该书是否是收费书
-                //if($book->is_free==0){
+            //判断该书是否收费书
+            if($book->is_free==0){
+                //免费书is_vip全部改成0
+                for ($i=0;$i<$ArrayLength;$i++){
                     $data['content']['data'][$i]['is_vip']=0;
-               /* }else{
+                    //加入从多少章节开始收费
+                    $data['content']['data'][$i]['no']=$book->no;
+                }
+                return $data;
+            }else{
+                //查询用户已购书
+                $purchased=Purchased::findOne(['user_id'=>$user_id,'book_id'=>$book_id]);
+                if($purchased){
+                    $chapter_no=explode('|',$purchased->chapter_no);//分割成数组
+                    $chapter_no=array_filter($chapter_no);//删除数组中空元素
+                }else{
+                    //没有购买书
+                    $chapter_no=[];
+                }
+
+                //循环更改is_vip和加入no(从多少章节开始收费)
+                for ($i=0;$i<$ArrayLength;$i++){
                     //把全部章节更改为收费章节
                     $data['content']['data'][$i]['is_vip']=1;
                     //加入从多少章节开始收费
                     $data['content']['data'][$i]['no']=$book->no;
                     //判断用户是否已购买该章节,该书从多少章节开始收费.用户购买该章节或者该章节是免费章节,is_vip改成0
-                    if(in_array($data['content']['data'][$i]['chapter_id'],$chapter_no) || ($data['content']['data'][$i]['sortid']<$book->no && $book->no!=0) ){
+                    if(in_array($data['content']['data'][$i]['sortid'],$chapter_no) || ($data['content']['data'][$i]['sortid']<$book->no && $book->no!=0) ){
                         $data['content']['data'][$i]['is_vip']=0;
 
                     }
-                }*/
+                }
+                return $data;
 
             }
+
+
 
             // }
 
@@ -98,7 +111,7 @@ class YuewenController extends \yii\web\Controller{
             $result['msg'] = '请求方式错误';
         }
 
-      return $data;
+      return $result;
     }
 
     //获取章节内容

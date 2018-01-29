@@ -4,8 +4,10 @@ namespace frontend\controllers;
 use backend\models\Author;
 use backend\models\Book;
 use backend\models\Category;
+use backend\models\Consume;
 use backend\models\Purchased;
 use backend\models\Reading;
+use backend\models\Recharge;
 use backend\models\User;
 use backend\models\UserDetails;
 use frontend\models\SmsDemo;
@@ -800,6 +802,121 @@ class UserController extends Controller {
                 }
 
             }
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
+    }
+
+    //用户账户
+    public function actionAccount(){
+        $result = [
+            'code'=>400,//状态
+            'msg'=>'',//错误信息,如果有
+        ];
+        if(\Yii::$app->request->isPost){
+            $obj=new Verification();
+            $res=$obj->check();
+            //if($res){
+                //接口验证不通过
+               // $result['msg']= $res;
+            //}else{
+                //接收参数
+                $user_id=\Yii::$app->request->post('user_id');//用户id
+                if(empty($user_id)){
+                    $result['msg']='请传入指定参数';
+                    return $result;
+                }
+                //根据用户id查询用户数据
+                $user=User::findBySql("SELECT ticket,voucher FROM user WHERE id=$user_id")->one();
+                if($user){
+                    //返回信息
+                    $result['data']=['ticket'=>$user->ticket,'voucher'=>$user->voucher];
+                    $result['msg']='获取账户信息成功';
+                    $result['code']=200;
+
+                }else{
+                    $result['msg']='没有该用户';
+                }
+           // }
+
+        }else{
+            $result['msg']='请求方式错误';
+
+        }
+        return $result;
+    }
+
+    //充值记录返回
+    public function actionRecharge(){
+        $result = [
+            'code'=>400,//状态
+            'msg'=>'',//错误信息,如果有
+        ];
+        if(\Yii::$app->request->isPost){
+            $obj=new Verification();
+            $res=$obj->check();
+           // if($res){
+            //接口验证不通过
+            // $result['msg']= $res;
+           // }else{
+                //接收参数
+                $user_id=\Yii::$app->request->post('user_id');
+                if(empty($user_id)){
+                    $result['msg']='没有指定参数';
+                    return $result;
+                }
+                $recharges=Recharge::findAll(['user_id'=>$user_id]);
+                if($recharges){
+                    foreach ($recharges as $recharge){
+                        $result['data'][]=['no'=>$recharge->no,'money'=>$recharge->money,'ticket'=>$recharge->ticket,'voucher'=>$recharge->voucher,'trade_no'=>$recharge->trade_no,'mode'=>$recharge->mode,'status'=>$recharge->status,'create_time'=>$recharge->create_time,'over_time'=>$recharge->over_time];
+                        $result['msg']='获取充值记录成功';
+                        $result['code']=200;
+                    }
+
+                }else{
+                    $result['code']=400;
+                    $result['msg']='无充值记录';
+                }
+           // }
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
+    }
+
+    //消费记录返回
+    public function actionConsume(){
+        $result = [
+            'code'=>400,//状态
+            'msg'=>'',//错误信息,如果有
+        ];
+        if(\Yii::$app->request->isPost){
+            $obj=new Verification();
+            $res=$obj->check();
+            // if($res){
+            //接口验证不通过
+            // $result['msg']= $res;
+            // }else{
+            //接收参数
+            $user_id=\Yii::$app->request->post('user_id');
+            if(empty($user_id)){
+                $result['msg']='没有指定参数';
+                return $result;
+            }
+            $consumes=Consume::findAll(['user_id'=>$user_id]);
+            if($consumes){
+                foreach ($consumes as $consume){
+                    $result['data'][]=['book_id'=>$consume->book_id,'consumption'=>$consume->consumption,'deductible'=>$consume->deductible,'discount'=>$consume->discount,'deduction'=>$consume->deduction,'content'=>$consume->content,'create_time'=>$consume->create_time,];
+                    $result['msg']='获取消费记录成功';
+                    $result['code']=200;
+                }
+
+            }else{
+                $result['code']=400;
+                $result['msg']='无消费记录';
+            }
+            // }
         }else{
             $result['msg']='请求方式错误';
         }

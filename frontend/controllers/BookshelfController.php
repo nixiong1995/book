@@ -18,6 +18,7 @@ class BookshelfController extends Controller{
         parent::init();
     }
 
+    //书架首页
     public function actionIndex(){
         $result = [
             'code'=>400,
