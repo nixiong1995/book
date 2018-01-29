@@ -179,7 +179,7 @@ class  ConsumeController extends Controller{
                     //用户没有购买过该书,默认从收费章节开始购买
                     $charge=$book->no-1;//在数组中开始收费章节
                     //用户购买章节的起始章节名称
-                    $chaptet_name=$records->content->data[$charge]->chapter_name;
+                    $chapter_name=$records->content->data[$charge]->chapter_name;
                     for ($i=$charge;$i<($chapter_number+$charge);$i++){
                         // $datas[]=$records->content->data[$i]->word_count;
                         $word_count+=$records->content->data[$i]->word_count;
