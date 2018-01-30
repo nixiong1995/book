@@ -124,7 +124,7 @@ class  ConsumeController extends Controller{
                         //$voucher_balance=$user->voucher-$voucher;
 
                     }else{//如果账户书券小于最多抵扣书券,减去账户所有书券
-                        $voucher=$user->voucher;
+                        $voucher=round($user->voucher);
                         //$voucher_balance=0;
                     }
                 }
@@ -133,9 +133,9 @@ class  ConsumeController extends Controller{
                 $DiscountedPrice=round($discount-$voucher);
                 //账户阅票余额
                // $ticket_balance=$user->ticket-$DiscountedPrice;
-                $ticket_balance=$user->ticket;
+                $ticket_balance=round($user->ticket);
                 //账户书券余额
-                $voucher_balance=$user->voucher;
+                $voucher_balance=round($user->voucher);
                 /*if($ticket_balance>0){
                     $ticket_balance=$ticket_balance;
                 }else{
@@ -186,7 +186,7 @@ class  ConsumeController extends Controller{
                 //计算购书价格
                 $price=round($book->price*($word_count/1000));
                 $RealPrice=$price;//实际价格
-                $discount=0.00;//定义折扣后价格
+                $discount=0;//定义折扣后价格
 
                 //图书折扣
                 if($chapter_number<20){
@@ -212,7 +212,7 @@ class  ConsumeController extends Controller{
                         //$voucher_balance=$user->voucher-$voucher;
 
                     }else{//如果账户书券小于最多抵扣书券,减去账户所有书券
-                        $voucher=$user->voucher;
+                        $voucher=round($user->voucher);
                         //账户书券余额
                         //$voucher_balance=0.00;
                     }
@@ -221,9 +221,9 @@ class  ConsumeController extends Controller{
                 $DiscountedPrice=round($discount-$voucher);
                 //用户阅票余额
                // $ticket_balance=$user->ticket-$DiscountedPrice;
-                $ticket_balance=$user->ticket;
+                $ticket_balance=round($user->ticket);
                 //账户书券余额
-                $voucher_balance=$user->voucher;
+                $voucher_balance=round($user->voucher);
                /* if($ticket_balance>0){
                     $ticket_balance=$ticket_balance;
                 }else{
@@ -315,7 +315,7 @@ class  ConsumeController extends Controller{
 
 
                     }else{//如果账户书券小于最多抵扣书券,减去账户所有书券
-                        $voucher=$user->voucher;
+                        $voucher=round($user->voucher);
                         //账户书券余额
                        // $voucher_balance=0.00;
                     }
@@ -324,9 +324,9 @@ class  ConsumeController extends Controller{
                 $DiscountedPrice=round($price-$voucher);
                 //账户阅票余额
                 //$ticket_balance=$user->ticket-$DiscountedPrice;
-                  $ticket_balance=$user->ticket;
+                  $ticket_balance=round($user->ticket);
                 //账户书券余额
-                  $voucher_balance=$user->voucher;
+                  $voucher_balance=round($user->voucher);
                 /*if($ticket_balance>0){
                     $ticket_balance=$ticket_balance;
                 }else{
