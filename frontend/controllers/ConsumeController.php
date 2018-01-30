@@ -1,11 +1,13 @@
 <?php
 namespace frontend\controllers;
 use backend\models\Book;
+use backend\models\Consume;
 use backend\models\Purchased;
 use backend\models\User;
 use DeepCopy\f001\B;
 use libs\PostRequest;
 use libs\Verification;
+use yii\db\Exception;
 use yii\web\Controller;
 use yii\web\Response;
 
@@ -21,7 +23,7 @@ class  ConsumeController extends Controller{
         parent::init();
     }
 
-    //多章购买
+    //多章价格计算
     public function actionMultiChapter(){
         $relust=[
             'code'=>400,
@@ -58,20 +60,20 @@ class  ConsumeController extends Controller{
             ];
             $post=new PostRequest();
             $records=json_decode($post->request_post($postUrl,$curlPost));
-            $total_chapter=count($records->content->data);//该书总章节数
+            $total_chapter=count($records->content->data);//该书总章节数(用于循环计算章节字数)
             $word_count=0;//字数
 
-            //判断是否传入购买章节数
+            //判断是否传入购买章节数(没有传入是购买剩余所有章节或者购买整本书)
             if(empty($chapter_number)){
 
                 //购买整本书或者购买剩余所有章节
-                //判断是否已购买该书
-                $no=0;//已购章节数量
+                $no=0;//定义已购章节数量
+                //判断用户是否已购买该书
                 if($purchased){
                     //购买剩余所有章节
                     $chapter_no=explode('|',$purchased->chapter_no);  //已购买该书的数组
                     $chapter_no=array_filter($chapter_no);//去除数组空元素
-                    $no=count($chapter_no);//统计已经购买章节数量,确定现在购买章节数量,计算折扣
+                    $no=count($chapter_no);//统计用户已经购买章节数量,确定现在购买章节数量,计算折扣
                     $new_chapter_no=max($chapter_no); //最大章节(也就是最后购买章节),计算用户这次该从哪个章节购买
                     //获取购买的起始章节名称
                     $chapter_name=$records->content->data[$new_chapter_no]->chapter_name;
@@ -96,22 +98,21 @@ class  ConsumeController extends Controller{
                 //计算购书价格
                 $price=round($book->price*($word_count/1000));
                 $RealPrice=$price;//实际价格
-                $discount=0.00;//折扣后价格
-
+                $discount=0;//定义折扣后价格
 
                 //图书折扣
-                if(($total_chapter-$no)<20){
+                if(($total_chapter-$no)<20){//购买20章以下无折扣
                     $discount=round($price*1);
                 }elseif(($total_chapter-$no)>=20 && ($total_chapter-$no)<60){//购买20章98折
                     $discount=round($price*0.98);
                 }elseif (($total_chapter-$no)>=60 && ($total_chapter-$no)<100){//购买60章9折
                     $discount=round($price*0.9);
-                }elseif (($total_chapter-$no)>100){//购买100章以上
+                }elseif (($total_chapter-$no)>100){//购买100章以上8折
                     $discount=round($price*0.8);
                 }
                 //查询用户账户
                 $user=User::findOne(['id'=>$user_id]);
-                //判断用户账户是否书券
+                //判断用户账户是否有书券
                 //定义抵扣书券为0
                 $voucher=0;
                 if($user->voucher){
@@ -120,22 +121,26 @@ class  ConsumeController extends Controller{
                     if($user->voucher>$deduction){//如果账户书券大于最多抵扣书券,减去抵扣书券
                         $voucher=$deduction;
                         //账户书券余额
-                        $voucher_balance=$user->voucher-$voucher;
+                        //$voucher_balance=$user->voucher-$voucher;
 
                     }else{//如果账户书券小于最多抵扣书券,减去账户所有书券
                         $voucher=$user->voucher;
-                        $voucher_balance=0;
+                        //$voucher_balance=0;
                     }
                 }
+
                 //最终价格
                 $DiscountedPrice=round($discount-$voucher);
                 //账户阅票余额
-                $ticket_balance=$user->ticket-$DiscountedPrice;
-                if($ticket_balance>0){
+               // $ticket_balance=$user->ticket-$DiscountedPrice;
+                $ticket_balance=$user->ticket;
+                //账户书券余额
+                $voucher_balance=$user->voucher;
+                /*if($ticket_balance>0){
                     $ticket_balance=$ticket_balance;
                 }else{
                     $ticket_balance=0.00;
-                }
+                }*/
 
                 //计算用户账户余额加书券是否大于图书价格
                 if($user->ticket<$DiscountedPrice){
@@ -204,24 +209,26 @@ class  ConsumeController extends Controller{
                     if($user->voucher>$deduction){//如果账户书券大于最多抵扣书券,减去抵扣书券
                         $voucher=$deduction;
                         //用户书券余额
-                        $voucher_balance=$user->voucher-$voucher;
-
+                        //$voucher_balance=$user->voucher-$voucher;
 
                     }else{//如果账户书券小于最多抵扣书券,减去账户所有书券
                         $voucher=$user->voucher;
                         //账户书券余额
-                        $voucher_balance=0.00;
+                        //$voucher_balance=0.00;
                     }
                 }
                 //最终价格
                 $DiscountedPrice=round($discount-$voucher);
                 //用户阅票余额
-                $ticket_balance=$user->ticket-$DiscountedPrice;
-                if($ticket_balance>0){
+               // $ticket_balance=$user->ticket-$DiscountedPrice;
+                $ticket_balance=$user->ticket;
+                //账户书券余额
+                $voucher_balance=$user->voucher;
+               /* if($ticket_balance>0){
                     $ticket_balance=$ticket_balance;
                 }else{
                     $ticket_balance=0.00;
-                }
+                }*/
 
 
                 //计算用户账户余额加书券是否大于图书价格
@@ -246,7 +253,7 @@ class  ConsumeController extends Controller{
         return $relust;
     }
 
-    //单章购买
+    //单章价格计算
     public function actionSingleChapter(){
         $relust=[
           'code'=>400,
@@ -291,7 +298,11 @@ class  ConsumeController extends Controller{
 
                 //查询用户账户
                 $user=User::findOne(['id'=>$user_id]);
-                //判断用户账户是否书券
+                if(!$user){
+                    $relust['msg']='没有该用户';
+                    return $relust;
+                }
+                //判断用户账户是否有书券
                 //定义抵扣书券为0
                 $voucher=0;
                 if($user->voucher){
@@ -300,24 +311,27 @@ class  ConsumeController extends Controller{
                     if($user->voucher>$deduction){//如果账户书券大于最多抵扣书券,减去抵扣书券
                         $voucher=$deduction;
                         //账户书券余额
-                        $voucher_balance=$user->voucher-$voucher;
+                        //$voucher_balance=$user->voucher-$voucher;
 
 
                     }else{//如果账户书券小于最多抵扣书券,减去账户所有书券
                         $voucher=$user->voucher;
                         //账户书券余额
-                        $voucher_balance=0.00;
+                       // $voucher_balance=0.00;
                     }
                 }
                 //最终价格
                 $DiscountedPrice=round($price-$voucher);
                 //账户阅票余额
-                $ticket_balance=$user->ticket-$DiscountedPrice;
-                if($ticket_balance>0){
+                //$ticket_balance=$user->ticket-$DiscountedPrice;
+                  $ticket_balance=$user->ticket;
+                //账户书券余额
+                  $voucher_balance=$user->voucher;
+                /*if($ticket_balance>0){
                     $ticket_balance=$ticket_balance;
                 }else{
                     $ticket_balance=0.00;
-                }
+                }*/
 
                 //计算用户账户余额加书券是否大于图书价格
                 if($user->ticket<$DiscountedPrice){
@@ -339,8 +353,178 @@ class  ConsumeController extends Controller{
         return $relust;
     }
 
+    //多章购买
+    public function actionMultiEmption(){
+        $relust=[
+            'code'=>400,
+            'msg'=>'',
+        ];
+        if(\Yii::$app->request->isPost){
+            $obj = new Verification();
+            $res = $obj->check();
+            if($res){
+                $result['msg']= $res;
+            }else{
+                //接收手机端传递的参数
+                $book_id=\Yii::$app->request->post('book_id');//图书id
+                $chapter_number=\Yii::$app->request->post('chapter_number');//章节数量
+                $user_id=\Yii::$app->request->post('user_id');//用户id
+                $ticket=\Yii::$app->request->post('ticket');//消费阅票数量
+                $voucher=\Yii::$app->request->post('voucher');//消费书券数量
+
+                //检测是否传入指定参数
+                if(empty($book_id) || empty($ticket) || empty($user_id)){
+                    $relust['msg']='请传入指定参数';
+                    return $relust;
+                }
+
+
+
+            }
+
+
+        }else{
+            $relust['msg']='请求方式错误';
+        }
+        return $relust;
+    }
+
+    //单章购买
+    public function actionSingleEmption(){
+        $relust=[
+            'code'=>400,
+            'msg'=>'',
+        ];
+        if(\Yii::$app->request->isPost){
+            $obj = new Verification();
+            $res = $obj->check();
+            //if($res){
+               // $result['msg']= $res;
+           // }else{
+                //接收客户端参数
+                $book_id=\Yii::$app->request->post('book_id');//图书id
+                $chapter_id=\Yii::$app->request->post('chapter_id');//章节id
+                $user_id=\Yii::$app->request->post('user_id');//用户id
+                $ticket=\Yii::$app->request->post('ticket');//消费阅票数量
+                $BookCoupons=\Yii::$app->request->post('voucher');//消费书券数量
+
+                //检测是否传入指定参数
+                if(empty($book_id) || empty($chapter_id) || empty($user_id) || empty($ticket) || empty($BookCoupons)){
+                    $relust['msg']='请传入指定参数';
+                    return $relust;
+                }
+
+                //查询该书价格以及出处
+                $book=Book::findOne(['id'=>$book_id]);
+                //根据版权章节id查询出章节字数
+                //请求地址
+                $postUrl = 'http://partner.chuangbie.com/partner/chapterinfo';
+                $curlPost =[
+                    'partner_id'=>2130,
+                    'partner_sign'=>'b42c36ddd1a5cc2c6895744143f77b7b',
+                    'book_id'=>$book->copyright_book_id,
+                    'chapter_id'=>$chapter_id,
+                ];
+
+                $post=new PostRequest();
+                $record=json_decode($post->request_post($postUrl,$curlPost));
+
+                $word_count=$record->content->data->word_count;//购买章节字数
+                $chapter_no=$record->content->data->sortid;
+                //var_dump($chapter_no);exit;
+                //计算购书价格
+                $price=round($book->price*($word_count/1000));
+                $RealPrice=$price;//实际价格
+
+                //查询用户账户
+                $user=User::findOne(['id'=>$user_id]);
+                if(!$user){
+                    $relust['msg']='没有该用户';
+                    return $relust;
+                }
+
+            //判断用户账户是否有书券
+            //定义抵扣书券为0
+            $voucher=0;
+            if($user->voucher){
+                //计算书券抵扣金额(最多只能抵扣25%)
+                $deduction=round($price*0.25);//最多抵扣的金额
+                if($user->voucher>$deduction){//如果账户书券大于最多抵扣书券,减去抵扣书券
+                    $voucher=$deduction;
+                }else{//如果账户书券小于最多抵扣书券,减去账户所有书券
+                    $voucher=$user->voucher;
+                }
+            }
+            //最终价格
+            $DiscountedPrice=round($price-$voucher);
+            if($ticket!=$DiscountedPrice || $BookCoupons!=$voucher){
+                $relust['msg']='价格计算有误';
+                return $relust;
+            }
+
+            //计算用户账户余额加书券是否大于图书价格
+            if($user->ticket<$DiscountedPrice){
+                $relust['code']=401;
+                $relust['msg']='账户余额不足';
+                return $relust;
+            }else{
+                //用户消费记录,用户已购书记录,账户扣减
+                $consume=new Consume();
+                $consume->user_id=$user_id;
+                $consume->book_id=$book_id;
+                $consume->consumption=$price;
+                $consume->deductible=$voucher;
+                $consume->discount=1;
+                $consume->deduction=$DiscountedPrice;
+                $consume->content=$chapter_no;
+                $consume->create_time=time();
+                $transaction=\Yii::$app->db->beginTransaction();//开启事务
+                try{
+                    $consume->save();
+
+                    ////////////记录用户购买书开始////////////////
+                    $purchased=Purchased::find()->where(['user_id'=>$user_id,'book_id'=>$book_id])->one();
+                    if($purchased){
+                        //用户已购买该书
+                        $purchased->user_id=$user_id;
+                        $purchased->book_id=$book_id;
+                        $purchased->chapter_no=$purchased->chapter_no.'|'.$chapter_no;
+                        $purchased->save();
+                    }else{
+                        //用户还没购买该书
+
+                        $purchased=new Purchased();
+                        $purchased->user_id=$user_id;
+                        $purchased->book_id=$book_id;
+                        $purchased->chapter_no=$chapter_no;
+                        $purchased->save();
+                    }
+                    $user->ticket=$user->ticket-$ticket;
+                    $user->voucher=$user->voucher-$BookCoupons;
+                    $user->save();
+                    $transaction->commit();
+                    $relust['code']=200;
+                    $relust['msg']='购买成功';
+
+
+                }catch ( Exception $e){
+                    //事务回滚
+                    $transaction->rollBack();
+                }
+
+            }
+
+           // }
+
+        }else{
+            $relust['msg']='请求方式错误';
+        }
+        return $relust;
+
+    }
+
     //多章购买消费计算
-    public function actionMultiCalculation(){
+    /*public function actionMultiCalculation(){
         $relust=[
           'code'=>400,
            'msg'=>''
@@ -443,6 +627,8 @@ class  ConsumeController extends Controller{
             $relust['msg']='请求方式错误';
         }
         return $relust;
-    }
+    }*/
+
+
 
 }
