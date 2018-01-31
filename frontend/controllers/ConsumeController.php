@@ -69,12 +69,14 @@ class  ConsumeController extends Controller{
             $records=json_decode($post->request_post($postUrl,$curlPost));
             $total_chapter=count($records->content->data);//该书总章节数(用于循环计算章节字数)
             $word_count=0;//字数
+            $charge=$book->no-1;//在数组中开始收费章节,
 
             //判断是否传入购买章节数(没有传入是购买剩余所有章节或者购买整本书)
             if(empty($chapter_number)){
 
                 //购买整本书或者购买剩余所有章节
                 $no=0;//定义已购章节数量
+
                 //判断用户是否已购买该书
                 if($purchased){
                     //购买剩余所有章节
@@ -82,8 +84,17 @@ class  ConsumeController extends Controller{
                     $chapter_no=array_filter($chapter_no);//去除数组空元素
                     $no=count($chapter_no);//统计用户已经购买章节数量,确定现在购买章节数量,计算折扣
                     $new_chapter_no=max($chapter_no); //最大章节(也就是最后购买章节),计算用户这次该从哪个章节购买
-                    //获取购买的起始章节名称
-                    $chapter_name=$records->content->data[$new_chapter_no]->chapter_name;
+
+                    //如果用户最后购买章节等于该书总章节数,说明用户已购买了整本书
+                    if($total_chapter==$new_chapter_no){
+                       //下次购买章节名称就是最后章节名称
+                        //获取购买的起始章节名称
+                        $chapter_name=$records->content->data[$new_chapter_no-1]->chapter_name;
+                   }else{
+                        //获取购买的起始章节名称
+                        $chapter_name=$records->content->data[$new_chapter_no]->chapter_name;
+                    }
+
                     //循环获取章节字数
                     for ($i=$new_chapter_no;$i<$total_chapter;$i++){
                         $word_count+=$records->content->data[$i]->word_count;
@@ -92,7 +103,6 @@ class  ConsumeController extends Controller{
                 }else{
                     //购买整本书
                     //用户没有购买过该书,默认从收费章节开始购买
-                    $charge=$book->no-1;//在数组中开始收费章节,
                     //获取章节起始购买名称
                     $chapter_name=$records->content->data[$charge]->chapter_name;
                     //循环统计购买章节字数
@@ -108,13 +118,13 @@ class  ConsumeController extends Controller{
                 $discount=0;//定义折扣后价格
 
                 //图书折扣
-                if(($total_chapter-$no)<20){//购买20章以下无折扣
+                if(($total_chapter-($no+$charge))<20){//购买20章以下无折扣
                     $discount=round($price*1);
-                }elseif(($total_chapter-$no)>=20 && ($total_chapter-$no)<60){//购买20章98折
+                }elseif(($total_chapter-($no+$charge))>=20 && ($total_chapter-$no)<60){//购买20章98折
                     $discount=round($price*0.98);
-                }elseif (($total_chapter-$no)>=60 && ($total_chapter-$no)<100){//购买60章9折
+                }elseif (($total_chapter-($no+$charge))>=60 && ($total_chapter-$no)<100){//购买60章9折
                     $discount=round($price*0.9);
-                }elseif (($total_chapter-$no)>100){//购买100章以上8折
+                }elseif (($total_chapter-($no+$charge))>100){//购买100章以上8折
                     $discount=round($price*0.8);
                 }
                 //判断用户账户是否有书券
@@ -172,7 +182,7 @@ class  ConsumeController extends Controller{
                     $chapter_no=array_filter($chapter_no);//删除数组空元素
                     $QuantityPurchased=count($chapter_no);//统计已购买章节
                     //计算免费章节数和已购买章节数
-                    $num=($book->no-1)+$QuantityPurchased;
+                    $num=$charge+$QuantityPurchased;
                     //剩余未购买的章节数
                     $Surplus=$total_chapter-$num;
                     //最大章节(也就是最后购买章节)
@@ -193,7 +203,7 @@ class  ConsumeController extends Controller{
 
                 }else{
                     //用户没有购买过该书,默认从收费章节开始购买
-                    $charge=$book->no-1;//在数组中开始收费章节
+                   // $charge=$book->no-1;//在数组中开始收费章节
                     //剩余未购买章节数
                     $Surplus=$total_chapter-$charge;
                     //如果用户选择购买章节大于本书章节,默认本书最大章节
@@ -443,6 +453,7 @@ class  ConsumeController extends Controller{
                 $total_chapter=count($records->content->data);//该书总章节数(用于循环计算章节字数)
                 $word_count=0;//字数
                 $str='';//定义这次购买的章节号
+                $charge=$book->no-1;//在数组中开始收费章节,
 
                 //判断是否传入购买章节数(没有传入是购买剩余所有章节或者购买整本书)
                 if(empty($chapter_number)){
@@ -466,7 +477,6 @@ class  ConsumeController extends Controller{
                     }else{
                         //购买整本书
                         //用户没有购买过该书,默认从收费章节开始购买
-                        $charge=$book->no-1;//在数组中开始收费章节,
                         //循环统计购买章节字数
                         for ($i=$charge;$i<$total_chapter;$i++){
                             $word_count+=$records->content->data[$i]->word_count;
@@ -480,16 +490,16 @@ class  ConsumeController extends Controller{
                     $discount=0;//定义折扣
 
                     //图书折扣
-                    if(($total_chapter-$no)<20){//购买20章以下无折扣
+                    if(($total_chapter-($no+$charge))<20){//购买20章以下无折扣
                         $price=round($price*1);
                         $discount=1;
-                    }elseif(($total_chapter-$no)>=20 && ($total_chapter-$no)<60){//购买20章98折
+                    }elseif(($total_chapter-($no+$charge))>=20 && ($total_chapter-$no)<60){//购买20章98折
                         $price=round($price*0.98);
                         $discount=0.98;
-                    }elseif (($total_chapter-$no)>=60 && ($total_chapter-$no)<100){//购买60章9折
+                    }elseif (($total_chapter-($no+$charge))>=60 && ($total_chapter-$no)<100){//购买60章9折
                         $price=round($price*0.9);
                         $discount=0.9;
-                    }elseif (($total_chapter-$no)>100){//购买100章以上8折
+                    }elseif (($total_chapter-($no+$charge))>100){//购买100章以上8折
                         $price=round($price*0.8);
                         $discount=0.8;
                     }
@@ -583,7 +593,7 @@ class  ConsumeController extends Controller{
                         $chapter_no=array_filter($chapter_no);//删除数组空元素
                         $QuantityPurchased=count($chapter_no);//统计已购买章节
                         //计算免费章节数和已购买章节数
-                        $num=($book->no-1)+$QuantityPurchased;
+                        $num=$charge+$QuantityPurchased;
                         //剩余未购买的章节数
                         $Surplus=$total_chapter-$num;
                         //最大章节(也就是最后购买章节)
@@ -602,7 +612,7 @@ class  ConsumeController extends Controller{
 
                     }else{
                         //用户没有购买过该书,默认从收费章节开始购买
-                        $charge=$book->no-1;//在数组中开始收费章节
+                        //$charge=$book->no-1;//在数组中开始收费章节
                         //剩余未购买章节数
                         $Surplus=$total_chapter-$charge;
                         //循环计算购买章节字数
