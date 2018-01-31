@@ -320,8 +320,8 @@ class  ConsumeController extends Controller{
 
                 //查询该书价格以及出处
                 $book=Book::findOne(['id'=>$book_id]);
-            //查询用户账户
-            $user=User::findOne(['id'=>$user_id]);
+                //查询用户账户
+                $user=User::findOne(['id'=>$user_id]);
             if(!$user){
                 $relust['msg']='没有该用户';
                 return $relust;
@@ -363,7 +363,7 @@ class  ConsumeController extends Controller{
                     }
                 }
                 //最终价格
-                $DiscountedPrice=round($price-$voucher);
+                 $DiscountedPrice=round($price-$voucher);
                 //账户阅票余额
                 //$ticket_balance=$user->ticket-$DiscountedPrice;
                   $ticket_balance=round($user->ticket);
@@ -791,6 +791,16 @@ class  ConsumeController extends Controller{
                 $price=round($book->price*($word_count/1000));
                 $RealPrice=$price;//实际价格
 
+                $purchased=Purchased::find()->where(['user_id'=>$user_id,'book_id'=>$book_id])->one();
+                //分割已购买的章节号
+                $Chapter_number=explode('|',$purchased->chapter_no);
+                //删除数组空元素
+                $Chapter_number=array_filter($Chapter_number);
+                if(in_array($chapter_no,$Chapter_number)){
+                    $relust['msg']='已购买过该章节';
+                    return $relust;
+                }
+
 
 
             //判断用户账户是否有书券
@@ -833,12 +843,11 @@ class  ConsumeController extends Controller{
                     $consume->save();
 
                     ////////////记录用户购买书开始////////////////
-                    $purchased=Purchased::find()->where(['user_id'=>$user_id,'book_id'=>$book_id])->one();
                     if($purchased){
                         //用户已购买该书
                         $purchased->user_id=$user_id;
                         $purchased->book_id=$book_id;
-                        $purchased->chapter_no=$purchased->chapter_no.'|'.$chapter_no;
+                        $purchased->chapter_no=$purchased->chapter_no.$chapter_no;
                         $purchased->save();
                     }else{
                         //用户还没购买该书
@@ -846,7 +855,7 @@ class  ConsumeController extends Controller{
                         $purchased=new Purchased();
                         $purchased->user_id=$user_id;
                         $purchased->book_id=$book_id;
-                        $purchased->chapter_no=$chapter_no;
+                        $purchased->chapter_no=$chapter_no.'|';
                         $purchased->save();
                     }
                     $user->ticket=$user->ticket-$ticket;
