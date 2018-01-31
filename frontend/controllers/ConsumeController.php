@@ -857,7 +857,7 @@ class  ConsumeController extends Controller{
                         //用户已购买该书
                         $purchased->user_id=$user_id;
                         $purchased->book_id=$book_id;
-                        $purchased->chapter_no=$purchased->chapter_no.$chapter_no;
+                        $purchased->chapter_no=$purchased->chapter_no.$chapter_no.'|';
                         $purchased->save();
                     }else{
                         //用户还没购买该书
