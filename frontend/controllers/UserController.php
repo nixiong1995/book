@@ -173,7 +173,7 @@ class UserController extends Controller {
             //验证接口
             $obj=new Verification();
             $res=$obj->check();
-           if($res){
+            if($res){
               $result['msg']= $res;
             }else{
 
@@ -240,7 +240,7 @@ class UserController extends Controller {
                             $collects=explode('|',$model->collect);//分割收藏的书为数组
                             $books2=[];
                             foreach ($collects as $collect) {
-                                $Books= Book::findBySql("SELECT id,name FROM book where id=$collect limit 5")->one();
+                                $Books= Book::findBySql("SELECT id,name FROM book where id=$collect")->one();
                                 $books2[$Books->id]= $Books->name;//将书名装入数组中
                             }
                             $BookName3=implode('|',$books2);//收藏的书
@@ -249,7 +249,7 @@ class UserController extends Controller {
                         }
 
                         //根据用户id到reading查询该用户读过的书id,再根据书id到book表查询书名
-                        $book_ids = Reading::findBySql("SELECT book_id FROM reading where user_id=$User->id ORDER BY `create_time` DESC ")->all();
+                        $book_ids = Reading::findBySql("SELECT book_id FROM reading where user_id=$User->id ORDER BY `create_time` DESC limit 5")->all();
                         if($book_ids){
                             $books =[];//定义空数组装书名
                             //遍历查询书名
@@ -284,7 +284,7 @@ class UserController extends Controller {
                     //未查到用户
                     $result['msg']='该手机未注册或者账号被封停状态';
                 }
-           }
+         }
         }else{
             $result['msg']='请求方式错误';
         }

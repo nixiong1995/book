@@ -70,7 +70,7 @@ class UserController extends Controller{
             //通过分类id遍历查询喜欢的类型
             $molds=[];//定义空数组装分类名
             foreach ($category_ids as $category_id){
-                $category=Category::findBySql("SELECT id,name FROM category where id=$category_id limit 3")->one();
+                $category=Category::findBySql("SELECT id,name FROM category where id=$category_id")->one();
                 $molds[$category->id]=$category->name;//将分类名装入数组中
             }
             $TypeName=implode('|',$molds);//分割数组成字符串
@@ -84,7 +84,7 @@ class UserController extends Controller{
             $collects=array_filter($collects);//删除数组中空元素
             $books2=[];
             foreach ($collects as $collect) {
-                $Books= Book::findBySql("SELECT id,name FROM book where id=$collect limit 5")->one();
+                $Books= Book::findBySql("SELECT id,name FROM book where id=$collect")->one();
                 $books2[$Books->id]= $Books->name;//将书名装入数组中
             }
             $BookName3=implode('|',$books2);//收藏的书
@@ -99,7 +99,7 @@ class UserController extends Controller{
 
             $names=[];
             foreach ($author_ids as $author_id){
-                $author=Author::findBySql("SELECT id,name FROM author where id=$author_id limit 3")->one();
+                $author=Author::findBySql("SELECT id,name FROM author where id=$author_id")->one();
                 $names[$author->id]=$author->name;
             }
             $AuthorName=implode('|',$names);
