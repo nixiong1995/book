@@ -907,7 +907,17 @@ class UserController extends Controller {
             $consumes=Consume::findAll(['user_id'=>$user_id]);
             if($consumes){
                 foreach ($consumes as $consume){
-                    $result['data'][]=['book_id'=>$consume->book_id,'consumption'=>$consume->consumption,'deductible'=>$consume->deductible,'discount'=>$consume->discount,'deduction'=>$consume->deduction,'content'=>$consume->content,'create_time'=>$consume->create_time,];
+                    $result['data'][]=
+                        [
+                            'book_id'=>$consume->book_id,
+                            'book_name'=>$consume->book->name,
+                            'consumption'=>$consume->consumption,
+                            'deductible'=>$consume->deductible,
+                            'discount'=>$consume->discount,
+                            'deduction'=>$consume->deduction,
+                            'content'=>$consume->content,
+                            'create_time'=>$consume->create_time,
+                            ];
                     $result['msg']='获取消费记录成功';
                     $result['code']=200;
                 }

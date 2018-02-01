@@ -76,11 +76,6 @@ class RechargeController extends Controller{
                     $transaction->rollBack();
                 }
 
-
-
-
-
-
           //   }
 
         }else{

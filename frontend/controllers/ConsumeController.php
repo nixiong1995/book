@@ -358,10 +358,11 @@ class  ConsumeController extends Controller{
                 $book=Book::findOne(['id'=>$book_id]);
                 //查询用户账户
                 $user=User::findOne(['id'=>$user_id]);
-            if(!$user){
-                $relust['msg']='没有该用户';
-                return $relust;
-            }
+
+                if(!$user){
+                    $relust['msg']='没有该用户';
+                    return $relust;
+                }
                 //根据版权章节id查询出章节字数
                 //请求地址
                 $postUrl = 'http://partner.chuangbie.com/partner/chapterinfo';
@@ -858,7 +859,9 @@ class  ConsumeController extends Controller{
                     return $relust;
                 }
                 //根据版权章节id查询出章节字数
-                //请求地址
+
+            ////////////////////请求版权方接口开始///////////////////////////////////////
+            //请求地址
                 $postUrl = 'http://partner.chuangbie.com/partner/chapterinfo';
                 $curlPost =[
                     'partner_id'=>2130,
@@ -866,27 +869,16 @@ class  ConsumeController extends Controller{
                     'book_id'=>$book->copyright_book_id,
                     'chapter_id'=>$chapter_id,
                 ];
-
                 $post=new PostRequest();
                 $record=json_decode($post->request_post($postUrl,$curlPost));
-
-                $word_count=$record->content->data->word_count;//购买章节字数
+            ////////////////////请求版权方接口结束///////////////////////////////////////
+                //购买章节字数
+                $word_count=$record->content->data->word_count;
+                //购买章节号
                 $chapter_no=$record->content->data->sortid;
-                //var_dump($chapter_no);exit;
                 //计算购书价格
                 $price=round($book->price*($word_count/1000));
                 $RealPrice=$price;//实际价格
-
-                $purchased=Purchased::find()->where(['user_id'=>$user_id,'book_id'=>$book_id])->one();
-                //分割已购买的章节号
-                $Chapter_number=explode('|',$purchased->chapter_no);
-                //删除数组空元素
-                $Chapter_number=array_filter($Chapter_number);
-                if(in_array($chapter_no,$Chapter_number)){
-                    $relust['msg']='已购买过该章节';
-                    return $relust;
-                }
-
 
 
             //判断用户账户是否有书券
@@ -914,48 +906,106 @@ class  ConsumeController extends Controller{
                 $relust['msg']='账户余额不足';
                 return $relust;
             }else{
-                //用户消费记录,用户已购书记录,账户扣减
-                $consume=new Consume();
-                $consume->user_id=$user_id;
-                $consume->book_id=$book_id;
-                $consume->consumption=$RealPrice;
-                $consume->deductible=$voucher;
-                $consume->discount=1;
-                $consume->deduction=$DiscountedPrice;
-                $consume->content=$chapter_no;
-                $consume->create_time=time();
-                $transaction=\Yii::$app->db->beginTransaction();//开启事务
-                try{
-                    $consume->save();
 
-                    ////////////记录用户购买书开始////////////////
-                    if($purchased){
-                        //用户已购买该书
-                        $purchased->user_id=$user_id;
-                        $purchased->book_id=$book_id;
-                        $purchased->chapter_no=$purchased->chapter_no.$chapter_no.'|';
-                        $purchased->save();
-                    }else{
+
+                $purchased=Purchased::find()->where(['user_id'=>$user_id,'book_id'=>$book_id])->one();
+
+
+                /////////////////////////////判断用户是否购买过该书/////////////////////
+                $str='';//定义购买章节号字符串
+                if($purchased){
+
+                    //购买过该书
+
+                    //分割已购买的章节号
+                    $Chapter_number=explode('|',$purchased->chapter_no);
+                    //删除数组空元素
+                    $Chapter_number=array_filter($Chapter_number);
+                    //判断用户是否以及购买该章节
+                    if(in_array($chapter_no,$Chapter_number)){
+                        $relust['msg']='已购买过该章节';
+                        return $relust;
+                    }
+
+                    //用户消费记录,用户已购书记录,账户扣减
+                    $consume=new Consume();
+                    $consume->user_id=$user_id;
+                    $consume->book_id=$book_id;
+                    $consume->consumption=$RealPrice;
+                    $consume->deductible=$voucher;
+                    $consume->discount=1;
+                    $consume->deduction=$DiscountedPrice;
+                    $consume->content=$chapter_no;
+                    $consume->create_time=time();
+                    $transaction=\Yii::$app->db->beginTransaction();//开启事务
+                    try{
+                        $consume->save();
+
+                        ////////////记录用户购买书开始////////////////
+
+                            //用户已购买该书
+                            $purchased->user_id=$user_id;
+                            $purchased->book_id=$book_id;
+                            $purchased->chapter_no=$purchased->chapter_no.$chapter_no.'|';
+                            $purchased->save();
+
+                            $user->ticket=$user->ticket-$ticket;
+                            $user->voucher=$user->voucher-$BookCoupons;
+                            $user->save();
+                            $transaction->commit();
+                            $relust['code']=200;
+                            $relust['msg']='购买成功';
+
+
+                    }catch ( Exception $e){
+                        //事务回滚
+                        $transaction->rollBack();
+                    }
+
+
+
+
+                }else{
+
+                    //用户消费记录,用户已购书记录,账户扣减
+                    $consume=new Consume();
+                    $consume->user_id=$user_id;
+                    $consume->book_id=$book_id;
+                    $consume->consumption=$RealPrice;
+                    $consume->deductible=$voucher;
+                    $consume->discount=1;
+                    $consume->deduction=$DiscountedPrice;
+                    $consume->content=$chapter_no;
+                    $consume->create_time=time();
+                    $transaction=\Yii::$app->db->beginTransaction();//开启事务
+                    try{
+                        $consume->save();
+
+                        ////////////记录用户购买书开始////////////////
+
                         //用户还没购买该书
-
                         $purchased=new Purchased();
                         $purchased->user_id=$user_id;
                         $purchased->book_id=$book_id;
                         $purchased->chapter_no=$chapter_no.'|';
                         $purchased->save();
+
+                        $user->ticket=$user->ticket-$ticket;
+                        $user->voucher=$user->voucher-$BookCoupons;
+                        $user->save();
+                        $transaction->commit();
+                        $relust['code']=200;
+                        $relust['msg']='购买成功';
+
+
+                    }catch ( Exception $e){
+                        //事务回滚
+                        $transaction->rollBack();
                     }
-                    $user->ticket=$user->ticket-$ticket;
-                    $user->voucher=$user->voucher-$BookCoupons;
-                    $user->save();
-                    $transaction->commit();
-                    $relust['code']=200;
-                    $relust['msg']='购买成功';
 
-
-                }catch ( Exception $e){
-                    //事务回滚
-                    $transaction->rollBack();
                 }
+
+
 
             }
 
