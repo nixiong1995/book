@@ -866,7 +866,7 @@ class UserController extends Controller {
                     $result['msg']='没有指定参数';
                     return $result;
                 }
-                $recharges=Recharge::findAll(['user_id'=>$user_id]);
+                $recharges=Recharge::find()->where(['user_id'=>$user_id])->orderBy('create_time DESC')->all();
                 if($recharges){
                     foreach ($recharges as $recharge){
                         $result['data'][]=['no'=>$recharge->no,'money'=>$recharge->money,'ticket'=>$recharge->ticket,'voucher'=>$recharge->voucher,'trade_no'=>$recharge->trade_no,'mode'=>$recharge->mode,'status'=>$recharge->status,'create_time'=>$recharge->create_time,'over_time'=>$recharge->over_time];
@@ -904,7 +904,8 @@ class UserController extends Controller {
                 $result['msg']='没有指定参数';
                 return $result;
             }
-            $consumes=Consume::findAll(['user_id'=>$user_id]);
+            $consumes=Consume::findAll(['user_id'=>$user_id]);//
+            $consumes=Consume::find()->where(['user_id'=>$user_id])->orderBy('create_time DESC')->all();
             if($consumes){
                 foreach ($consumes as $consume){
                     $result['data'][]=
