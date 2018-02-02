@@ -249,7 +249,7 @@ class UserController extends Controller {
                         }
 
                         //根据用户id到reading查询该用户读过的书id,再根据书id到book表查询书名
-                        $book_ids = Reading::findBySql("SELECT book_id FROM reading where user_id=$User->id ORDER BY `create_time` DESC limit 5")->all();
+                        $book_ids = Reading::findBySql("SELECT book_id FROM reading where user_id=$User->id ORDER BY `create_time` DESC ")->all();
                         if($book_ids){
                             $books =[];//定义空数组装书名
                             //遍历查询书名
