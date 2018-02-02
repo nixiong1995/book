@@ -32,17 +32,38 @@ class BookstoreController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-       if($res){
-             $result['msg']= $res;
-        }else{
-                $position=\Yii::$app->request->post('position');
-                $models=Advert::find()->where(['position'=>$position])->orderBy('create_time DESC')->limit(4)->all();
-                foreach ($models as $model){
-                    $result['data'][]=['title'=>$model->title,'position'=>$model->position ,'sort'=>$model->sort,'image'=>HTTP_PATH.$model->image,'url'=>$model->url];
+       //if($res){
+           //  $result['msg']= $res;
+      //  }else{
+                $position=\Yii::$app->request->post('position');//广告位置
+                $client=\Yii::$app->request->post('client');//客户端
+                $version=\Yii::$app->request->post('version');//版本号
+                if(empty($position)){
+                    $result['msg']='没有传入广告位置';
+                    return $result;
                 }
-                $result['code']=200;
-                $result['msg']='获取广告图成功';
-           }
+                $where='';
+                //如果有客户端版本号拼接条件
+                if($client){
+                    $where.=" and client=$client";
+                }
+
+                if($version){
+                    $where.=" and version='$version'";
+                }
+               // $models=Advert::find()->where(['position'=>$position])->orderBy('create_time DESC')->limit(4)->all();
+                $models=Advert::findBySql("SELECT * FROM advert WHERE position=$position $where ORDER BY create_time DESC limit 4")->all();
+                if($models){
+                    foreach ($models as $model){
+                        $result['data'][]=['title'=>$model->title,'position'=>$model->position ,'sort'=>$model->sort,'image'=>HTTP_PATH.$model->image,'url'=>$model->url,'client'=>$model->client,'version'=>$model->version];
+                    }
+                    $result['code']=200;
+                    $result['msg']='获取广告图成功';
+                }else{
+                    $result['msg']='没有广告图';
+                }
+
+           //}
 
         }else{
             $result['msg']='请求方式错误';

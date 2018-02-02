@@ -11,7 +11,7 @@ class Advert extends ActiveRecord{
         return [
             ['file', 'file', 'extensions' => ['png', 'jpg', 'gif','jpeg']],
             ['file','required','on'=>self::SCENARIO_ADD],
-            [['position','sort','title','url'],'required'],
+            [['position','sort','title','url','client','version'],'required'],
             ['sort','integer'],
             ['url','string']
         ];
@@ -26,6 +26,8 @@ class Advert extends ActiveRecord{
             'count'=>'统计',
             'url'=>'图片链接地址',
             'title'=>'广告标题',
+            'client'=>'客户端',
+            'version'=>'版本号',
         ];
     }
 
