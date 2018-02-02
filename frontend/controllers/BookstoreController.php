@@ -32,9 +32,9 @@ class BookstoreController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-       //if($res){
-           //  $result['msg']= $res;
-      //  }else{
+           if($res){
+                 $result['msg']= $res;
+            }else{
                 $position=\Yii::$app->request->post('position');//广告位置
                 $client=\Yii::$app->request->post('client');//客户端
                 $version=\Yii::$app->request->post('version');//版本号
@@ -63,7 +63,7 @@ class BookstoreController extends Controller{
                     $result['msg']='没有广告图';
                 }
 
-           //}
+           }
 
         }else{
             $result['msg']='请求方式错误';

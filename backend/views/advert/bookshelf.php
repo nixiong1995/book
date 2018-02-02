@@ -14,6 +14,8 @@
         <th>广告图片</th>
         <th>排序</th>
         <th>点击数</th>
+        <th>客户端</th>
+        <th>版本号</th>
         <th>操作</th>
     </tr>
     <?php foreach ($models as $model):?>
@@ -22,6 +24,8 @@
             <td><?=yii\bootstrap\Html::img(HTTP_PATH.$model->image,['class'=>'img-cricle','style'=>'width:70px'])?></td>
             <td><?=$model->sort?></td>
             <td><?=$model->count?></td>
+            <td><?=$model->client?'安卓':'苹果'?></td>
+            <td><?=$model->version?></td>
             <td>
                 <a href="<?=\yii\helpers\Url::to(['advert/edit','id'=>$model->id])?>"><span class="glyphicon glyphicon-pencil btn btn-default btn-sm"></a>
                 <a href="javascript:;" class="delete"><span class="glyphicon glyphicon-trash btn btn-danger btn-sm" ></span></a>
