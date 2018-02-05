@@ -2,9 +2,10 @@
 ?>
 <h2>广告列表</h2>
 <p><a href="<?=\yii\helpers\Url::to(['advert/add'])?>" class="btn btn-primary">新增广告</a></p>
-    <p class="col-lg-9">
+    <p class="col-lg-8">
     <form class="form-inline" method="get" action="<?=\yii\helpers\Url::to(['advert/bookshelf'])?>">
-        <?=\yii\bootstrap\Html::dropDownList('position','1',[1=>'书架',2=>'书城首页',3=>'书城排行页',4=>'书城精品页',5=>'书城星本页',6=>'书城免费页',7=>'书城完本页',8=>'支付页面'],['class'=>"form-control"])?>
+    <?=\yii\bootstrap\Html::dropDownList('client','',[''=>'请选择客户端',1=>'安卓',2=>'苹果'],['class'=>"form-control"])?>
+        <?=\yii\bootstrap\Html::dropDownList('position','',[''=>'请选择广告位置',1=>'书架',2=>'书城首页',3=>'书城排行页',4=>'书城精品页',5=>'书城星本页',6=>'书城免费页',7=>'书城完本页',8=>'支付页面'],['class'=>"form-control"])?>
         <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search">搜索</span></button>
     </form>
     </p>
@@ -16,6 +17,7 @@
         <th>点击数</th>
         <th>客户端</th>
         <th>版本号</th>
+        <th>是否是苹果审核广告</th>
         <th>操作</th>
     </tr>
     <?php foreach ($models as $model):?>
@@ -24,8 +26,9 @@
             <td><?=yii\bootstrap\Html::img(HTTP_PATH.$model->image,['class'=>'img-cricle','style'=>'width:70px'])?></td>
             <td><?=$model->sort?></td>
             <td><?=$model->count?></td>
-            <td><?=$model->client?'安卓':'苹果'?></td>
+            <td><?php if($model->client==1){echo '安卓';}elseif($model->client==2){echo '苹果';}?></td>
             <td><?=$model->version?></td>
+            <td><?=$model->checked?'是':'否'?></td>
             <td>
                 <a href="<?=\yii\helpers\Url::to(['advert/edit','id'=>$model->id])?>"><span class="glyphicon glyphicon-pencil btn btn-default btn-sm"></a>
                 <a href="javascript:;" class="delete"><span class="glyphicon glyphicon-trash btn btn-danger btn-sm" ></span></a>

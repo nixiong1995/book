@@ -40,9 +40,14 @@ class AdvertController extends Controller{
     //书架广告
     public function actionBookshelf(){
         $position=\Yii::$app->request->get('position');
+        $client=\Yii::$app->request->get('client');
         $query=Advert::find();//->where(['position'=>0])->orderBy('create_time  DESC');
         if($position){
             $query->where(['position'=>$position]);
+        }
+
+        if($client){
+            $query->andWhere(['client'=>$client]);
         }
         $pager=new Pagination([
             'totalCount'=>$query->count(),//总条数
