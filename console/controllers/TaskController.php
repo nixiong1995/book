@@ -15,8 +15,8 @@ class TaskController extends Controller{
             //Recharge::deleteAll('status=1 and create_time < '.(time()-60));
             Recharge::deleteAll('create_time < :create_time AND status = :status', [':create_time' =>(time()-300) , ':status' => '1']);
             //每隔一秒执行一次
-            sleep(60);
-            echo iconv('utf-8','gbk','清理完成'.date('Y-m-d H:i:s')."\n");
+            sleep(1);
+            echo '清理完成'.date('Y-m-d H:i:s')."\n";
         }
 
     }
