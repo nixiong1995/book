@@ -32,7 +32,7 @@ class BookstoreController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-           if($res){
+          if($res){
                  $result['msg']= $res;
             }else{
                 $position=\Yii::$app->request->post('position');//广告位置

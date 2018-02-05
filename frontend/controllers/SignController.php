@@ -12,7 +12,7 @@ class SignController extends Controller
     public function actionSign()
     {
         $time=strtotime("2017-12-22");
-        var_dump($time);exit;
+        var_dump(time());exit;
        // $p = ['keyword' =>'大佬', 'time' => 1513220354];
         $p = ['imei' =>'26B185DD-38A1-4BC3-8229-D31FE5E01F4', 'address' =>'四川省成都市','time'=>1513607650];
         //$p=['time'=>1513004884,'category_id'=>12,'page'=>1,'type'=>1];
