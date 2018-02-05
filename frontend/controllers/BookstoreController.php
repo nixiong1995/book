@@ -46,9 +46,17 @@ class BookstoreController extends Controller{
                 }
 
                 if($version==1.5 && $client==2){
-                    $result['data'][]=['title'=>null,'position'=>null ,'sort'=>null,'image'=>null,'url'=>null,'client'=>null,'version'=>null];
-                    $result['code']=200;
-                    $result['msg']='获取广告图成功';
+                    $models=Advert::find()->where(['position'=>$position])->andWhere(['checked'=>1])->orderBy('create_time DESC')->limit(4)->all();
+                    // $models=Advert::findBySql("SELECT * FROM advert WHERE position=$position $where ORDER BY create_time DESC limit 4")->all();
+                    if($models){
+                        foreach ($models as $model){
+                            $result['data'][]=['title'=>$model->title,'position'=>$model->position ,'sort'=>$model->sort,'image'=>HTTP_PATH.$model->image,'url'=>$model->url,'client'=>$model->client,'version'=>$model->version];
+                        }
+                        $result['code']=200;
+                        $result['msg']='获取广告图成功';
+                    }else{
+                        $result['msg']='没有广告图';
+                    }
                 }else{
                    /* if($version){
                         $where.=" and version='$version'";
@@ -58,7 +66,7 @@ class BookstoreController extends Controller{
                     if($client){
                         $where.=" and client=$client";
                     }*/
-                    $models=Advert::find()->where(['position'=>$position])->orderBy('create_time DESC')->limit(4)->all();
+                    $models=Advert::find()->where(['position'=>$position])->andWhere(['<>','checked',1])->orderBy('create_time DESC')->limit(4)->all();
                    // $models=Advert::findBySql("SELECT * FROM advert WHERE position=$position $where ORDER BY create_time DESC limit 4")->all();
                     if($models){
                         foreach ($models as $model){

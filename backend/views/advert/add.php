@@ -12,5 +12,6 @@ echo $form->field($model,'url')->textInput();
 echo $model->file?yii\bootstrap\Html::img(HTTP_PATH.$model->image,['class'=>'img-cricle','style'=>'width:200px']):'';
 echo $form->field($model,'count')->textInput();
 echo $form->field($model,'sort')->textInput();
+echo $form->field($model,'checked')->checkbox();
 echo '<button type="submit" class="btn btn-info">提交</button>';
 \yii\bootstrap\ActiveForm::end();

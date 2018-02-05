@@ -12,7 +12,7 @@ class Advert extends ActiveRecord{
             ['file', 'file', 'extensions' => ['png', 'jpg', 'gif','jpeg']],
             ['file','required','on'=>self::SCENARIO_ADD],
             [['position','sort','title','url','client','version'],'required'],
-            ['sort','integer'],
+            [['sort','checked'],'integer'],
             ['url','string']
         ];
     }
@@ -28,6 +28,7 @@ class Advert extends ActiveRecord{
             'title'=>'广告标题',
             'client'=>'客户端',
             'version'=>'版本号',
+            'checked'=>'苹果审核广告请勾选',
         ];
     }
 
