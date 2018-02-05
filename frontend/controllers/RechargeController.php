@@ -30,46 +30,64 @@ class RechargeController extends Controller{
              //if($res){
             // $result['msg']= $res;
             // }else{
-                 //接收客户端参数
-                 //校验通知数据的正确性
-                /* $out_trade_no = $_POST['out_trade_no'];//商户订单号
-                 $trade_no = $_POST['trade_no'];//支付宝交易号
-                 $trade_status = $_POST['trade_status'];//交易状态trade_status
-                 $total_amount = $_POST['total_amount'];//订单的实际金额
-                 $app_id = $_POST['app_id'];*/
-                $out_trade_no=\Yii::$app->request->post('out_trade_no');//商户订单号
                 $trade_no=\Yii::$app->request->post('trade_no');//第三方交易号
                 $total_amount=\Yii::$app->request->post('total_amount');//订单的实际金额
-                 //根据本地订单号查询到该订单
-                 $recharge=Recharge::findOne(['no'=>$out_trade_no]);
-                 //判断是否有该订单
-                 if(!$recharge){
-                     $relust['msg']='没有该订单';
-                     return $relust;
-                 }
+                $user_id=\Yii::$app->request->post('user_id');//用户id
+                if(empty($total_amount) ||empty($trade_no) ||empty($user_id)){
+                    $relust['msg']='未传入指定参数';
+                    return $relust;
+                }
 
-                 //判断价格是否一样
-                 if($recharge->money!=$total_amount){
-                     $relust['msg']='价格有误';
-                     return $relust;
-                 }
+                //判断是否有该用户
+                $user=User::findOne(['id'=>$user_id]);
+                if(!$user){
+                    $relust['msg']='没有该用户';
+                    return $relust;
+                }
 
-                 //修改订单
+                 $recharge=new Recharge();
+                //生成唯一订单号
+                $no = date('Ymd') . str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
+                //查询数据库是否有该单号
+                $r=Recharge::findOne(['no'=>$no]);
+                while ($r){
+                    $order['danhao'] = date('Ymd') . str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
+                    //查询数据库是否有该单号
+                    $r=Recharge::findOne(['no'=>$no]);
+                }
+                $voucher=0;//定义赠送书券
+                //书券赠送
+                if( $total_amount==30){
+                    $voucher=500;
+                }elseif ($total_amount==98){
+                    $voucher=2000;
+                }elseif ($total_amount==198){
+                    $voucher=5000;
+                }
+                $recharge->no=$no;
+                $recharge->user_id=$user_id;
+                $recharge->money=$total_amount;
+                $recharge->ticket=$total_amount*100;
+                $recharge->voucher=$voucher;
                 $recharge->trade_no=$trade_no;
+                $recharge->mode='苹果支付';
                 $recharge->status=2;
+                $recharge->create_time=time();
                 $recharge->over_time=time();
+
                 $transaction=\Yii::$app->db->beginTransaction();//开启事务
 
                 try{
 
                     $recharge->save();
-                    //var_dump($model->user_id);exit;
                     ////////////用户账户开始///////////
-                    $user=User::findOne(['id'=>$recharge->user_id]);
                     $user->ticket=$user->ticket+$recharge->ticket;//用户账户原本阅票+本次充值阅票
                     $user->voucher=$user->voucher+$recharge->voucher;//用户账户原本书券+本次赠送书券;
-                    $user->save();
+                    $user->save(false);
+                    $relust['code']=200;
+                    $relust['msg']='记录用户充值成功';
                     $transaction->commit();
+
                     //////////用户账户结束//////////
                 }catch (Exception $e){
                     //事务回滚
