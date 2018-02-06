@@ -92,7 +92,7 @@ class YuewenController extends \yii\web\Controller{
                     //加入从多少章节开始收费
                     $data['content']['data'][$i]['no']=$book->no;
                     //判断用户是否已购买该章节,该书从多少章节开始收费.用户购买该章节或者该章节是免费章节,is_vip改成0
-                    if(in_array($data['content']['data'][$i]['sortid'],$chapter_no) || ($data['content']['data'][$i]['sortid']<$book->no && $book->no!=0) ){
+                    if(in_array(($i+1),$chapter_no) || (($i+1)<$book->no && $book->no!=0) ){
                         $data['content']['data'][$i]['is_vip']=0;
 
                     }

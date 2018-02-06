@@ -529,7 +529,7 @@ class  ConsumeController extends Controller{
                         for ($i=$charge;$i<$total_chapter;$i++){
                             //本次购买章节总字数
                             $word_count+=$records->content->data[$i]->word_count;
-                            $str.=$records->content->data[$i]->sortid.'|';//拼接这次购买章节号
+                            $str.=($i+1).'|';//拼接这次购买章节号
                         }
 
                         //#########################未购买过该书#################################################
@@ -695,7 +695,7 @@ class  ConsumeController extends Controller{
                         //循环计算购买章节字数
                         for ($i=$charge;$i<($chapter_number+$charge);$i++){
                             $word_count+=$records->content->data[$i]->word_count;
-                            $str.=$records->content->data[$i]->sortid.'|';
+                            $str.=($i+1).'|';
                         }
 
                         //#####################未购买该书#######################################
