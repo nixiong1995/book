@@ -514,7 +514,8 @@ class  ConsumeController extends Controller{
                             //本次购买章节字数
                             $word_count+=$records->content->data[$i]->word_count;
                             //拼接这次购买章节号
-                            $str.=$records->content->data[$i]->sortid .'|';
+                            //$str.=$records->content->data[$i]->sortid .'|';
+                             $str.=($i+1) .'|';
                         }
 
                         //########################已购买过该书###########################################
@@ -677,8 +678,10 @@ class  ConsumeController extends Controller{
                         //循环获取章节字数
                         for ($i=$new_chapter_no;$i<($chapter_number+$new_chapter_no);$i++){
                             $word_count+=$records->content->data[$i]->word_count;
-                            $str.=$records->content->data[$i]->sortid.'|';
+                            //$str.=$records->content->data[$i]->sortid.'|';
+                            $str.=($i+1).'|';
                         }
+                        //var_dump($str);exit;
 
                         //######################已购买过该书#####################################
 
@@ -862,20 +865,30 @@ class  ConsumeController extends Controller{
 
             ////////////////////请求版权方接口开始///////////////////////////////////////
             //请求地址
-                $postUrl = 'http://partner.chuangbie.com/partner/chapterinfo';
+               // $postUrl = 'http://partner.chuangbie.com/partner/chapterinfo';
+                $postUrl = 'http://partner.chuangbie.com/partner/chapterlist';
                 $curlPost =[
                     'partner_id'=>2130,
                     'partner_sign'=>'b42c36ddd1a5cc2c6895744143f77b7b',
                     'book_id'=>$book->copyright_book_id,
-                    'chapter_id'=>$chapter_id,
+                    //'chapter_id'=>$chapter_id,
                 ];
                 $post=new PostRequest();
                 $record=json_decode($post->request_post($postUrl,$curlPost));
             ////////////////////请求版权方接口结束///////////////////////////////////////
-                //购买章节字数
-                $word_count=$record->content->data->word_count;
-                //购买章节号
-                $chapter_no=$record->content->data->sortid;
+            //根据传入的章节id循环查找该章节
+            //$key='';
+            $cishu=count($record->content->data);
+            for($j=0;$j<$cishu;$j++){
+                if($record->content->data[$j]->chapter_id==$chapter_id){
+                    //购买章节字数
+                    $word_count=$record->content->data[$j]->word_count;
+                    //购买章节号
+                    $chapter_no=$j+1;
+                    break;
+                }
+            }
+
                 //计算购书价格
                 $price=round($book->price*($word_count/1000));
                 $RealPrice=$price;//实际价格

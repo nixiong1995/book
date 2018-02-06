@@ -12,7 +12,7 @@
         <tr>
             <th>书名</th>
             <th>销量</th>
-            <th>销售金额</th>
+            <th>销售阅票</th>
         </tr>
         </thead>
         <tbody>
@@ -27,7 +27,7 @@
         <?php endforeach;?>
         </tbody>
     </table>
-    <p>数据合计:<?= $pager->totalCount;?>条&emsp;&emsp;销售金额统计:<?=$totalMoney?>.00
+    <p>数据合计:<?= $pager->totalCount;?>条&emsp;&emsp;销售阅票统计:<?=$totalMoney?>.00
 
 <?php
 echo \yii\widgets\LinkPager::widget([

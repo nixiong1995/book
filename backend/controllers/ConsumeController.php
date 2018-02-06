@@ -64,7 +64,7 @@ class ConsumeController extends Controller{
         $count=$query=\Yii::$app->db->createCommand(" select count(*) as totalCount from (select count(*) as sellCount,sum(deduction) as sellMoney,book_id from consume group by book_id) as sell_tj,book where book.id = sell_tj.book_id")->queryScalar();
         $pager=new Pagination([
             'totalCount'=>$count,//总条数
-            'defaultPageSize'=>10,//每页显示条数
+            'defaultPageSize'=>20,//每页显示条数
         ]);
         //var_dump($pager->offset);exit;
         //$query=\Yii::$app->db->createCommand("select sell_tj.sellCount,sell_tj.sellMoney,sell_tj.book_id,book.name from (select count(*) as sellCount,sum(deduction) as sellMoney,book_id from consume WHERE 1=1 $where group by book_id ORDER BY sellCount DESC ) as sell_tj,book where book.id = sell_tj.book_id  ")->queryAll();
