@@ -30,13 +30,29 @@
         <td><?=$model->deductible?></td>
         <td><?=$model->deduction?></td>
         <td><?=date("Ymd",$model->create_time)?></td>
-        <td><a tabindex="0" class="btn btn-sm btn-default" role="button" data-toggle="popover" data-trigger="focus" title="消费章节详细如下" data-content="<?=str_replace('|','-',$model->content)?>">查看消费章节详情</a></td></td>
+        <td><a tabindex="0" class="btn btn-sm btn-default" role="button" data-toggle="popover" data-trigger="focus" title="消费章节详细如下" data-content="<?=str_replace('|','-',$model->content)?>">查看消费章节详情</a></td>
     </tr>
        <?php $consume+=$model->consumption;$consumption+=$model->deduction?>
     <?php endforeach;?>
+        <tr>
+            <td>合计:</td>
+            <td></td>
+            <td><?=$consume?>.00</td>
+            <td></td>
+            <td><?=$consumption?>.00</td>
+            <td></td>
+            <td></td>
+        </tr>
     </tbody>
+
     </table>
-    <p>数据合计:<?= $pager->totalCount;?>条&emsp;&emsp;消费阅票统计:<?=$consume?>.00&emsp;&emsp;实际消费阅票统计:<?=$consumption?>.00</p>
+    <p>
+        数据合计:<?= $pager->totalCount;?>条&emsp;&emsp;
+        实际消费阅票合计:<?=\backend\models\Consume::getTotal()?>.00&emsp;&emsp;
+        近一个月消费阅票合计:<?=\backend\models\Consume::getMonth()?>.00&emsp;&emsp;
+        近7天消费阅票合计:<?=\backend\models\Consume::getWeek()?>.00&emsp;&emsp;
+        今日消费阅票合计:<?=\backend\models\Consume::getToday()?>.00&emsp;&emsp;
+    </p>
 <?php
 echo \yii\widgets\LinkPager::widget([
     'pagination'=>$pager,

@@ -39,9 +39,26 @@
             </tr>
             <?php $totalMonry+=$model->money;?>
         <?php endforeach;?>
+        <tr>
+            <td>合计:</td>
+            <td></td>
+            <td><?=$totalMonry?>.00</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
         </tbody>
     </table>
-    <p>数据合计:<?= $pager->totalCount;?>条&emsp;&emsp;充值金额统计:<?=$totalMonry?></p>
+    <p>
+        数据合计:<?= $pager->totalCount;?>条&emsp;&emsp;
+        累计充值合计:<?=\backend\models\Recharge::getToatalMoney()?>&emsp;&emsp;
+        近一个月累计充值合计:<?=\backend\models\Recharge::getMonthMoney()?>&emsp;&emsp;
+        近7天累计充值合计:<?=\backend\models\Recharge::getWeekMoney()?>&emsp;&emsp;
+        今日累计充值合计:<?=\backend\models\Recharge::getTodayMoney()?>&emsp;&emsp;
+    </p>
 <?php
 echo \yii\widgets\LinkPager::widget([
     'pagination'=>$pager,

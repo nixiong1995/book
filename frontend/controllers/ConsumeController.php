@@ -111,8 +111,6 @@ class  ConsumeController extends Controller{
                         }
                     }
 
-
-
                     //#################用户已购买过该书##################
 
                 }else{

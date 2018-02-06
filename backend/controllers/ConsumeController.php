@@ -35,10 +35,11 @@ class ConsumeController extends Controller{
         //实例化分页工具类
         $pager=new Pagination([
             'totalCount'=>$count,//总条数
-            'defaultPageSize'=>20,//每页显示条数
+            'defaultPageSize'=>2,//每页显示条数
         ]);
         //分页查询
         $models=Consume::findBySql("SELECT * FROM consume WHERE 1=1 $where limit $pager->offset,$pager->limit")->all();
+
         return $this->render('index',['models'=>$models,'pager'=>$pager]);
     }
 
