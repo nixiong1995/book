@@ -78,7 +78,6 @@ class RechargeController extends Controller{
                 $transaction=\Yii::$app->db->beginTransaction();//开启事务
 
                 try{
-
                     $recharge->save();
                     ////////////用户账户开始///////////
                     $user->ticket=$user->ticket+$recharge->ticket;//用户账户原本阅票+本次充值阅票

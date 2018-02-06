@@ -26,6 +26,10 @@
 <?php
 echo \yii\widgets\LinkPager::widget([
     'pagination'=>$pager,
+    'nextPageLabel' => '下一页',
+    'prevPageLabel' => '上一页',
+    'firstPageLabel' => '首页',
+    'lastPageLabel' => '尾页',
 ]);
 $del_url=\yii\helpers\Url::to(['information/del']);
 $this->registerJs(new \yii\web\JsExpression(

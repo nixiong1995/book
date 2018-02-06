@@ -18,7 +18,9 @@
             <th>所得阅票</th>
             <th>赠送书券</th>
             <th>充值方式</th>
+            <th>状态</th>
             <th>充值时间</th>
+            <th>完成时间</th>
         </tr>
         </thead>
         <tbody>
@@ -31,14 +33,20 @@
                 <td><?=$model->ticket?></td>
                 <td><?=$model->voucher?></td>
                 <td><?=$model->mode?></td>
+                <td><?php if($model->status==1){echo '待付款';}elseif($model->status==2){echo '交易完成';}elseif($model->status==3){echo '异常交易';}?></td>
                 <td><?=date("Ymd",$model->create_time)?></td>
+                <td><?=date("Ymd",$model->over_time)?></td>
             </tr>
             <?php $totalMonry+=$model->money;?>
         <?php endforeach;?>
         </tbody>
     </table>
-    <p>数据合计:<?= $pager->totalCount;?>条&emsp;&emsp;充值金额统计:<?=$totalMonry?>.00</p>
+    <p>数据合计:<?= $pager->totalCount;?>条&emsp;&emsp;充值金额统计:<?=$totalMonry?></p>
 <?php
 echo \yii\widgets\LinkPager::widget([
     'pagination'=>$pager,
+    'nextPageLabel' => '下一页',
+    'prevPageLabel' => '上一页',
+    'firstPageLabel' => '首页',
+    'lastPageLabel' => '尾页',
 ]);

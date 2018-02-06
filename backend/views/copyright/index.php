@@ -67,6 +67,10 @@
 <?php
 echo \yii\widgets\LinkPager::widget([
     'pagination'=>$pager,
+    'nextPageLabel' => '下一页',
+    'prevPageLabel' => '上一页',
+    'firstPageLabel' => '首页',
+    'lastPageLabel' => '尾页',
 ]);
 $del_url=\yii\helpers\Url::to(['copyright/del']);
 $sele_url=\yii\helpers\Url::to(['book/selected']);//加入分类精选url
