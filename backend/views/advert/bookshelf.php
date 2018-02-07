@@ -5,7 +5,7 @@
     <p class="col-lg-8">
     <form class="form-inline" method="get" action="<?=\yii\helpers\Url::to(['advert/bookshelf'])?>">
     <?=\yii\bootstrap\Html::dropDownList('client','',[''=>'请选择客户端',1=>'安卓',2=>'苹果'],['class'=>"form-control"])?>
-        <?=\yii\bootstrap\Html::dropDownList('position','',[''=>'请选择广告位置',1=>'书架',2=>'书城首页',3=>'书城排行页',4=>'书城精品页',5=>'书城星本页',6=>'书城免费页',7=>'书城完本页',8=>'支付页面'],['class'=>"form-control"])?>
+        <?=\yii\bootstrap\Html::dropDownList('position','',[''=>'请选择广告位置',1=>'书架',2=>'书城首页',3=>'书城排行页',4=>'书城精品页',5=>'书城星本页',6=>'书城免费页',7=>'书城完本页',8=>'支付页面',9=>'启动页面'],['class'=>"form-control"])?>
         <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search">搜索</span></button>
     </form>
     </p>
