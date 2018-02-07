@@ -139,9 +139,9 @@ class CopyrightController extends Controller{
                 if($data['ftype_id']==10){
                     $category_id=29;
                 }elseif ($data['ftype_id']==157){
-                    $category_id=36;
-                }elseif($data['ftype_id']==0){
-                    $category_id=38;
+                    $category_id=24;
+                }elseif($data['ftype_id']==162){
+                    $category_id=30;
                 }elseif ($data['ftype_id']==1){
                     $category_id=16;
                 }elseif ($data['ftype_id']==2){
@@ -162,7 +162,8 @@ class CopyrightController extends Controller{
                     $category_id=30;
                 }elseif($data['ftype_id']==149){
                     $category_id=33;
-
+                }elseif($data['ftype_id']==160){
+                    $category_id=19;
                 }
                 \Yii::$app->db->createCommand()->batchInsert(Book::tableName(),
                     [

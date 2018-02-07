@@ -42,7 +42,7 @@
         <tr>
             <td>合计:</td>
             <td></td>
-            <td><?=$totalMonry?>.00</td>
+            <td><?=$totalMonry?></td>
             <td></td>
             <td></td>
             <td></td>

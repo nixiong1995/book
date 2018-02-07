@@ -133,17 +133,20 @@ class  ConsumeController extends Controller{
                 $RealPrice=$price;//实际价格
                 $discount=0;//定义折扣后价格
 
+
+
                 //图书折扣
                 //本次购买章节数=本书总章节数-(已购买章节数+免费的章节数)
-                if(($total_chapter-($no+$charge))<20){//购买20章以下无折扣
+                if($total_chapter-($no+$charge)<20){//购买20章以下无折扣
                     $discount=round($price*1);
-                }elseif(($total_chapter-($no+$charge))>=20 && ($total_chapter-$no)<60){//购买20章98折
+                }elseif($total_chapter-($no+$charge)>=20 && ($total_chapter-($no+$charge))<60){//购买20章98折
                     $discount=round($price*0.98);
-                }elseif (($total_chapter-($no+$charge))>=60 && ($total_chapter-$no)<100){//购买60章9折
+                }elseif ($total_chapter-($no+$charge)>=60 && ($total_chapter-($no+$charge))<100){//购买60章9折
                     $discount=round($price*0.9);
-                }elseif (($total_chapter-($no+$charge))>100){//购买100章以上8折
+                }elseif ($total_chapter-($no+$charge)>100){//购买100章以上8折
                     $discount=round($price*0.8);
                 }
+
 
                 //判断用户账户是否有书券
                 //定义抵扣书券为0
@@ -545,10 +548,10 @@ class  ConsumeController extends Controller{
                     if(($total_chapter-($no+$charge))<20){//购买20章以下无折扣
                         $price=round($price*1);
                         $discount=1;
-                    }elseif(($total_chapter-($no+$charge))>=20 && ($total_chapter-$no)<60){//购买20章98折
+                    }elseif(($total_chapter-($no+$charge))>=20 && ($total_chapter-($no+$charge))<60){//购买20章98折
                         $price=round($price*0.98);
                         $discount=0.98;
-                    }elseif (($total_chapter-($no+$charge))>=60 && ($total_chapter-$no)<100){//购买60章9折
+                    }elseif (($total_chapter-($no+$charge))>=60 && ($total_chapter-($no+$charge))<100){//购买60章9折
                         $price=round($price*0.9);
                         $discount=0.9;
                     }elseif (($total_chapter-($no+$charge))>100){//购买100章以上8折
