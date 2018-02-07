@@ -856,10 +856,10 @@ class UserController extends Controller {
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-           // if($res){
+            if($res){
             //接口验证不通过
-            // $result['msg']= $res;
-           // }else{
+             $result['msg']= $res;
+            }else{
                 //接收参数
                 $user_id=\Yii::$app->request->post('user_id');
                 if(empty($user_id)){
@@ -878,7 +878,7 @@ class UserController extends Controller {
                     $result['code']=400;
                     $result['msg']='无充值记录';
                 }
-           // }
+            }
         }else{
             $result['msg']='请求方式错误';
         }
@@ -894,10 +894,10 @@ class UserController extends Controller {
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-            // if($res){
+             if($res){
             //接口验证不通过
-            // $result['msg']= $res;
-            // }else{
+             $result['msg']= $res;
+             }else{
             //接收参数
             $user_id=\Yii::$app->request->post('user_id');
             if(empty($user_id)){
@@ -927,7 +927,7 @@ class UserController extends Controller {
                 $result['code']=400;
                 $result['msg']='无消费记录';
             }
-            // }
+             }
         }else{
             $result['msg']='请求方式错误';
         }

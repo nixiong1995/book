@@ -505,7 +505,7 @@ class  ConsumeController extends Controller{
 
                         //判断用户已经购买了最后一张,但是本书未购买完
                         if($new_chapter_no==$total_chapter && ($no+$charge)!=$total_chapter ){
-                            $relust['msg']='请单章购买';
+                            $relust['msg']='请选择单章购买';
                             return $relust;
                         }
 
