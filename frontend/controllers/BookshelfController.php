@@ -27,9 +27,9 @@ class BookshelfController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-           // if($res){
-           //$result['msg']= $res;
-          //  }else{
+            if($res){
+           $result['msg']= $res;
+            }else{
                 $user_id=\Yii::$app->request->post('user_id');
                 if($user_id){
                     //查询用户收藏过的书id
@@ -107,7 +107,7 @@ class BookshelfController extends Controller{
                 }else{
                     $result['msg']='请传入用户id';
                 }
-          // }
+           }
 
         }else{
             $result['msg']='请求方式错误';

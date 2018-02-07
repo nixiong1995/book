@@ -26,9 +26,9 @@ class YuewenController extends \yii\web\Controller{
             //验证
             $obj = new Verification();
             $res = $obj->check();
-            //if($res){
-            // $result['msg']= $res;
-            // }else{
+            if($res){
+             $result['msg']= $res;
+            }else{
             //接收手机端传递参数
             $user_id = \Yii::$app->request->post('user_id');//用户id
             $book_id = \Yii::$app->request->post('book_id');//本地图书id
@@ -101,10 +101,7 @@ class YuewenController extends \yii\web\Controller{
 
             }
 
-
-
-            // }
-
+             }
 
         }else {
             $result['code'] = 400;
@@ -123,9 +120,9 @@ class YuewenController extends \yii\web\Controller{
             //验证
             $obj=new Verification();
             $res=$obj->check();
-           //if($res){
-              //  $result['msg']= $res;
-         //   }else{
+           if($res){
+                $result['msg']= $res;
+            }else{
 
                 //接收手机端传递参数
                 $book_id=\Yii::$app->request->post('book_id');//本地图书id
@@ -155,7 +152,7 @@ class YuewenController extends \yii\web\Controller{
                 }
                 return $datas;
 
-          //  }
+           }
 
         }else{
             $result['code']=400;

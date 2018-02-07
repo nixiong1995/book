@@ -33,9 +33,9 @@ class  ConsumeController extends Controller{
             //验证
             $obj = new Verification();
             $res = $obj->check();
-            //  if($res){
-            // $result['msg']= $res;
-            // }else{
+              if($res){
+             $result['msg']= $res;
+             }else{
             //接收手机端传递的参数
             $book_id=\Yii::$app->request->post('book_id');//图书id
             $chapter_number=\Yii::$app->request->post('chapter_number');//章节数量
@@ -324,7 +324,7 @@ class  ConsumeController extends Controller{
 
             ////////////////////////////根据转入章节数量购买书籍//////////////////////////////
 
-            // }
+             }
 
         }else{
             $relust['msg']='请求方式错误';
@@ -342,9 +342,9 @@ class  ConsumeController extends Controller{
             //验证
             $obj = new Verification();
             $res = $obj->check();
-          //  if($res){
-            // $result['msg']= $res;
-           // }else{
+            if($res){
+             $result['msg']= $res;
+            }else{
                 //接收手机端传递的参数
                 $book_id=\Yii::$app->request->post('book_id');//图书id
                 $chapter_id=\Yii::$app->request->post('chapter_id');//章节id
@@ -416,7 +416,7 @@ class  ConsumeController extends Controller{
                     $relust['msg']='结算价格计算成功';
                 }
 
-           // }
+            }
 
         }else{
             $relust['msg']='请求方式错误';
@@ -433,10 +433,10 @@ class  ConsumeController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj = new Verification();
             $res = $obj->check();
-           // if($res){
-               // $result['msg']= $res;
+            if($res){
+                $result['msg']= $res;
 
-          //  }else{
+            }else{
                 //接收手机端传递的参数
                 $book_id=\Yii::$app->request->post('book_id');//图书id
                 $chapter_number=\Yii::$app->request->post('chapter_number');//章节数量
@@ -818,9 +818,7 @@ class  ConsumeController extends Controller{
                 }
             ////////////////////////根据章节数量购买////////////////////////////////////////////
 
-
-
-           // }
+            }
 
 
         }else{
@@ -838,9 +836,9 @@ class  ConsumeController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj = new Verification();
             $res = $obj->check();
-            //if($res){
-               // $result['msg']= $res;
-           // }else{
+            if($res){
+                $result['msg']= $res;
+            }else{
                 //接收客户端参数
                 $book_id=\Yii::$app->request->post('book_id');//图书id
                 $chapter_id=\Yii::$app->request->post('chapter_id');//章节id
@@ -1019,11 +1017,9 @@ class  ConsumeController extends Controller{
 
                 }
 
-
-
             }
 
-           // }
+            }
 
         }else{
             $relust['msg']='请求方式错误';

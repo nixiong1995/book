@@ -94,11 +94,11 @@ class BookstoreController extends Controller{
             'msg'=>'',//错误信息,如果有
         ];
         if(\Yii::$app->request->isPost){
-           // $obj=new Verification();
-           // $res=$obj->check();
-          // if($res){
-             //  $result['msg']= $res;
-           // }else{
+            $obj=new Verification();
+            $res=$obj->check();
+           if($res){
+              $result['msg']= $res;
+           }else{
             //今日必读
             $models1=Book::find()->where(['groom'=>1])->orderBy('groom_time DESC')->limit(5)->all();
 
@@ -217,7 +217,7 @@ class BookstoreController extends Controller{
             }
             $result['code']=200;
             $result['msg']='获取书城信息成功';
-          // }
+           }
 
         }else{
            $result['msg']='请求方式错误';
@@ -761,11 +761,11 @@ class BookstoreController extends Controller{
             'msg'=>'',//错误信息,如果有
         ];
         if(\Yii::$app->request->isPost){
-           // $obj=new Verification();
-            //$res=$obj->check();
-            //if($res){
-            // $result['msg']= $res;
-            //}else{
+            $obj=new Verification();
+            $res=$obj->check();
+            if($res){
+             $result['msg']= $res;
+            }else{
             //根据传入groom查询是什么完本
                 $groom=\Yii::$app->request->post('groom');
                 $type=\Yii::$app->request->post('type');
@@ -812,7 +812,7 @@ class BookstoreController extends Controller{
                 }
                 $result['code']=200;
                 $result['msg']='获取书本信息成功';
-           // }
+            }
         }else{
             $result['msg']='请求方式错误';
         }

@@ -27,9 +27,9 @@ class RechargeController extends Controller{
             //验证接口
             $obj=new Verification();
             $res=$obj->check();
-             //if($res){
-            // $result['msg']= $res;
-            // }else{
+             if($res){
+             $result['msg']= $res;
+             }else{
                 $trade_no=\Yii::$app->request->post('trade_no');//第三方交易号
                 $total_amount=\Yii::$app->request->post('total_amount');//订单的实际金额
                 $user_id=\Yii::$app->request->post('user_id');//用户id
@@ -92,9 +92,7 @@ class RechargeController extends Controller{
                     //事务回滚
                     $transaction->rollBack();
                 }
-
-          //   }
-
+             }
         }else{
             $relust['msg']='请求方式错误';
         }

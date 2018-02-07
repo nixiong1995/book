@@ -25,9 +25,9 @@ class ReadingController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-           // if($res){
-               // $result['msg']= $res;
-           // }else{
+           if($res){
+                $result['msg']= $res;
+           }else{
                 //接收手机端传递过来的数据
                 $book_id=\Yii::$app->request->post('book_id');
                 $user_id=\Yii::$app->request->post('user_id');
@@ -65,7 +65,7 @@ class ReadingController extends Controller{
                 }else{
                     $result['msg']='缺少参数';
                 }
-            //}
+            }
         }else{
             $result['msg']='请求方式错误';
         }
