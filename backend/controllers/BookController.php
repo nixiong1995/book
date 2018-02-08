@@ -128,7 +128,7 @@ class BookController extends Controller{
                                 }
                             }
                 //跳转
-               return $this->redirect(['book/index']);
+               return $this->redirect(['book/index?category='.$model->category_id]);
             }
         }
         return $this->render('add',['model'=>$model]);
