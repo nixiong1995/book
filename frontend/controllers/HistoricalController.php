@@ -2,6 +2,7 @@
 namespace frontend\controllers;
 
 use frontend\models\Historical;
+use libs\PostRequest;
 use yii\web\Controller;
 use yii\web\Response;
 
@@ -15,7 +16,8 @@ class HistoricalController extends Controller{
         parent::init();
     }
 
-    public function actionIndex(){
+    //获取历史人物
+    public function actionPeople(){
         $result = [
             'code'=>400,
             'msg'=>'',//错误信息,如果有
@@ -40,13 +42,31 @@ ORDER BY id LIMIT 3')->all();
             $result['code']=200;
             $result['msg']='获取人物成功';
             $result['data']=$models;
-            return $result;
-
 
         }else{
             $result['msg']='请求方式错误';
         }
         return $result;
 
+    }
+
+    //获取推荐书
+    public function actionBook(){
+        $result = [
+            'code'=>400,
+            'msg'=>'',//错误信息,如果有
+        ];
+        if(\Yii::$app->request->isPost){
+            $postUrl = 'http://partner.chuangbie.com/partner/booklist';
+            $curlPost =['partner_id'=>2130,'partner_sign'=>'b42c36ddd1a5cc2c6895744143f77b7b','page_size'=>100];
+            $post=new PostRequest();
+            $data=$post->request_post( $postUrl,$curlPost);
+            $datas=json_decode($data,true);
+            var_dump($datas['content']['data']);exit;
+
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
     }
 }
