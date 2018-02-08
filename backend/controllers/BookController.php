@@ -137,6 +137,10 @@ class BookController extends Controller{
     //图书修改
     public function actionEdit($id)
     {
+        //接收地址栏参数
+        $data=\Yii::$app->request->get('data');
+        //将数组通过&符号链接
+        $s = urldecode(http_build_query($data));
         $model = Book::findOne(['id' => $id]);
         $Author=Author::findOne(['id'=>$model->author_id]);
         $model->author_name=$Author->name;
@@ -182,7 +186,7 @@ class BookController extends Controller{
                     $transaction->rollBack();
                 }
                 //跳转
-                return $this->redirect(['book/index']);
+                return $this->redirect(['book/index?'.$s]);
             }
         }
         return $this->render('add', ['model' => $model]);

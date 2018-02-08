@@ -26,7 +26,7 @@
             <td><?=$model->popularity?></td>
             <td><?=$model->sign?'是':'否'?></td>
             <td>
-                <a href="<?=\yii\helpers\Url::to(['author/edit','id'=>$model->id])?>"><span class="glyphicon glyphicon-pencil btn btn-default btn-sm"></a>
+                <a href="<?=\yii\helpers\Url::to(['author/edit','id'=>$model->id,'data'=>$_GET])?>"><span class="glyphicon glyphicon-pencil btn btn-default btn-sm"></a>
                 <a href="javascript:;" class="groom-author"><span class="glyphicon glyphicon-star btn btn-success btn-sm"></a>
                 <a href="javascript:;" class="delete"><span class="glyphicon glyphicon-trash btn btn-danger btn-sm" ></a>
             </td>

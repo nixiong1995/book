@@ -60,7 +60,7 @@
                 <td><?=\backend\models\Chapter::getSize($model->size)?></td>
                 <td><?php if($model->is_end==1){echo '连载';}else{echo '完结';}?></td>
                 <td>
-                    <a href="<?=\yii\helpers\Url::to(['book/edit','id'=>$model->id])?>"><span class="glyphicon glyphicon-pencil btn btn-primary btn-sm" ></a>
+                    <a href="<?=\yii\helpers\Url::to(['book/edit','id'=>$model->id,'data'=>$_GET])?>"><span class="glyphicon glyphicon-pencil btn btn-primary btn-sm" ></a>
                     <a href="<?=\yii\helpers\Url::to(['chapter/index','id'=>$model->id])?>"><span class="glyphicon glyphicon-file btn btn-default btn-sm"></a>
                     <a href="javascript:;" class="today_read"><span class="glyphicon glyphicon-star btn btn-success btn-sm"></a>
                     <a href="<?=\yii\helpers\Url::to(['seckill/add','book_id'=>$model->id])?>"><span class="glyphicon glyphicon-time btn btn-info btn-sm"></a>

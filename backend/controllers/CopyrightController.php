@@ -81,6 +81,10 @@ class CopyrightController extends Controller{
 
     //版权方图书修改
     public function actionEdit($id){
+        //地址栏参数
+        $data=\Yii::$app->request->get('data');
+        //将数组通过&符号链接
+        $s = urldecode(http_build_query($data));
         $model=Book::findOne(['id'=>$id]);
         $Author=Author::findOne(['id'=>$model->author_id]);
         $model->author_name=$Author->name;
@@ -105,7 +109,7 @@ class CopyrightController extends Controller{
                     $transaction->rollBack();
                 }
 
-                return $this->redirect(['copyright/index']);
+                return $this->redirect(['copyright/index?'.$s]);
             }
         }
         return $this->render('edit',['model'=>$model]);

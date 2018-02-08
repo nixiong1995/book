@@ -52,6 +52,7 @@ class AuthorController extends Controller{
                 \Yii::$app->session->setFlash('success', '添加成功');
                 //跳转
                 return $this->redirect(['author/index']);
+
             }
         }
         return $this->render('add', ['model' => $model]);
@@ -60,6 +61,10 @@ class AuthorController extends Controller{
     //作者修改
     public function actionEdit($id)
     {
+        //地址栏参数
+        $data=\Yii::$app->request->get('data');
+        //将数组通过&符号链接
+        $s = urldecode(http_build_query($data));
         $model = Author::findOne(['id' => $id]);
         $model->file = $model->image;
         $old_path=$model->file;
@@ -91,7 +96,7 @@ class AuthorController extends Controller{
                 $model->save();
                 \Yii::$app->session->setFlash('success', '修改成功');
                 //跳转
-                return $this->redirect(['author/index']);
+                return $this->redirect(['author/index?'.$s]);
             }
         }
         return $this->render('add', ['model' => $model]);
