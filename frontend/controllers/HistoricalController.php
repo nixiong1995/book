@@ -1,11 +1,12 @@
 <?php
+
 namespace frontend\controllers;
 
 use frontend\models\Historical;
 use libs\PostRequest;
 use yii\web\Controller;
 use yii\web\Response;
-
+header("Access-Control-Allow-Origin: *");
 class HistoricalController extends Controller{
 
     public $enableCsrfValidation=false;
