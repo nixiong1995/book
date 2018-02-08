@@ -15,7 +15,7 @@ class TaskController extends Controller{
         //sql: update order set status=0 where status = 1 and create_time < time()-24*3600
         //while (true){
             //Recharge::deleteAll('status=1 and create_time < '.(time()-60));
-            Recharge::deleteAll('create_time < :create_time AND status = :status', [':create_time' =>(time()-300) , ':status' => '1']);
+            Recharge::deleteAll('create_time < :create_time AND status = :status', [':create_time' =>(time()-180) , ':status' => '1']);
             //每隔一秒执行一次
             //sleep(1);
             echo '清理完成'.date('Y-m-d H:i:s')."\n";
