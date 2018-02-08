@@ -62,7 +62,12 @@ ORDER BY id LIMIT 3')->all();
             $post=new PostRequest();
             $data=$post->request_post( $postUrl,$curlPost);
             $datas=json_decode($data,true);
-            var_dump($datas['content']['data']);exit;
+            $indexs=array_rand($datas['content']['data'],3);
+            foreach ($indexs as $index){
+                $result['data'][]=$datas['content']['data'][$index];
+            }
+            $result['code']=200;
+            $result['msg']='获取书籍成功';
 
         }else{
             $result['msg']='请求方式错误';
