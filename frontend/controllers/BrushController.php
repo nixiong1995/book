@@ -22,11 +22,11 @@ class BrushController extends Controller{
             'msg'=>'',//错误信息,如果有
         ];
         if(\Yii::$app->request->isPost){
-           // $obj=new Verification();
-           // $res=$obj->check();
-            //if($res){
-               // $result['msg']= $res;
-          //  }else{
+            $obj=new Verification();
+            $res=$obj->check();
+            if($res){
+                $result['msg']= $res;
+            }else{
                 //接收参数
                 $name=\Yii::$app->request->post('name');//包名
                 $advert_id=\Yii::$app->request->post('advert_id');//本地图片id
@@ -56,8 +56,7 @@ class BrushController extends Controller{
                 }
                 $result['msg']='点击数记录成功';
                 $result['code']=200;
-
-           // }
+           }
 
         }else{
             $result['msg']='请求方式错误';
