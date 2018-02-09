@@ -45,7 +45,7 @@ class BookstoreController extends Controller{
                 }
 
                 if($version==1.5 && $client==2){
-                    $models=Advert::find()->where(['position'=>$position])->andWhere(['checked'=>1])->orderBy('create_time DESC')->limit(4)->all();
+                    $models=Advert::find()->where(['position'=>$position])->andWhere(['checked'=>1])->orderBy('sort ASC')->limit(4)->all();
                     if($models){
                         foreach ($models as $model){
                             $result['data'][]=['id'=>$model->id,'title'=>$model->title,'position'=>$model->position ,'sort'=>$model->sort,'image'=>HTTP_PATH.$model->image,'url'=>$model->url,'client'=>$model->client,'version'=>$model->version];
@@ -57,7 +57,7 @@ class BookstoreController extends Controller{
                     }
                 }else{
 
-                    $models=Advert::find()->where(['position'=>$position])->andWhere(['<>','checked',1])->orderBy('create_time DESC')->limit(4)->all();
+                    $models=Advert::find()->where(['position'=>$position])->andWhere(['<>','checked',1])->orderBy('sort ASC')->limit(4)->all();
                     if($models){
                         foreach ($models as $model){
                             $result['data'][]=['id'=>$model->id,'title'=>$model->title,'position'=>$model->position ,'sort'=>$model->sort,'image'=>HTTP_PATH.$model->image,'url'=>$model->url,'client'=>$model->client,'version'=>$model->version];
@@ -751,11 +751,11 @@ class BookstoreController extends Controller{
             'msg'=>'',//错误信息,如果有
         ];
         if(\Yii::$app->request->isPost){
-            $obj=new Verification();
-            $res=$obj->check();
-            if($res){
-             $result['msg']= $res;
-            }else{
+           // $obj=new Verification();
+           // $res=$obj->check();
+           // if($res){
+             //$result['msg']= $res;
+           // }else{
             //根据传入groom查询是什么完本
                 $groom=\Yii::$app->request->post('groom');
                 $type=\Yii::$app->request->post('type');
@@ -802,7 +802,7 @@ class BookstoreController extends Controller{
                 }
                 $result['code']=200;
                 $result['msg']='获取书本信息成功';
-            }
+           // }
         }else{
             $result['msg']='请求方式错误';
         }
