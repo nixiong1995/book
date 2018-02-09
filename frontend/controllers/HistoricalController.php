@@ -29,7 +29,8 @@ class HistoricalController extends Controller{
             $res=true;
             while ($res){
 
-                $models=Historical::findBySql('SELECT * FROM historical WHERE id >= ((SELECT MAX(id) FROM historical)-(SELECT MIN(id) FROM historical)) * RAND() + (SELECT MIN(id) FROM historical)  LIMIT 3')->all();
+               // $models=Historical::findBySql('SELECT * FROM historical WHERE id >= ((SELECT MAX(id) FROM historical)-(SELECT MIN(id) FROM historical)) * RAND() + (SELECT MIN(id) FROM historical)  LIMIT 3')->all();
+                $models=Historical::findBySql('SELECT * FROM historical  order by rand() limit 3')->all();
 
                 //判断3个人物不是同一个朝代
                 if($models[0]->dynasty==$models[1]->dynasty || $models[1]->dynasty==$models[2]->dynasty || $models[0]->dynasty==$models[2]->dynasty){
