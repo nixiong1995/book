@@ -23,7 +23,6 @@ class Advert extends ActiveRecord{
             'file'=>'广告图片',
             'position'=>'广告位置',
             'sort'=>'排序',
-            'count'=>'统计',
             'url'=>'图片链接地址',
             'title'=>'广告标题',
             'client'=>'客户端',

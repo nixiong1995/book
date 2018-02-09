@@ -38,7 +38,6 @@ class BookstoreController extends Controller{
                 $position=\Yii::$app->request->post('position');//广告位置
                 $client=\Yii::$app->request->post('client');//客户端
                 $version=\Yii::$app->request->post('version');//版本号
-                $where='';
 
                 if(empty($position)){
                     $result['msg']='没有传入广告位置';
@@ -47,10 +46,9 @@ class BookstoreController extends Controller{
 
                 if($version==1.5 && $client==2){
                     $models=Advert::find()->where(['position'=>$position])->andWhere(['checked'=>1])->orderBy('create_time DESC')->limit(4)->all();
-                    // $models=Advert::findBySql("SELECT * FROM advert WHERE position=$position $where ORDER BY create_time DESC limit 4")->all();
                     if($models){
                         foreach ($models as $model){
-                            $result['data'][]=['title'=>$model->title,'position'=>$model->position ,'sort'=>$model->sort,'image'=>HTTP_PATH.$model->image,'url'=>$model->url,'client'=>$model->client,'version'=>$model->version];
+                            $result['data'][]=['id'=>$model->id,'title'=>$model->title,'position'=>$model->position ,'sort'=>$model->sort,'image'=>HTTP_PATH.$model->image,'url'=>$model->url,'client'=>$model->client,'version'=>$model->version];
                         }
                         $result['code']=200;
                         $result['msg']='获取广告图成功';
@@ -58,19 +56,11 @@ class BookstoreController extends Controller{
                         $result['msg']='没有广告图';
                     }
                 }else{
-                   /* if($version){
-                        $where.=" and version='$version'";
-                    }
 
-                    //如果有客户端版本号拼接条件
-                    if($client){
-                        $where.=" and client=$client";
-                    }*/
                     $models=Advert::find()->where(['position'=>$position])->andWhere(['<>','checked',1])->orderBy('create_time DESC')->limit(4)->all();
-                   // $models=Advert::findBySql("SELECT * FROM advert WHERE position=$position $where ORDER BY create_time DESC limit 4")->all();
                     if($models){
                         foreach ($models as $model){
-                            $result['data'][]=['title'=>$model->title,'position'=>$model->position ,'sort'=>$model->sort,'image'=>HTTP_PATH.$model->image,'url'=>$model->url,'client'=>$model->client,'version'=>$model->version];
+                            $result['data'][]=['id'=>$model->id,'title'=>$model->title,'position'=>$model->position ,'sort'=>$model->sort,'image'=>HTTP_PATH.$model->image,'url'=>$model->url,'client'=>$model->client,'version'=>$model->version];
                         }
                         $result['code']=200;
                         $result['msg']='获取广告图成功';
