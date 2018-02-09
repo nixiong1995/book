@@ -23,7 +23,7 @@ class BookstoreController extends Controller{
         parent::init();
     }
 
-    //获取广告
+    //获取广告banna图
     public function actionAdvert(){
         $result = [
             'code'=>400,
