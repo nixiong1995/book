@@ -40,7 +40,11 @@
         </tr>
     <?php endforeach;?>
 </table>
-<p>合计:<?= $pager->totalCount;?></p>
+<p>合计:<?= $pager->totalCount;?>&emsp;&emsp;
+    近一个月新增:<?=\backend\models\User::getMonth()?>&emsp;&emsp;
+    近7天新增:<?=\backend\models\User::getWeek()?>&emsp;&emsp;
+    今日新增:<?=\backend\models\User::getToday()?>&emsp;&emsp;
+</p>
 <?php
 echo \yii\widgets\LinkPager::widget([
     'pagination'=>$pager,
