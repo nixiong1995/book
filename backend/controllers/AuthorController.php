@@ -63,8 +63,10 @@ class AuthorController extends Controller{
     {
         //地址栏参数
         $data=\Yii::$app->request->get('data');
-        //将数组通过&符号链接
-        $s = urldecode(http_build_query($data));
+        if($data){
+            //将数组通过&符号链接
+            $s = urldecode(http_build_query($data));
+        }
         $model = Author::findOne(['id' => $id]);
         $model->file = $model->image;
         $old_path=$model->file;

@@ -139,8 +139,10 @@ class BookController extends Controller{
     {
         //接收地址栏参数
         $data=\Yii::$app->request->get('data');
-        //将数组通过&符号链接
-        $s = urldecode(http_build_query($data));
+        if($data){
+            //将数组通过&符号链接
+            $s = urldecode(http_build_query($data));
+        }
         $model = Book::findOne(['id' => $id]);
         $Author=Author::findOne(['id'=>$model->author_id]);
         $model->author_name=$Author->name;

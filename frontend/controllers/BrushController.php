@@ -86,13 +86,11 @@ class BrushController extends Controller{
                     return $result;
                 }
 
-
                 if($advert_id){
                     $model=Brush::find()->where(['name'=>$name])->andWhere(['advert_id'=>$advert_id])->one();
                 }else{
                     $model=Brush::find()->where(['name'=>$name])->andWhere(['advert_id'=>null])->one();
                 }
-
 
                 if($model){
                     $model->unrestricted_click=$model->unrestricted_click+1;
