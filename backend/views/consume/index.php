@@ -37,9 +37,9 @@
         <tr>
             <td>合计:</td>
             <td></td>
-            <td><?=$consume?>.00</td>
+            <td><?=$consume?>阅票</td>
             <td></td>
-            <td><?=$consumption?>.00</td>
+            <td><?=$consumption?>阅票</td>
             <td></td>
             <td></td>
         </tr>

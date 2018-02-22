@@ -75,8 +75,6 @@ class CopyrightController extends Controller{
             return 'error';
         }
 
-
-
     }
 
     //版权方图书修改

@@ -34,7 +34,7 @@ class  ConsumeController extends Controller{
             $obj = new Verification();
             $res = $obj->check();
               if($res){
-             $result['msg']= $res;
+             $relust['msg']= $res;
              }else{
             //接收手机端传递的参数
             $book_id=\Yii::$app->request->post('book_id');//图书id
@@ -49,6 +49,10 @@ class  ConsumeController extends Controller{
 
             //查询该书价格以及出处和从多少章节开始收费
             $book=Book::findOne(['id'=>$book_id]);
+            if(!$book){
+                 $relust['msg']='没有该书';
+                 return $relust;
+             }
             //查询用户账户
             $user=User::findOne(['id'=>$user_id]);
             //判断书否有该用户
@@ -343,7 +347,7 @@ class  ConsumeController extends Controller{
             $obj = new Verification();
             $res = $obj->check();
             if($res){
-             $result['msg']= $res;
+             $relust['msg']= $res;
             }else{
                 //接收手机端传递的参数
                 $book_id=\Yii::$app->request->post('book_id');//图书id
@@ -357,6 +361,12 @@ class  ConsumeController extends Controller{
 
                 //查询该书价格以及出处
                 $book=Book::findOne(['id'=>$book_id]);
+
+                if(!$book){
+                    $relust['msg']='没有该书';
+                    return $relust;
+                }
+
                 //查询用户账户
                 $user=User::findOne(['id'=>$user_id]);
 
@@ -434,8 +444,7 @@ class  ConsumeController extends Controller{
             $obj = new Verification();
             $res = $obj->check();
             if($res){
-                $result['msg']= $res;
-
+                $relust['msg']= $res;
             }else{
                 //接收手机端传递的参数
                 $book_id=\Yii::$app->request->post('book_id');//图书id
@@ -452,6 +461,16 @@ class  ConsumeController extends Controller{
 
                 //查询该书价格以及出处和从多少章节开始收费
                 $book=Book::findOne(['id'=>$book_id]);
+                if(!$book){
+                    $relust['msg']='没有该书';
+                    return $relust;
+                }
+
+                if($book->is_free==0){
+                    $relust['msg']='该书不需要购买';
+                    $relust['code']=400;
+                    return $relust;
+                }
                 //查询用户账户
                 $user=User::findOne(['id'=>$user_id]);
                 if(!$user){
@@ -837,7 +856,7 @@ class  ConsumeController extends Controller{
             $obj = new Verification();
             $res = $obj->check();
             if($res){
-                $result['msg']= $res;
+                $relust['msg']= $res;
             }else{
                 //接收客户端参数
                 $book_id=\Yii::$app->request->post('book_id');//图书id
@@ -854,6 +873,15 @@ class  ConsumeController extends Controller{
 
                 //查询该书价格以及出处
                 $book=Book::findOne(['id'=>$book_id]);
+                if(!$book){
+                    $relust['msg']='没有该书';
+                    return $relust;
+                }
+                if($book->is_free==0){
+                    $relust['msg']='该书不需要购买';
+                    $relust['code']=400;
+                    return $relust;
+                }
                 //查询用户账户
                 $user=User::findOne(['id'=>$user_id]);
                 if(!$user){
@@ -1027,113 +1055,6 @@ class  ConsumeController extends Controller{
         return $relust;
 
     }
-
-    //多章购买消费计算
-    /*public function actionMultiCalculation(){
-        $relust=[
-          'code'=>400,
-           'msg'=>''
-        ];
-        if(\Yii::$app->request->isPost){
-            $obj = new Verification();
-            $res = $obj->check();
-             //if($res){
-                 //$result['msg']= $res;
-            // }else{
-                 //接收参数
-                 $book_id=\Yii::$app->request->post('book_id');//书id
-                 $user_id=\Yii::$app->request->post('user_id');//用户id
-                 //判断是否传入指定参数
-                 if(empty($book_id) || empty($user_id)){
-                     $relust['msg']='未传入指定参数';
-                     return $relust;
-                 }
-                 //查询该书基本信息
-                 $book=Book::findOne(['id'=>$book_id]);
-                 //查询用户基本信息
-                 $user=User::findOne(['id'=>$user_id]);
-                 //请求版权方书本信息接口
-                 $postUrl = 'http://partner.chuangbie.com/partner/bookinfo';
-                 $curlPost =[
-                     'partner_id'=>2130,
-                     'partner_sign'=>'b42c36ddd1a5cc2c6895744143f77b7b',
-                     'book_id'=>$book->copyright_book_id,
-                 ];
-                 $post=new PostRequest();
-                 $record=json_decode($post->request_post($postUrl,$curlPost));
-                 $word_count=$record->content->data->word_count;//该书总字数
-
-                //请求版权方图书章节列表
-                $postUrl2 = 'http://partner.chuangbie.com/partner/chapterlist';
-                $curlPost2 =[
-                    'partner_id'=>2130,
-                    'partner_sign'=>'b42c36ddd1a5cc2c6895744143f77b7b',
-                    'book_id'=>$book->copyright_book_id,
-                ];
-                $post2=new PostRequest();
-                $record2=json_decode($post2->request_post($postUrl2,$curlPost2));
-                $chapter_number=count($record2->content->data);//该书总章节数
-                //var_dump($chapter_number);exit;
-
-                //每章价格
-                $price=round(($word_count/1000*$book->price)/$chapter_number);
-                 //查询用户已购章节
-                 $purchased=Purchased::find()->where(['user_id'=>$user_id])->one();
-                 $RealPrice=0;//实际价格
-                 $discount=0;//折扣
-                 if($purchased){
-                     //已购买该书
-                     $chapter_no=explode('|',$purchased->chapter_no);
-                     //最大章节(也就是最后购买章节)
-                     $chapter_no=array_filter($chapter_no);//去除数组空元素
-                     $no=count($chapter_no);//统计购买章节数量
-                     $new_chapter_no=max($chapter_no);//最新章节号
-                     //剩余购买的章节数
-                     $RemainingChapters=$chapter_number-$no;
-                     $RealPrice=round($RemainingChapters*$price);//实际价格
-
-                     //图书折扣
-                     if($RemainingChapters>=20 && $RemainingChapters<60){//购买20章98折
-                         $SettlementPrice=round($RealPrice*0.98);
-                         $discount=0.98;
-                         //var_dump($price);exit;
-                     }elseif ($RemainingChapters>=60 && $RemainingChapters<100){//购买60章9折
-                         $SettlementPrice=round($RealPrice*0.9);
-                         $discount=0.9;
-                     }elseif ($RemainingChapters>100){//购买100章以上
-                         $SettlementPrice=round($RealPrice*0.8);
-                         $discount=0.8;
-                     }
-
-                 }else{
-                     //没有购买该书
-                     //图书折扣
-                     $RealPrice=$chapter_number*$price;//实际价格
-                     if($chapter_number>=20 && $chapter_number<60){//购买20章98折
-                         $SettlementPrice=round($RealPrice*0.98);
-                         $discount=0.98;
-                         //var_dump($price);exit;
-                     }elseif ($chapter_number>=60 && $chapter_number<100){//购买60章9折
-                         $SettlementPrice=round($RealPrice*0.9);
-                         $discount=0.9;
-                     }elseif ($chapter_number>100){//购买100章以上
-                         $SettlementPrice=round($RealPrice*0.8);
-                         $discount=0.8;
-                     }
-
-                 }
-                 $relust['code']=200;
-                 $relust['msg']='获取价格信息成功';
-                 $relust['data']=['RealPrice'=>$RealPrice,'price'=>$price,'discount'=>$discount,'SettlementPrice'=>$SettlementPrice,'ticket'=>$user->ticket,'voucher'=>$user->voucher,'discount'=>$discount,'new_chapter_no'=>isset($new_chapter_no)?$new_chapter_no:''];
-
-
-            // }
-        }else{
-            $relust['msg']='请求方式错误';
-        }
-        return $relust;
-    }*/
-
 
 
 }
