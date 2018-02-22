@@ -48,9 +48,9 @@
     </table>
     <p>
         数据合计:<?= $pager->totalCount;?>条&emsp;&emsp;
-        实际消费阅票合计:<?=\backend\models\Consume::getTotal()?>
-        近一个月实际消费阅票合计:<?=\backend\models\Consume::getMonth()?>
-        近7天实际消费阅票合计:<?=\backend\models\Consume::getWeek()?>
+        实际消费阅票合计:<?=\backend\models\Consume::getTotal()?>&emsp;
+        近一个月实际消费阅票合计:<?=\backend\models\Consume::getMonth()?>&emsp;
+        近7天实际消费阅票合计:<?=\backend\models\Consume::getWeek()?>&emsp;
         今日实际消费阅票合计:<?=\backend\models\Consume::getToday()?>
     </p>
 <?php
