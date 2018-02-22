@@ -48,10 +48,10 @@
     </table>
     <p>
         数据合计:<?= $pager->totalCount;?>条&emsp;&emsp;
-        实际消费阅票合计:<?=\backend\models\Consume::getTotal()?>.00&emsp;&emsp;
-        近一个月实际消费阅票合计:<?=\backend\models\Consume::getMonth()?>.00&emsp;&emsp;
-        近7天实际消费阅票合计:<?=\backend\models\Consume::getWeek()?>.00&emsp;&emsp;
-        今日实际消费阅票合计:<?=\backend\models\Consume::getToday()?>.00&emsp;&emsp;
+        实际消费阅票合计:<?=\backend\models\Consume::getTotal()?>
+        近一个月实际消费阅票合计:<?=\backend\models\Consume::getMonth()?>
+        近7天实际消费阅票合计:<?=\backend\models\Consume::getWeek()?>
+        今日实际消费阅票合计:<?=\backend\models\Consume::getToday()?>
     </p>
 <?php
 echo \yii\widgets\LinkPager::widget([
