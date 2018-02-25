@@ -77,7 +77,13 @@ class MemberController extends Controller{
                 }elseif ($number==10001){
                     $money=8.8;
                 }
-                var_dump($money);exit;
+                $member->money=$member->money+$money;
+                if($member->save()){
+                    $relust['code']=200;
+                    $relust['msg']='抽取红包'.$money.'元';
+                }else{
+                    $relust['msg']='抽取红包失败';
+                }
 
             }else{
                 $relust['msg']='没有该手机号';
