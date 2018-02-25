@@ -20,7 +20,7 @@
                 <td><?=$model->id;?></td>
                 <td><?=$model->name;?></td>
                 <td><?=$model->advert_id;?></td>
-                <td><?=$model->click?></td>
+                <td><?php if($model->advert_id){echo $model->click;}else{echo round($model->click*0.95);}?></td>
                 <td><?=$model->unrestricted_click?></td>
                 <td><?=$model->date?></td>
             </tr>
