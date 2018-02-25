@@ -15,6 +15,7 @@ class MemberController extends Controller{
         parent::init();
     }
 
+    //记录用户
     public function actionRecord(){
         $result = [
             'code'=>400,
@@ -51,6 +52,42 @@ class MemberController extends Controller{
             $result['msg']='请求方式错误';
         }
         return $result;
+
+    }
+
+    //随机抽取红包
+    public function actionLuckDraw(){
+        $relust=[
+            'code'=>400,
+            'msg'=>'',
+        ];
+        if(\Yii::$app->request->isPost){
+            //接收参数
+            $phone=\Yii::$app->request->post('phone');
+            $member=Member::findOne(['phone'=>$phone]);
+            $money=0;
+            if($member){
+                $number=rand(1,10001);
+                if($number<=8000){
+                    $money=sprintf("%.2f",Member::getrandomFloat(0.06,0.1));
+                }elseif ($number>8000 && $number<=9500){
+                    $money=sprintf("%.2f",Member::getrandomFloat(0.1,0.5));
+                }elseif ($number>9500 && $number<=10000){
+                    $money=sprintf("%.2f",Member::getrandomFloat(0.5,1.2));
+                }elseif ($number==10001){
+                    $money=8.8;
+                }
+                var_dump($money);exit;
+
+            }else{
+                $relust['msg']='没有该手机号';
+
+            }
+
+        }else{
+            $relust['msg']='请求方式错误';
+        }
+        return $relust;
 
     }
 }

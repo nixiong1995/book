@@ -72,7 +72,7 @@ class QuestionsController extends Controller{
         return $relust;
     }
 
-    //查询用户出题
+    //用户查询自己出题
     public function actionMemberQuestions(){
         $relust=[
           'code'=>400,
@@ -92,6 +92,24 @@ class QuestionsController extends Controller{
             $relust['msg']='获取用户出题成功';
             $relust['data']=$model;
 
+        }else{
+            $relust['msg']='请求方式错误';
+        }
+        return $relust;
+    }
+
+    //随机出题,用户答题
+    public function actionQueryQuestions(){
+
+        $relust=[
+            'code'=>400,
+            'msg'=>'',
+        ];
+        if(\Yii::$app->request->isPost){
+            $models=Question::findBySql('SELECT * FROM question WHERE status=4 order by rand() limit 10')->all();
+            $relust['code']=200;
+            $relust['msg']='获取题库成功';
+            $relust['data']=$models;
         }else{
             $relust['msg']='请求方式错误';
         }

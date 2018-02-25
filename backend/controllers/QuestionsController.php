@@ -1,6 +1,7 @@
 <?php
 //元宵节答题活动
 namespace backend\controllers;
+use backend\filters\RbacFilter;
 use backend\models\Question;
 use yii\data\Pagination;
 use yii\web\Controller;
@@ -39,5 +40,16 @@ class QuestionsController extends Controller{
         }else{
             return 'error';
         }
+    }
+
+    //验证访问权限
+    public function behaviors()
+    {
+        return [
+            'rbac'=>[
+                'class'=>RbacFilter::className(),
+                'except'=>['login','logout','captcha','error'],
+            ]
+        ];
     }
 }
