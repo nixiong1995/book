@@ -31,6 +31,7 @@ class BrushController extends Controller{
                 //接收参数
                 $name=\Yii::$app->request->post('name');//包名
                 $advert_id=\Yii::$app->request->post('advert_id');//本地图片id
+                $time=date("Ymd");
 
                 if(empty($name)){
                     $result['msg']='请传入指定参数';
@@ -39,11 +40,10 @@ class BrushController extends Controller{
 
 
                 if($advert_id){
-                    $model=Brush::find()->where(['name'=>$name])->andWhere(['advert_id'=>$advert_id])->one();
+                    $model=Brush::find()->where(['name'=>$name])->andWhere(['advert_id'=>$advert_id])->andWhere(['date'=>$time])->one();
                 }else{
-                    $model=Brush::find()->where(['name'=>$name])->andWhere(['advert_id'=>null])->one();
+                    $model=Brush::find()->where(['name'=>$name])->andWhere(['advert_id'=>null])->andWhere(['date'=>$time])->one();
                 }
-
 
                 if($model){
                     $model->click=$model->click+1;
@@ -53,6 +53,7 @@ class BrushController extends Controller{
                     $brush->name=$name;
                     $brush->click=1;
                     $brush->advert_id=$advert_id;
+                    $brush->date=$time;
                     $brush->save();
                 }
                 $result['msg']='点击数记录成功';
@@ -75,11 +76,12 @@ class BrushController extends Controller{
             $obj=new Verification();
             $res=$obj->check();
             if($res){
-                $result['msg']= $res;
+               $result['msg']= $res;
             }else{
                 //接收参数
                 $name=\Yii::$app->request->post('name');//包名
                 $advert_id=\Yii::$app->request->post('advert_id');//本地图片id
+                $time=date("Ymd");
 
                 if(empty($name)){
                     $result['msg']='请传入指定参数';
@@ -87,9 +89,9 @@ class BrushController extends Controller{
                 }
 
                 if($advert_id){
-                    $model=Brush::find()->where(['name'=>$name])->andWhere(['advert_id'=>$advert_id])->one();
+                    $model=Brush::find()->where(['name'=>$name])->andWhere(['advert_id'=>$advert_id])->andWhere(['date'=>$time])->one();
                 }else{
-                    $model=Brush::find()->where(['name'=>$name])->andWhere(['advert_id'=>null])->one();
+                    $model=Brush::find()->where(['name'=>$name])->andWhere(['advert_id'=>null])->andWhere(['date'=>$time])->one();
                 }
 
                 if($model){
@@ -100,6 +102,7 @@ class BrushController extends Controller{
                     $brush->name=$name;
                     $brush->unrestricted_click=1;
                     $brush->advert_id=$advert_id;
+                    $brush->date=$time;
                     $brush->save();
                 }
                 $result['msg']='点击数记录成功';
