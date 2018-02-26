@@ -1,6 +1,8 @@
 <?php
 namespace frontend\controllers;
+use backend\models\Question;
 use frontend\models\Member;
+use yii\db\Exception;
 use yii\web\Controller;
 use yii\web\Response;
 header("Access-Control-Allow-Origin: *");
@@ -55,7 +57,7 @@ class MemberController extends Controller{
 
     }
 
-    //答题正确随机抽取现金红包
+    //出题抽取现金红包
     public function actionLuckDraw(){
         $relust=[
             'code'=>400,
@@ -64,33 +66,49 @@ class MemberController extends Controller{
         if(\Yii::$app->request->isPost){
             //接收参数
             $phone=\Yii::$app->request->post('phone');
+            $id=\Yii::$app->request->post('id');
+            //判断是否传入参数
+            if(empty($phone) || empty($id)){
+                $relust['msg']='请传入指定参数';
+                return $relust;
+            }
+            //判断是否有该题
+            $question=Question::findOne(['id'=>$id]);
+            if(!$question){
+                $relust['msg']='没有该题';
+                return $relust;
+            }
             $member=Member::findOne(['phone'=>$phone]);
             $money=0;
+            //判断是否该手机号
             if($member){
-                $number=rand(1,10001);
+                $number=rand(1,10000);
                 if($number<=8000){
                     $money=sprintf("%.2f",Member::getrandomFloat(0.06,0.1));
                 }elseif ($number>8000 && $number<=9500){
                     $money=sprintf("%.2f",Member::getrandomFloat(0.1,0.5));
                 }elseif ($number>9500 && $number<=10000){
                     $money=sprintf("%.2f",Member::getrandomFloat(0.5,1.2));
-                }elseif ($number==10001){
-                    $money=8.8;
                 }
                 $member->money=$member->money+$money;
-                if($member->save()){
+                $transaction=\Yii::$app->db->beginTransaction();//开启事务
+                try{
+                    $member->save();
+                    $question->receive=0;
+                    $question->save();
+                    $transaction->commit();
                     $relust['code']=200;
                     $relust['msg']='抽取红包成功';
                     $relust['money']=$money;
-                }else{
+
+                }catch (Exception $e ){
+                    //事务回滚
+                    $transaction->rollBack();
                     $relust['msg']='抽取红包失败';
                 }
-
             }else{
                 $relust['msg']='没有该手机号';
-
             }
-
         }else{
             $relust['msg']='请求方式错误';
         }
