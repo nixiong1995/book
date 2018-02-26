@@ -63,8 +63,7 @@ class MemberController extends Controller{
         ];
         if(\Yii::$app->request->isPost){
             //接收参数
-            $data=$_POST;
-            return $data;
+            $phone=\Yii::$app->request->post('phone');
             $member=Member::findOne(['phone'=>$phone]);
             $money=0;
             if($member){
@@ -96,5 +95,32 @@ class MemberController extends Controller{
         }
         return $relust;
 
+    }
+
+
+    //轮播用户中奖信息
+    public function actionWinning(){
+        $relust=[
+            'code'=>400,
+            'msg'=>'',
+        ];
+        if(\Yii::$app->request->isPost){
+            $arr = array(
+                130,131,132,133,134,135,136,137,138,139,
+                144,147,
+                150,151,152,153,155,156,157,158,159,
+                176,177,178,
+                180,181,182,183,184,185,186,187,188,189,
+            );
+            for($i = 0; $i < 10; $i++) {
+                $tmp[] = $arr[array_rand($arr)].'****'.mt_rand(1000,9999).'抽取到'.sprintf("%.2f",Member::getrandomFloat(0.1,1.2)).'元红包';
+            }
+            $relust['code']=200;
+            $relust['msg']='获取抽奖信息成功';
+            $relust['data']=array_unique($tmp);
+        }else{
+            $relust['msg']='请求方式错误';
+        }
+        return $relust;
     }
 }
