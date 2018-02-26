@@ -78,6 +78,13 @@ class MemberController extends Controller{
                 $relust['msg']='没有该题';
                 return $relust;
             }
+
+            //判断是否领取过红包
+            if($question->receive==0){
+                $relust['msg']='已经抽取过红包了';
+                return $relust;
+            }
+
             $member=Member::findOne(['phone'=>$phone]);
             $money=0;
             //判断是否该手机号
@@ -98,13 +105,13 @@ class MemberController extends Controller{
                     $question->save();
                     $transaction->commit();
                     $relust['code']=200;
-                    $relust['msg']='抽取红包成功';
+                    $relust['msg']='出题抽取红包成功';
                     $relust['money']=$money;
 
                 }catch (Exception $e ){
                     //事务回滚
                     $transaction->rollBack();
-                    $relust['msg']='抽取红包失败';
+                    $relust['msg']='出题抽取红包失败';
                 }
             }else{
                 $relust['msg']='没有该手机号';
@@ -114,6 +121,52 @@ class MemberController extends Controller{
         }
         return $relust;
 
+    }
+
+    //答题抽取现金红包
+    public function actionLotteryDraw(){
+        $relust=[
+            'code'=>400,
+            'msg'=>'',
+        ];
+        if(\Yii::$app->request->isPost){
+            //接收参数
+            $phone=\Yii::$app->request->post('phone');
+            //判断是否传入参数
+            if(empty($phone)){
+                $relust['msg']='请传入指定参数';
+                return $relust;
+            }
+            $member=Member::findOne(['phone'=>$phone]);
+            $money=0;
+            //判断是否该手机号
+            if($member){
+                $number=rand(1,10001);
+                if($number<=8000){
+                    $money=sprintf("%.2f",Member::getrandomFloat(0.06,0.1));
+                }elseif ($number>8000 && $number<=9500){
+                    $money=sprintf("%.2f",Member::getrandomFloat(0.1,0.5));
+                }elseif ($number>9500 && $number<=10000){
+                    $money=sprintf("%.2f",Member::getrandomFloat(0.5,1.2));
+                }elseif ($number==10001){
+                    $money=8.8;
+                }
+                $member->money=$member->money+$money;
+                if($member->save()){
+                    $relust['code']=200;
+                    $relust['msg']='答题获取红包成功';
+                    $relust['money']=$money;
+                }else{
+                    $relust['msg']='答题获取红包失败';
+                }
+
+            }else{
+                $relust['msg']='没有该手机号';
+            }
+        }else{
+            $relust['msg']='请求方式错误';
+        }
+        return $relust;
     }
 
     //答题错误抽取书券或者书
