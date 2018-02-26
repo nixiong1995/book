@@ -27,6 +27,7 @@ class QuestionsController extends Controller{
             $phone=\Yii::$app->request->post('phone');
             $title=\Yii::$app->request->post('title');
             $options=\Yii::$app->request->post('option');
+            $options=explode(',',$options);
             //判断是否传入参数
             if(empty($phone) || empty($title) || empty($options)){
                 $relust['msg']='请传入指定参数';
@@ -106,6 +107,45 @@ class QuestionsController extends Controller{
             'msg'=>'',
         ];
         if(\Yii::$app->request->isPost){
+            //接收参数
+            $phone=\Yii::$app->request->post('phone');
+            //活动时间
+            $date=date("Ymd");
+            //判断是否传入参数
+            if(empty($phone)){
+                $relust['msg']='请传入指定参数';
+                return $relust;
+            }
+            $member=Member::findOne(['phone'=>$phone]);
+            //判断是否有该用户
+            if(!$member){
+                $relust['msg']='没有该手机号';
+                return $relust;
+            }
+
+          //判断活动时间
+            if($date==20180301){
+                //判断今日答题次数
+                if($member->one>0){
+                    $member->one=$member->one-1;
+                    $member->save();
+                }else{
+                    $relust['msg']='今日答题次数已用完';
+                    return $relust;
+                }
+
+            }elseif ($date==20180302){
+                if($member->two>0){
+                    $member->one=$member->two-1;
+                    $member->save();
+                }else{
+                    $relust['msg']='今日答题次数已用完';
+                    return $relust;
+                }
+            }else{
+                $relust['msg']='未到答题时间';
+                return $relust;
+            }
             $models=Question::findBySql('SELECT * FROM question WHERE status=4 order by rand() limit 10')->all();
             $relust['code']=200;
             $relust['msg']='获取题库成功';

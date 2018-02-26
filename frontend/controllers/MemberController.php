@@ -63,7 +63,8 @@ class MemberController extends Controller{
         ];
         if(\Yii::$app->request->isPost){
             //接收参数
-            $phone=\Yii::$app->request->post('phone');
+            $data=$_POST;
+            return $data;
             $member=Member::findOne(['phone'=>$phone]);
             $money=0;
             if($member){
