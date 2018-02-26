@@ -73,7 +73,7 @@ class QuestionsController extends Controller{
         return $relust;
     }
 
-    //用户查询自己出题
+    //用户查询自己出题以及红包
     public function actionMemberQuestions(){
         $relust=[
           'code'=>400,
@@ -84,6 +84,7 @@ class QuestionsController extends Controller{
             $phone=\Yii::$app->request->post('phone');
             //查询用户出题
             $model=Question::find()->where(['ascription'=>$phone])->all();
+            $money=\Yii::$app->db->createCommand("SELECT money FROM member WHERE phone='$phone'")->queryScalar();
             //判断是否出题
             if(!$model){
                 $relust['msg']='该手机未出题';
@@ -91,6 +92,7 @@ class QuestionsController extends Controller{
             }
             $relust['code']=200;
             $relust['msg']='获取用户出题成功';
+            $relust['money']=$money;
             $relust['data']=$model;
 
         }else{

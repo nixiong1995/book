@@ -55,7 +55,7 @@ class MemberController extends Controller{
 
     }
 
-    //随机抽取红包
+    //答题正确随机抽取现金红包
     public function actionLuckDraw(){
         $relust=[
             'code'=>400,
@@ -80,7 +80,8 @@ class MemberController extends Controller{
                 $member->money=$member->money+$money;
                 if($member->save()){
                     $relust['code']=200;
-                    $relust['msg']='抽取红包'.$money.'元';
+                    $relust['msg']='抽取红包成功';
+                    $relust['money']=$money;
                 }else{
                     $relust['msg']='抽取红包失败';
                 }
@@ -95,6 +96,20 @@ class MemberController extends Controller{
         }
         return $relust;
 
+    }
+
+    //答题错误抽取书券或者书
+    public function actionExtract(){
+        $relust=[
+            'code'=>400,
+            'msg'=>'',
+        ];
+        if(\Yii::$app->request->isPost){
+
+        }else{
+            $relust['msg']='请求方式错误';
+        }
+        return $relust;
     }
 
 
