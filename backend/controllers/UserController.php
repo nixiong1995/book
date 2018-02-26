@@ -125,7 +125,7 @@ class UserController extends Controller{
 
 
         //查询用户已购买的书
-        $purchaseds=Purchased::find(['user_id'=>$id])->limit(5)->all();
+        $purchaseds=Purchased::find()->where(['user_id'=>$id])->limit(5)->all();
         if($purchaseds){
             $bookdata=[];
 
