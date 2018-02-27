@@ -1,5 +1,6 @@
 <?php
 namespace frontend\controllers;
+use backend\models\Book;
 use backend\models\Question;
 use frontend\models\Member;
 use yii\db\Exception;
@@ -191,11 +192,33 @@ class MemberController extends Controller{
             //随机书和书券概率
             $num1=rand(1,10);
             //随机数大于8送书,小于8送书券
-            if($num1>8){
+            //if($num1>8){
+                $book=\Yii::$app->db->createCommand('SELECT id,image FROM book WHERE `from`=3 ORDER BY RAND() LIMIT 1')->queryAll();
+                var_dump($book[0]['id']);exit;
+                if($member->book_id){
+                    //分割数组
+                    $BookId=explode(',',$member->book_id);
+                    //判断是否已经抽到
+                    if(!in_array($book['id'],$BookId)){
+                        $member->book_id=$member->book_id.','.$book['id'];
+                    }
+                }else{
+                    $member->book_id=$book['id'];
+                }
 
-            }else{
+                if($member->save()){
+                    $relust['code']=200;
+                    $relust['msg']='抽取图书成功';
+                    $relust['img']=$book['image'];
+                }
 
-            }
+
+
+
+
+            //}else{
+
+          //  }
 
         }else{
             $relust['msg']='请求方式错误';
