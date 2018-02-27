@@ -58,7 +58,7 @@
         </tr>
     <?php endforeach;?>
 </table>
-    <div class="text-muted">合计<?=$pager->totalCount?>条</div>
+    <div class="text-muted">合计:<?=$pager->totalCount?>条&emsp;&emsp;通过审核合计:<?=\backend\models\Question::getTotalQuestion()?>条</div>
 
 <?php
 echo yii\widgets\LinkPager::widget([

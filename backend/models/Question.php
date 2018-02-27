@@ -20,5 +20,11 @@ class Question extends ActiveRecord{
         return $total_money;
     }
 
+    //查询已通过审核的题目数量
+    public static function getTotalQuestion(){
+        $total_question=\Yii::$app->db->createCommand('SELECT count(id) FROM question WHERE status=4')->queryScalar();
+        return $total_question;
+    }
+
 
 }

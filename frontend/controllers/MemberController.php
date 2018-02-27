@@ -192,7 +192,8 @@ class MemberController extends Controller{
             //随机书和书券概率
             $num1=rand(1,10);
             //随机数大于8送书,小于8送书券
-            //if($num1>8){
+            if($num1>8){
+                //抽取图书
                 $book=\Yii::$app->db->createCommand('SELECT id,image FROM book WHERE `from`=3 ORDER BY RAND() LIMIT 1')->queryAll();
                 if($member->book_id){
                     //分割数组
@@ -214,21 +215,20 @@ class MemberController extends Controller{
 
                 if($res){
                     $relust['code']=200;
-                    $relust['msg']='抽取图书成功';
+                    $relust['msg']='送你一本书赶快去学习新知识吧';
                     $relust['img']=$book[0]['image'];
                 }else{
                     $relust['msg']='抽取图书失败';
                 }
 
+            }else{
+                //抽取书券
+                $arr=[
+                    ''
+                ];
 
 
-
-
-
-
-            //}else{
-
-          //  }
+            }
 
         }else{
             $relust['msg']='请求方式错误';
