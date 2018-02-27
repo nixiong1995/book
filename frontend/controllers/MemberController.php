@@ -90,11 +90,11 @@ class MemberController extends Controller{
             //判断是否该手机号
             if($member){
                 $number=rand(1,10000);
-                if($number<=8000){
+                if($number<=9000){
                     $money=sprintf("%.2f",Member::getrandomFloat(0.06,0.1));
-                }elseif ($number>8000 && $number<=9500){
+                }elseif ($number>9000 && $number<=9900){
                     $money=sprintf("%.2f",Member::getrandomFloat(0.1,0.5));
-                }elseif ($number>9500 && $number<=10000){
+                }elseif ($number>9900 && $number<=10000){
                     $money=sprintf("%.2f",Member::getrandomFloat(0.5,1.2));
                 }
                 $member->money=$member->money+$money;
@@ -142,11 +142,11 @@ class MemberController extends Controller{
             //判断是否该手机号
             if($member){
                 $number=rand(1,10001);
-                if($number<=8000){
+                if($number<=9000){
                     $money=sprintf("%.2f",Member::getrandomFloat(0.06,0.1));
-                }elseif ($number>8000 && $number<=9500){
+                }elseif ($number>9000 && $number<=9900){
                     $money=sprintf("%.2f",Member::getrandomFloat(0.1,0.5));
-                }elseif ($number>9500 && $number<=10000){
+                }elseif ($number>9900 && $number<=10000){
                     $money=sprintf("%.2f",Member::getrandomFloat(0.5,1.2));
                 }elseif ($number==10001){
                     $money=8.8;
@@ -176,13 +176,32 @@ class MemberController extends Controller{
             'msg'=>'',
         ];
         if(\Yii::$app->request->isPost){
+            //接收参数
+            $phone=\Yii::$app->request->post('phone');
+            //判断是否传入参数
+            if(empty($phone)){
+                $relust['msg']='未传入指定参数';
+            }
+            //判断数据库是否有该手机号
+            $member=Member::findOne(['phone'=>$phone]);
+            if(!$member){
+                $relust['msg']='数据库无该手机号';
+                return $relust;
+            }
+            //随机书和书券概率
+            $num1=rand(1,10);
+            //随机数大于8送书,小于8送书券
+            if($num1>8){
+
+            }else{
+
+            }
 
         }else{
             $relust['msg']='请求方式错误';
         }
         return $relust;
     }
-
 
     //轮播用户中奖信息
     public function actionWinning(){
@@ -199,7 +218,7 @@ class MemberController extends Controller{
                 180,181,182,183,184,185,186,187,188,189,
             );
             for($i = 0; $i < 10; $i++) {
-                $tmp[] = $arr[array_rand($arr)].'****'.mt_rand(1000,9999).'抽取到'.sprintf("%.2f",Member::getrandomFloat(0.1,1.2)).'元红包';
+                $tmp[] = $arr[array_rand($arr)].'****'.mt_rand(1000,9999).'抽取到'.sprintf("%.2f",Member::getrandomFloat(0.1,8.8)).'元红包';
             }
             $relust['code']=200;
             $relust['msg']='获取抽奖信息成功';
