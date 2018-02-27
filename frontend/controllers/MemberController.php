@@ -190,9 +190,9 @@ class MemberController extends Controller{
                 return $relust;
             }
             //随机书和书券概率
-            $num1=rand(1,10);
+            $num=rand(1,10);
             //随机数大于8送书,小于8送书券
-            if($num1>8){
+            if($num>8){
                 //抽取图书
                 $book=\Yii::$app->db->createCommand('SELECT id,image FROM book WHERE `from`=3 ORDER BY RAND() LIMIT 1')->queryAll();
                 if($member->book_id){
@@ -200,7 +200,6 @@ class MemberController extends Controller{
                     $BookId=explode(',',$member->book_id);
                     //判断是否已经抽到
                     if(!in_array($book[0]['id'],$BookId)){
-                        //var_dump($book[0]['id']);exit;
                         $member->book_id=$member->book_id.','.$book[0]['id'];
                         $res=$member->save();
                     }else{
@@ -223,11 +222,22 @@ class MemberController extends Controller{
 
             }else{
                 //抽取书券
-                $arr=[
-                    ''
-                ];
-
-
+                $arr=[168,666];
+                $voucher=$arr[array_rand($arr)];
+                $member->voucher=$member->voucher+$voucher;
+                if($member->save()){
+                    if($voucher==168){
+                        $relust['code']=200;
+                        $relust['msg']='送你一张书券赶快去领取吧';
+                        $relust['img']='http://www.nixiong.top/yuanxiao/img/168.jpg';
+                    }else{
+                        $relust['code']=200;
+                        $relust['msg']='送你一张书券赶快去领取吧';
+                        $relust['img']='http://www.nixiong.top/yuanxiao/img/666.jpg';
+                    }
+                }else{
+                    $relust['msg']='抽取书券失败';
+                }
             }
 
         }else{

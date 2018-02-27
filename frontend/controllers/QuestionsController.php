@@ -45,6 +45,12 @@ class QuestionsController extends Controller{
                 $relust['msg']='没有该用户';
                 return $relust;
             }
+            //判断数据库题是否达到2000
+            $num=Question::find()->andWhere(['status'=>4])->count('id');
+            if($num>2000){
+                $relust['msg']='出题已达到上限';
+                return $relust;
+            }
             //记录正确答案
             $correct=$options[0];
             //打乱选项
