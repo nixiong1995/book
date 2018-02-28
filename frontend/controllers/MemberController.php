@@ -287,6 +287,35 @@ class MemberController extends Controller{
         return $relust;
     }
 
+    //查询用户账户余额
+    public function actionBalance(){
+        $relust=[
+            'code'=>400,
+            'msg'=>'',
+        ];
+        if(\Yii::$app->request->isPost){
+            //接收参数
+            $phone=\Yii::$app->request->post('phone');
+            //判断是否传入参数
+            if(empty($phone)){
+                $relust['msg']='未传入指定参数';
+                return $relust;
+            }
+            $member=Member::findOne(['phone'=>$phone]);
+            if(!$member){
+                $relust['msg']='没有该手机号';
+                return $relust;
+            }
+            $relust['code']=200;
+            $relust['msg']='获取账户余额成功';
+            $relust['money']=$member->money;
+
+        }else{
+            $relust['msg']='请求方式错误';
+        }
+        return $relust;
+    }
+
     //轮播用户中奖信息
     public function actionWinning(){
         $relust=[
