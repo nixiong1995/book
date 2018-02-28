@@ -119,10 +119,10 @@ class QuestionsController extends Controller{
             $phone=\Yii::$app->request->post('phone');
             $deduction=\Yii::$app->request->post('deduction');
             //活动时间
-            $date=date("Ymd");
+            $date=\Yii::$app->request->post('date');
             //判断是否传入参数
-            if(empty($phone)){
-                $relust['msg']='请传入指定参数';
+            if(empty($phone) || empty($date)){
+                $relust['msg']='未传入指定参数';
                 return $relust;
             }
             $member=Member::findOne(['phone'=>$phone]);
@@ -133,29 +133,32 @@ class QuestionsController extends Controller{
             }
 
           //判断活动时间
-            if($date==20180227){
+            if($date==20180301){
                 //判断今日答题次数
                 if($member->one<=0){
                     $relust['msg']='今日答题次数已用完';
                     return $relust;
                 }
 
-            }elseif ($date==20180228){
+            }elseif ($date==20180302){
                 if($member->two<0){
                     $relust['msg']='今日答题次数已用完';
                     return $relust;
                 }
-            }else{
-                $relust['msg']='未到答题时间';
+            }elseif($date<20180301){
+                $relust['msg']='活动未开始';
+                return $relust;
+            }elseif ($date>20180302){
+                $relust['msg']='活动已结束';
                 return $relust;
             }
 
             //判断是否扣减答题次数
             if($deduction){
-                if($date==20180227){
+                if($date==20180301){
                     $member->one=$member->one-1;
                     $member->save();
-                }elseif($date==20180228){
+                }elseif($date==20180302){
                     $member->two=$member->two-1;
                     $member->save();
                 }

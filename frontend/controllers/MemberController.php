@@ -246,6 +246,47 @@ class MemberController extends Controller{
         return $relust;
     }
 
+    //查询用户答题次数
+    public function actionQuestionNumber(){
+        $relust=[
+            'code'=>200,
+            'msg'=>'',
+        ];
+        if(\Yii::$app->request->isPost){
+            //接收数据
+            $phone=\Yii::$app->request->post('phone');
+            $time=\Yii::$app->request->post('date');//当前时间
+            if(empty($phone) || empty($time)){
+                $relust['msg']='未传入指定参数';
+                return $relust;
+            }
+            //通过手机查找该用户
+            $member=Member::findOne(['phone'=>$phone]);
+            if(!$member){
+                $relust['msg']='没有该手机号';
+                return $relust;
+            }
+
+            if($time==20180301){
+                $relust['msg']='获取一天答题次数成功';
+                $relust['code']=200;
+                $relust['frequency']=$member->one;
+            }elseif ($time==20180302){
+                $relust['msg']='获取第二天答题次数成功';
+                $relust['code']=200;
+                $relust['frequency']=$member->two;
+            }elseif($time<20180301){
+                $relust['msg']='活动未开始';
+            }elseif ($time>20180302){
+                $relust['msg']='活动已结束';
+            }
+
+        }else{
+            $relust['msg']='请求方式错误';
+        }
+        return $relust;
+    }
+
     //轮播用户中奖信息
     public function actionWinning(){
         $relust=[
