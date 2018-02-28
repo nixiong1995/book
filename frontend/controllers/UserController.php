@@ -66,11 +66,11 @@ class UserController extends Controller {
                 $phone=$redis->get('tel'.$tel);
                 $sms=$redis->get('captcha'.$tel);
                 $time=$redis->get('time'.$tel);
-                //判断是否有imei
+                /*//判断是否有imei
                 if(empty($imei)){
                     $result['msg']='没有IMEI号';
                     return $result;
-                }
+                }*/
                 //判断是否输入密码
                 if(empty($password)){
                     $result['msg']='没有密码';
@@ -153,7 +153,51 @@ class UserController extends Controller {
                     }
 
                 }else{
-                    $result['msg']='数据库没该IMEI,请重新记录用户IMEI';
+
+                    //没有imei,重新生成一条新数据
+                    $User=new User();
+                    $uid=$this->getuid();
+                    $res=\Yii::$app->db->createCommand("SELECT uid FROM user WHERE uid='$uid'")->queryOne();
+                    while ($res){
+                        $uid=$this->getuid();
+                        $res=\Yii::$app->db->createCommand("SELECT uid FROM user WHERE uid='$uid'")->queryOne();
+                    }
+                    $User->uid=$uid;
+                    $User->tel=$tel;
+                    $User->password_hash=\Yii::$app->security->generatePasswordHash($password);
+                    $User->auth_key=\Yii::$app->security->generateRandomString();
+                    $User->address=$address;
+                    $User->source=$source;
+                    $User->created_at=time();
+                    $User->imei='';
+                    $User->status=1;
+                    $transaction=\Yii::$app->db->beginTransaction();//开启事务
+                    try{
+                        $User->save();
+                        //实例化UserDetails
+                        $model=new UserDetails();
+                        $model->user_id=$User->id;
+                        if ($model->validate()) {//验证规则
+                            //保存所有数据
+                            $model->save();
+                            $result['code']=200;
+                            $result['msg']='注册成功';
+                            $result['data']=['user_id'=>$model->user_id];
+                        }
+                        $transaction->commit();
+                    }catch ( Exception $e){
+                        //事务回滚
+                        $transaction->rollBack();
+                    }
+
+
+
+
+
+
+
+
+
                 }
             }
         }else{
