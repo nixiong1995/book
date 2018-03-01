@@ -2,7 +2,9 @@
 namespace frontend\controllers;
 use backend\models\Book;
 use backend\models\Question;
+use backend\models\User;
 use frontend\models\Member;
+use libs\PostRequest;
 use yii\db\Exception;
 use yii\web\Controller;
 use yii\web\Response;
@@ -194,7 +196,7 @@ class MemberController extends Controller{
             //随机数大于8送书,小于8送书券
             if($num>8){
                 //抽取图书
-                $book=\Yii::$app->db->createCommand('SELECT id,image FROM book WHERE `from`=3 ORDER BY RAND() LIMIT 1')->queryAll();
+                $book=\Yii::$app->db->createCommand('SELECT id,image FROM book WHERE `from`=3 AND `is_end`=2 ORDER BY RAND() LIMIT 1')->queryAll();
                 if($member->book_id){
                     //分割数组
                     $BookId=explode(',',$member->book_id);
@@ -204,7 +206,8 @@ class MemberController extends Controller{
                         $res=$member->save();
                     }else{
                         $relust['code']=401;
-                        $relust['msg']='已存在该书';
+                        $relust['img']=$book[0]['image'];
+                        $relust['msg']='已抽到过该书';
                         return $relust;
                     }
                 }else{
@@ -270,14 +273,18 @@ class MemberController extends Controller{
             if($time==20180301){
                 $relust['msg']='获取一天答题次数成功';
                 $relust['code']=200;
-                $relust['frequency']=$member->one;
+                $relust['frequency']=$member->today;
             }elseif ($time==20180302){
                 $relust['msg']='获取第二天答题次数成功';
+                $relust['code']=200;
+                $relust['frequency']=$member->one;
+            }elseif ($time==20180303){
+                $relust['msg']='获取第三天答题次数成功';
                 $relust['code']=200;
                 $relust['frequency']=$member->two;
             }elseif($time<20180301){
                 $relust['msg']='活动未开始';
-            }elseif ($time>20180302){
+            }elseif ($time>20180303){
                 $relust['msg']='活动已结束';
             }
 
@@ -340,5 +347,57 @@ class MemberController extends Controller{
             $relust['msg']='请求方式错误';
         }
         return $relust;
+    }
+
+    //将元宵用户抽取到的书券批量写入阅cool用户表
+    public function actionVoucherRecord(){
+        //查询元宵用户表
+        $members=Member::find()->where(['>','voucher',0])->all();
+        $str='';
+        foreach ($members as $member){
+            $user=User::findOne(['tel'=>$member->phone]);
+            if($user){
+                $voucher=$member->voucher;
+                $user->voucher=$member->voucher;
+                $transaction=\Yii::$app->db->beginTransaction();//开启事务
+                try{
+                    $user->save();
+                    $member->voucher=0;
+                    $member->save();
+                    $str.=$member->phone.'赠送书券'.$voucher.'----';
+                    $transaction->commit();
+                }catch (Exception $e){
+                    //事务回滚
+                    $transaction->rollBack();
+                }
+
+            }
+        }
+        echo $str;
+    }
+
+    //将元宵节用户抽取到的书记录到已购书数据表
+    public function actionBookRecord(){
+        //查询字段book_id不为空的的数据
+        $members=Member::find()->where(['not',['book_id'=>null]])->all();
+        foreach ($members as $member){
+            //查询版权书id
+            $book_id=\Yii::$app->db->createCommand("select copyright_book_id from book WHERE id=$member->book_id")->queryScalar();
+            //请求地址
+            $postUrl = 'http://partner.chuangbie.com/partner/chapterlist';
+            $curlPost = [
+                'partner_id' => 2130,
+                'partner_sign' => 'b42c36ddd1a5cc2c6895744143f77b7b',
+                'book_id' => $book_id,
+            ];
+
+            $post = new PostRequest();
+            $records=json_decode($post->request_post($postUrl,$curlPost));
+            $total_chapter=count($records->content->data);//该书总章节数
+            $str='';
+            for
+
+
+        }
     }
 }

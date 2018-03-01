@@ -135,12 +135,18 @@ class QuestionsController extends Controller{
           //判断活动时间
             if($date==20180301){
                 //判断今日答题次数
+                if($member->today<=0){
+                    $relust['msg']='今日答题次数已用完';
+                    return $relust;
+                }
+            }elseif($date==20180302){
+                //判断今日答题次数
                 if($member->one<=0){
                     $relust['msg']='今日答题次数已用完';
                     return $relust;
                 }
 
-            }elseif ($date==20180302){
+            }elseif ($date>20180303){
                 if($member->two<0){
                     $relust['msg']='今日答题次数已用完';
                     return $relust;
@@ -148,7 +154,7 @@ class QuestionsController extends Controller{
             }elseif($date<20180301){
                 $relust['msg']='活动未开始';
                 return $relust;
-            }elseif ($date>20180302){
+            }elseif ($date>20180303){
                 $relust['msg']='活动已结束';
                 return $relust;
             }
@@ -156,9 +162,12 @@ class QuestionsController extends Controller{
             //判断是否扣减答题次数
             if($deduction){
                 if($date==20180301){
-                    $member->one=$member->one-1;
+                    $member->today=$member->today-1;
                     $member->save();
                 }elseif($date==20180302){
+                    $member->one=$member->one-1;
+                    $member->save();
+                }elseif($date==20180303){
                     $member->two=$member->two-1;
                     $member->save();
                 }
