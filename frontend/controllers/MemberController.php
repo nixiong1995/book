@@ -1,6 +1,7 @@
 <?php
 namespace frontend\controllers;
 use backend\models\Book;
+use backend\models\Purchased;
 use backend\models\Question;
 use backend\models\User;
 use frontend\models\Member;
@@ -194,7 +195,7 @@ class MemberController extends Controller{
             //随机书和书券概率
             $num=rand(1,10);
             //随机数大于8送书,小于8送书券
-            if($num>8){
+            if($num>3){
                 //抽取图书
                 $book=\Yii::$app->db->createCommand('SELECT id,image FROM book WHERE `from`=3 AND `is_end`=2 ORDER BY RAND() LIMIT 1')->queryAll();
                 if($member->book_id){
@@ -379,25 +380,65 @@ class MemberController extends Controller{
     //将元宵节用户抽取到的书记录到已购书数据表
     public function actionBookRecord(){
         //查询字段book_id不为空的的数据
+        $string='';
         $members=Member::find()->where(['not',['book_id'=>null]])->all();
         foreach ($members as $member){
-            //查询版权书id
-            $book_id=\Yii::$app->db->createCommand("select copyright_book_id from book WHERE id=$member->book_id")->queryScalar();
-            //请求地址
-            $postUrl = 'http://partner.chuangbie.com/partner/chapterlist';
-            $curlPost = [
-                'partner_id' => 2130,
-                'partner_sign' => 'b42c36ddd1a5cc2c6895744143f77b7b',
-                'book_id' => $book_id,
-            ];
+            $id=$member->book_id;
+            $user_id=\Yii::$app->db->createCommand("select id from user WHERE tel=$member->phone")->queryScalar();
+            if($user_id){
+                //查询版权书id
+                $book_id=\Yii::$app->db->createCommand("select copyright_book_id from book WHERE id=$member->book_id")->queryScalar();
+                //请求地址
+                $postUrl = 'http://partner.chuangbie.com/partner/chapterlist';
+                $curlPost = [
+                    'partner_id' => 2130,
+                    'partner_sign' => 'b42c36ddd1a5cc2c6895744143f77b7b',
+                    'book_id' => $book_id,
+                ];
 
-            $post = new PostRequest();
-            $records=json_decode($post->request_post($postUrl,$curlPost));
-            $total_chapter=count($records->content->data);//该书总章节数
-            $str='';
-            for
+                $post = new PostRequest();
+                $records=json_decode($post->request_post($postUrl,$curlPost));
+                $total_chapter=count($records->content->data);//该书总章节数
+                $str='';
+                for($i=1;$i<=$total_chapter;$i++){
+                    $str.=($i+1) .'|';
+                } //请求地址
+                $postUrl = 'http://partner.chuangbie.com/partner/chapterlist';
+                $curlPost = [
+                    'partner_id' => 2130,
+                    'partner_sign' => 'b42c36ddd1a5cc2c6895744143f77b7b',
+                    'book_id' => $book_id,
+                ];
 
+                $post = new PostRequest();
+                $records=json_decode($post->request_post($postUrl,$curlPost));
+                $total_chapter=count($records->content->data);//该书总章节数
+                $str='';
+                for($i=1;$i<=$total_chapter;$i++){
+                    $str.=$i .'|';
+                }
 
+                //判断该用户是否购买该书
+                $purchased=Purchased::find()->where(['user_id'=>$user_id])->andWhere(['book_id'=>$member->book_id])->one();
+                if(!$purchased){
+                    $model=new Purchased();
+                    $model->user_id=$user_id;
+                    $model->book_id=$member->book_id;
+                    $model->chapter_no=$str;
+                    $transaction=\Yii::$app->db->beginTransaction();//开启事务
+                    try{
+                        $model->save();
+                        $member->book_id=null;
+                        $member->save();
+                        $string.=$member->phone.'记录'.$id.'<br/>';
+                        $transaction->commit();
+                    }catch (Exception $e){
+                        //事务回滚
+                        $transaction->rollBack();
+                    }
+                }
+            }
         }
+        echo $string;
     }
 }
