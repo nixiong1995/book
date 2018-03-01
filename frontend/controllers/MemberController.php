@@ -195,7 +195,7 @@ class MemberController extends Controller{
             //随机书和书券概率
             $num=rand(1,10);
             //随机数大于8送书,小于8送书券
-            if($num>3){
+            if($num>8){
                 //抽取图书
                 $book=\Yii::$app->db->createCommand('SELECT id,image FROM book WHERE `from`=3 AND `is_end`=2 ORDER BY RAND() LIMIT 1')->queryAll();
                 if($member->book_id){
