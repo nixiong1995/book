@@ -1,8 +1,23 @@
 <?php
 ?>
+<style>
+    .span1{
+        color: darkgray;
+    }
+    .span2{
+        color: red;
+    }
+    .span3{
+        color: darkorange;
+    }
+    .span4{
+        color: green;
+    }
+</style>
+<p><h3 style="color: red">送出现金红包合计:<?=\backend\models\Question::getTotalMoney()?>元</h3></p>
     <p class="col-lg-9">
     <form class="form-inline" method="get" action="<?=\yii\helpers\Url::to(['questions/index'])?>">
-        <input type="text" name="keyword" class="form-control" placeholder="题目"/>
+        <input type="text" name="keyword" class="form-control" placeholder="题目、手机号"/>
         <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search">搜索</span></button>
     </form>
     </p>
@@ -26,7 +41,7 @@
             <td><?=$model->c?></td>
             <td><?=$model->d?></td>
             <td style="color: red"><?=$model->correct?></td>
-            <td class="content"><?php if($model->status==1){echo '审核中';}elseif($model->status==2){echo '未通过审核';}elseif($model->status==3){echo '已有此题';}elseif($model->status==4){echo '通过审核';}?></td>
+            <td class="content"><?php if($model->status==1){echo '<span class="span1">审核中</span>';}elseif($model->status==2){echo '<span class="span2">未通过审核</span>';}elseif($model->status==3){echo '<span class="span3">已有此题</span>';}elseif($model->status==4){echo '<span class="span4">通过审核</span>';}?></td>
             <td><?=$model->ascription?></td>
             <td class="button"><?php if($model->status==1){echo '<div class="btn-group">
                     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -43,6 +58,7 @@
         </tr>
     <?php endforeach;?>
 </table>
+    <div class="text-muted">合计<?=$pager->totalCount?>条</div>
 
 <?php
 echo yii\widgets\LinkPager::widget([

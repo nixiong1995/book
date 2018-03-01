@@ -111,6 +111,7 @@ class QuestionsController extends Controller{
         if(\Yii::$app->request->isPost){
             //接收参数
             $phone=\Yii::$app->request->post('phone');
+            $deduction=\Yii::$app->request->post('deduction');
             //活动时间
             $date=date("Ymd");
             //判断是否传入参数
@@ -128,19 +129,13 @@ class QuestionsController extends Controller{
           //判断活动时间
             if($date==20180301){
                 //判断今日答题次数
-                if($member->one>0){
-                    $member->one=$member->one-1;
-                    $member->save();
-                }else{
+                if($member->one<=0){
                     $relust['msg']='今日答题次数已用完';
                     return $relust;
                 }
 
             }elseif ($date==20180302){
-                if($member->two>0){
-                    $member->one=$member->two-1;
-                    $member->save();
-                }else{
+                if($member->two<0){
                     $relust['msg']='今日答题次数已用完';
                     return $relust;
                 }
@@ -148,7 +143,19 @@ class QuestionsController extends Controller{
                 $relust['msg']='未到答题时间';
                 return $relust;
             }
-            $models=Question::findBySql('SELECT * FROM question WHERE status=4 order by rand() limit 10')->all();
+
+            //判断是否扣减答题次数
+            if($deduction){
+                if($date==20180301){
+                    $member->one=$member->one-1;
+                    $member->save();
+                }elseif($date==20180302){
+                    $member->two=$member->two-1;
+                    $member->save();
+                }
+            }
+
+            $models=Question::findBySql('SELECT * FROM question WHERE status=4 order by rand() limit 1')->all();
             $relust['code']=200;
             $relust['msg']='获取题库成功';
             $relust['data']=$models;

@@ -14,5 +14,11 @@ class Question extends ActiveRecord{
         return false;
     }
 
+    //统计用户抽取红包金额
+    public static function getTotalMoney(){
+        $total_money=\Yii::$app->db->createCommand('SELECT sum(money) FROM member')->queryScalar();
+        return $total_money;
+    }
+
 
 }

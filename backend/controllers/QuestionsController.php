@@ -13,9 +13,9 @@ class QuestionsController extends Controller{
         $keyword=\Yii::$app->request->get('keyword');
         $query=Question::find();
         if($keyword){
-            $query->andWhere(['like','title',$keyword]);
-        }else{
-            $query->all();
+            //$query->andWhere(['like','title',$keyword]);
+            $query->FilterWhere(['like','title',$keyword])
+                ->orFilterWhere(['like','ascription',$keyword]);
         }
 
         $pager=new Pagination([
