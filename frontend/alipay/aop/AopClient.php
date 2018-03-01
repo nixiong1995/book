@@ -1,6 +1,8 @@
 <?php
 //require_once 'AopEncrypt.php';
 namespace frontend\alipay\aop;
+use yii\console\Exception;
+
 class AopClient {
 	//应用ID
 	public $appId;

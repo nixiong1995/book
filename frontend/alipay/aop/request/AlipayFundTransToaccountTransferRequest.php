@@ -5,6 +5,7 @@
  * @author auto create
  * @since 1.0, 2017-11-14 18:46:52
  */
+namespace frontend\alipay\aop\request;
 class AlipayFundTransToaccountTransferRequest
 {
 	/** 

@@ -229,11 +229,11 @@ class MemberController extends Controller{
                     if($voucher==168){
                         $relust['code']=200;
                         $relust['msg']='送你一张书券赶快去领取吧';
-                        $relust['img']='http://www.nixiong.top/yuanxiao/img/168.jpg';
+                        $relust['img']=\Yii::$app->request->hostInfo.'/yuanxiao/img/168.png';
                     }else{
                         $relust['code']=200;
                         $relust['msg']='送你一张书券赶快去领取吧';
-                        $relust['img']='http://www.nixiong.top/yuanxiao/img/666.jpg';
+                        $relust['img']=\Yii::$app->request->hostInfo.'/yuanxiao/img/666.png';
                     }
                 }else{
                     $relust['msg']='抽取书券失败';
