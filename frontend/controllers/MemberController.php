@@ -379,7 +379,6 @@ class MemberController extends Controller{
 
     //将元宵节用户抽取到的书记录到已购书数据表
     public function actionBookRecord(){
-        var_dump(date("Ymd His",1519959114));exit;
         //查询字段book_id不为空的的数据
         $string='';
         $members=Member::find()->where(['not',['book_id'=>null]])->all();
@@ -446,10 +445,26 @@ class MemberController extends Controller{
         //定义执行结果字符串
         $string='';
         //查询member表money字段大于0的用户
-        $members=Member::find()->where(['>',0,'money'])->all();
+        $members=Member::find()->where(['>','money',0])->all();
         foreach ($members as $member){
             $money=$member->money;//记录
+            $user=User::find()->where(['tel'=>$member->phone])->one();
+            if($user){
+                $user->ticket=$member->money*100;
+                $transaction=\Yii::$app->db->beginTransaction();//开启事务
+                try{
+                    $user->save();
+                    $member->money=0;
+                    $member->save();
+                    $string.=$member->phone.'----'.$money;
+                    $transaction->commit();
+                }catch (Exception $e){
+                    //事务回滚
+                    $transaction->rollBack();
+                }
+            }
         }
+        echo $string;
 
     }
 }

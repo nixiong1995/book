@@ -26,7 +26,8 @@ class WithdrawalsController extends Controller{
             //接收参数
             $phone=\Yii::$app->request->post('phone');
             $alipay=\Yii::$app->request->post('alipay');
-            if(empty($phone) || empty($alipay)){
+            $password=\Yii::$app->request->post('password');
+            if(empty($phone) || empty($alipay) || empty($password)){
                 $relust['msg']='未传入指定参数';
                 return $relust;
             }
@@ -49,11 +50,20 @@ class WithdrawalsController extends Controller{
 
             //判断是否是阅cool用户
             $user=User::findOne(['tel'=>$phone]);
-            if(!$user){
+            if($user){
+                if(!\Yii::$app->security->validatePassword($password,$user->password_hash)){
+                    $relust['code']=404;
+                    $relust['msg']='密码错误';
+                    return $relust;
+                }
+
+            }else{
                 $relust['code']=403;
                 $relust['msg']='注册阅cool用户即可提现';
                 return $relust;
             }
+
+
 
             $member->money=0;
             $transaction=\Yii::$app->db->beginTransaction();//开启事务
