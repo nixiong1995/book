@@ -7,7 +7,7 @@ use frontend\models\Withdrawals;
 use yii\db\Exception;
 use yii\web\Controller;
 use yii\web\Response;
-
+header("Access-Control-Allow-Origin: *");
 class WithdrawalsController extends Controller{
     public $enableCsrfValidation=false;
 
@@ -35,12 +35,14 @@ class WithdrawalsController extends Controller{
             //账户余额
             $money=$member->money;
             if(!$member){
+                $relust['code']=401;
                 $relust['msg']='您未参与该活动';
                 return $relust;
             }
 
             //判断余额是否大于1元
             if($money<1){
+                $relust['code']=402;
                 $relust['msg']='您的余额不足1元,无法提现';
                 return $relust;
             }
@@ -48,6 +50,7 @@ class WithdrawalsController extends Controller{
             //判断是否是阅cool用户
             $user=User::findOne(['tel'=>$phone]);
             if(!$user){
+                $relust['code']=403;
                 $relust['msg']='注册阅cool用户即可提现';
                 return $relust;
             }

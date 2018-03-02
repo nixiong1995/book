@@ -379,66 +379,77 @@ class MemberController extends Controller{
 
     //将元宵节用户抽取到的书记录到已购书数据表
     public function actionBookRecord(){
+        var_dump(date("Ymd His",1519959114));exit;
         //查询字段book_id不为空的的数据
         $string='';
         $members=Member::find()->where(['not',['book_id'=>null]])->all();
         foreach ($members as $member){
-            $id=$member->book_id;
+            $str_id=$member->book_id;
+            $ids=explode(',',$str_id);
+            $ids=array_filter($ids);
             $user_id=\Yii::$app->db->createCommand("select id from user WHERE tel=$member->phone")->queryScalar();
             if($user_id){
-                //查询版权书id
-                $book_id=\Yii::$app->db->createCommand("select copyright_book_id from book WHERE id=$member->book_id")->queryScalar();
-                //请求地址
-                $postUrl = 'http://partner.chuangbie.com/partner/chapterlist';
-                $curlPost = [
-                    'partner_id' => 2130,
-                    'partner_sign' => 'b42c36ddd1a5cc2c6895744143f77b7b',
-                    'book_id' => $book_id,
-                ];
+                $k=0;
+                foreach ($ids as $id){
+                    //查询版权书id
+                    $book_id=\Yii::$app->db->createCommand("select copyright_book_id from book WHERE id=$id")->queryScalar();
+                    //请求地址
+                    $postUrl = 'http://partner.chuangbie.com/partner/chapterlist';
+                    $curlPost = [
+                        'partner_id' => 2130,
+                        'partner_sign' => 'b42c36ddd1a5cc2c6895744143f77b7b',
+                        'book_id' => $book_id,
+                    ];
 
-                $post = new PostRequest();
-                $records=json_decode($post->request_post($postUrl,$curlPost));
-                $total_chapter=count($records->content->data);//该书总章节数
-                $str='';
-                for($i=1;$i<=$total_chapter;$i++){
-                    $str.=($i+1) .'|';
-                } //请求地址
-                $postUrl = 'http://partner.chuangbie.com/partner/chapterlist';
-                $curlPost = [
-                    'partner_id' => 2130,
-                    'partner_sign' => 'b42c36ddd1a5cc2c6895744143f77b7b',
-                    'book_id' => $book_id,
-                ];
+                    $post = new PostRequest();
+                    $records=json_decode($post->request_post($postUrl,$curlPost));
+                    $total_chapter=count($records->content->data);//该书总章节数
+                    $str='';
+                    for($i=1;$i<=$total_chapter;$i++){
+                        $str.=$i .'|';
+                    }
 
-                $post = new PostRequest();
-                $records=json_decode($post->request_post($postUrl,$curlPost));
-                $total_chapter=count($records->content->data);//该书总章节数
-                $str='';
-                for($i=1;$i<=$total_chapter;$i++){
-                    $str.=$i .'|';
-                }
-
-                //判断该用户是否购买该书
-                $purchased=Purchased::find()->where(['user_id'=>$user_id])->andWhere(['book_id'=>$member->book_id])->one();
-                if(!$purchased){
-                    $model=new Purchased();
-                    $model->user_id=$user_id;
-                    $model->book_id=$member->book_id;
-                    $model->chapter_no=$str;
-                    $transaction=\Yii::$app->db->beginTransaction();//开启事务
-                    try{
+                    //判断该用户是否购买该书
+                    $purchased=Purchased::find()->where(['user_id'=>$user_id])->andWhere(['book_id'=>$id])->one();
+                    if(!$purchased){
+                        $model=new Purchased();
+                        $model->user_id=$user_id;
+                        $model->book_id=$id;
+                        $model->chapter_no=$str;
                         $model->save();
-                        $member->book_id=null;
-                        $member->save();
                         $string.=$member->phone.'记录'.$id.'<br/>';
-                        $transaction->commit();
-                    }catch (Exception $e){
-                        //事务回滚
-                        $transaction->rollBack();
+                      /*  $transaction=\Yii::$app->db->beginTransaction();//开启事务
+                        try{
+                            $model->save();
+                            unset($ids[$k]);
+                            $member->book_id=$ids;
+                            $member->save();
+
+                            $k++;
+                            $transaction->commit();
+                        }catch (Exception $e){
+                            //事务回滚
+                            $transaction->rollBack();
+                        }*/
                     }
                 }
+                $member->book_id=null;
+                $member->save();
+
             }
         }
         echo $string;
+    }
+
+    //将元宵用户未提现的现金红包转入阅cool账户
+    public function actionMoneyRecord(){
+        //定义执行结果字符串
+        $string='';
+        //查询member表money字段大于0的用户
+        $members=Member::find()->where(['>',0,'money'])->all();
+        foreach ($members as $member){
+            $money=$member->money;//记录
+        }
+
     }
 }
