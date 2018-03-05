@@ -4,6 +4,7 @@ use backend\models\Book;
 use backend\models\Purchased;
 use backend\models\Question;
 use backend\models\User;
+use backend\models\UserDetails;
 use frontend\models\Member;
 use libs\PostRequest;
 use yii\db\Exception;
@@ -386,6 +387,8 @@ class MemberController extends Controller{
             $str_id=$member->book_id;
             $ids=explode(',',$str_id);
             $ids=array_filter($ids);
+            $collect=implode('|',$ids);
+            //var_dump($collect);exit;
             $user_id=\Yii::$app->db->createCommand("select id from user WHERE tel=$member->phone")->queryScalar();
             if($user_id){
                 $k=0;
@@ -415,21 +418,20 @@ class MemberController extends Controller{
                         $model->user_id=$user_id;
                         $model->book_id=$id;
                         $model->chapter_no=$str;
-                        $model->save();
-                        $string.=$member->phone.'记录'.$id.'<br/>';
-                      /*  $transaction=\Yii::$app->db->beginTransaction();//开启事务
+                        //$model->save();
+                       // $string.=$member->phone.'记录'.$id.'<br/>';
+                        $transaction=\Yii::$app->db->beginTransaction();//开启事务
                         try{
                             $model->save();
-                            unset($ids[$k]);
-                            $member->book_id=$ids;
-                            $member->save();
-
-                            $k++;
+                            $model2=UserDetails::findOne(['user_id'=>$user_id]);
+                            $model2->collect=$model2->collect.'|'.$collect;
+                            $model2->save();
+                            $string.=$member->phone.'记录'.$id.'<br/>';
                             $transaction->commit();
                         }catch (Exception $e){
                             //事务回滚
                             $transaction->rollBack();
-                        }*/
+                        }
                     }
                 }
                 $member->book_id=null;
