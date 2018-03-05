@@ -442,7 +442,7 @@ class MemberController extends Controller{
         echo $string;
     }
 
-    //将元宵用户未提现的现金红包转入阅cool账户
+    //将元宵用户未提现的现金红包转入阅cool账户,测试
     public function actionMoneyRecord(){
         //定义执行结果字符串
         $string='';
