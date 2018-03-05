@@ -419,24 +419,23 @@ class MemberController extends Controller{
                         $model->user_id=$user_id;
                         $model->book_id=$id;
                         $model->chapter_no=$str;
-                        //$model->save();
-                       // $string.=$member->phone.'记录'.$id.'<br/>';
-                        $transaction=\Yii::$app->db->beginTransaction();//开启事务
-                        try{
-                            $model->save();
-                            $model2=UserDetails::findOne(['user_id'=>$user_id]);
-                            $model2->collect=$model2->collect.'|'.$collect;
-                            $model2->save();
-                            $string.=$member->phone.'记录'.$id.'<br/>';
-                            $transaction->commit();
-                        }catch (Exception $e){
-                            //事务回滚
-                            $transaction->rollBack();
-                        }
+                        $model->save();
                     }
                 }
-                $member->book_id=null;
-                $member->save();
+                $transaction=\Yii::$app->db->beginTransaction();//开启事务
+                $model2=UserDetails::findOne(['user_id'=>$user_id]);
+                $model2->collect=$model2->collect.'|'.$collect;
+                try{
+                    $model2->save();
+                    $member->book_id=null;
+                    $member->save();
+                    $string.=$member->phone.'记录'.$collect.'<br/>';
+                    $transaction->commit();
+                }catch (Exception $e){
+                    //事务回滚
+                    $transaction->rollBack();
+                }
+
 
             }
         }
