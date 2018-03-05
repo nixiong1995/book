@@ -360,18 +360,20 @@ class MemberController extends Controller{
             $user=User::findOne(['tel'=>$member->phone]);
             if($user){
                 $voucher=$member->voucher;
-                $user->voucher=$member->voucher;
-                $transaction=\Yii::$app->db->beginTransaction();//开启事务
-                try{
-                    $user->save();
+
+                $user->voucher=$user->voucher+$voucher;
+                //var_dump($user->voucher);exit;
+                //$transaction=\Yii::$app->db->beginTransaction();//开启事务
+                //try{
+                    $user->save(false);
                     $member->voucher=0;
-                    $member->save();
+                    $member->save(false);
                     $str.=$member->phone.'赠送书券'.$voucher.'----';
-                    $transaction->commit();
-                }catch (Exception $e){
+                   // $transaction->commit();
+               // }catch (Exception $e){
                     //事务回滚
-                    $transaction->rollBack();
-                }
+                    //$transaction->rollBack();
+                //}
 
             }
         }
