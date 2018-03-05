@@ -357,23 +357,22 @@ class MemberController extends Controller{
         $members=Member::find()->where(['>','voucher',0])->all();
         $str='';
         foreach ($members as $member){
+            $voucher=$member->voucher;
             $user=User::findOne(['tel'=>$member->phone]);
             if($user){
-                $voucher=$member->voucher;
-
                 $user->voucher=$user->voucher+$voucher;
                 //var_dump($user->voucher);exit;
-                //$transaction=\Yii::$app->db->beginTransaction();//开启事务
-                //try{
+                $transaction=\Yii::$app->db->beginTransaction();//开启事务
+                try{
                     $user->save(false);
                     $member->voucher=0;
                     $member->save(false);
                     $str.=$member->phone.'赠送书券'.$voucher.'----';
-                   // $transaction->commit();
-               // }catch (Exception $e){
+                   $transaction->commit();
+                }catch (Exception $e){
                     //事务回滚
-                    //$transaction->rollBack();
-                //}
+                    $transaction->rollBack();
+                }
 
             }
         }
@@ -454,7 +453,7 @@ class MemberController extends Controller{
             $money=$member->money;//记录
             $user=User::find()->where(['tel'=>$member->phone])->one();
             if($user){
-                $user->ticket=$member->money*100;
+                $user->ticket=$user->ticket+($member->money*100);
                 $transaction=\Yii::$app->db->beginTransaction();//开启事务
                 try{
                     $user->save();
