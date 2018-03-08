@@ -127,11 +127,15 @@ class YuewenController extends \yii\web\Controller{
                             [
                                 'chapter_id'=>$row->id,
                                 'chapter_name'=>$row->name,
+                                'book_id'=>$book_id,
+                                'vname'=>'第一卷',
                                 'volume_id'=>$row->volume_id,
                                 'is_vip'=>0,
                                 'sortid'=>$row->id,
-                                'update_time'=>strtotime($row->updated_at),
-                                'no'=>0];
+                                'word_count'=>$row->word_count,
+                                'update_time'=>$row->updated_at,
+                                'no'=>0
+                            ];
                         $result['msg']='成功返回章节信息';
                         //var_dump($row);
                     }
@@ -144,11 +148,15 @@ class YuewenController extends \yii\web\Controller{
                             [
                                 'chapter_id'=>$row->id,
                                 'chapter_name'=>$row->name,
+                                'book_id'=>$book_id,
+                                'vname'=>'第一卷',
                                 'volume_id'=>$row->volume_id,
                                 'is_vip'=>0,
                                 'sortid'=>$row->id,
-                                'update_time'=>strtotime($row->updated_at),
-                                'no'=>0];
+                                'word_count'=>$row->word_count,
+                                'update_time'=>$row->updated_at,
+                                'no'=>0
+                            ];
                         $result['msg']='成功返回章节信息';
                         //var_dump($row);
                     }
