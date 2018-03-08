@@ -19,9 +19,13 @@ class YuewenController extends \yii\web\Controller{
     //获取版权章节列表
     public function actionChapterList()
     {
-        $result = [
-        'flag' => false,
-    ];
+        $result=[
+            'flag'=>false,
+            'content'=>[
+                "totalcount"=>0,
+                'totalpage'=>0,
+            ]
+        ];
         if (\Yii::$app->request->isPost) {
             //验证
             //$obj = new Verification();
@@ -48,58 +52,110 @@ class YuewenController extends \yii\web\Controller{
             //该书观看数加1
             $book->clicks=$book->clicks+1;
             $book->save();
+            if($book->ascription==1){
 
-            //请求地址
-            $postUrl = 'http://partner.chuangbie.com/partner/chapterlist';
-            $curlPost = [
-                'partner_id' => 2130,
-                'partner_sign' => 'b42c36ddd1a5cc2c6895744143f77b7b',
-                'book_id' => $book->copyright_book_id,
-                'min_chapter_id ' => $min_chapter_id,
-                'page_now' => $page_now,
-                'page_size' => $page_size,
-            ];
+                //请求地址
+                $postUrl = 'http://partner.chuangbie.com/partner/chapterlist';
+                $curlPost = [
+                    'partner_id' => 2130,
+                    'partner_sign' => 'b42c36ddd1a5cc2c6895744143f77b7b',
+                    'book_id' => $book->copyright_book_id,
+                    'min_chapter_id ' => $min_chapter_id,
+                    'page_now' => $page_now,
+                    'page_size' => $page_size,
+                ];
 
-            $post = new PostRequest();
-            $data = $post->request_post($postUrl, $curlPost);
-            $data = json_decode($data, true);
-            //统计数组长度
-            $ArrayLength=count($data['content']['data']);
-            //判断该书是否收费书
-            if($book->is_free==0){
-                //免费书is_vip全部改成0
-                for ($i=0;$i<$ArrayLength;$i++){
-                    $data['content']['data'][$i]['is_vip']=0;
-                    //加入从多少章节开始收费
-                    $data['content']['data'][$i]['no']=$book->no;
-                }
-                return $data;
-            }else{
-                //查询用户已购书
-                $purchased=Purchased::findOne(['user_id'=>$user_id,'book_id'=>$book_id]);
-                if($purchased){
-                    $chapter_no=explode('|',$purchased->chapter_no);//分割成数组
-                    $chapter_no=array_filter($chapter_no);//删除数组中空元素
-                }else{
-                    //没有购买书
-                    $chapter_no=[];
-                }
-
-                //循环更改is_vip和加入no(从多少章节开始收费)
-                for ($i=0;$i<$ArrayLength;$i++){
-                    //把全部章节更改为收费章节
-                    $data['content']['data'][$i]['is_vip']=1;
-                    //加入从多少章节开始收费
-                    $data['content']['data'][$i]['no']=$book->no;
-                    //判断用户是否已购买该章节,该书从多少章节开始收费.用户购买该章节或者该章节是免费章节,is_vip改成0
-                    if(in_array(($i+1),$chapter_no) || (($i+1)<$book->no && $book->no!=0) ){
+                $post = new PostRequest();
+                $data = $post->request_post($postUrl, $curlPost);
+                $data = json_decode($data, true);
+                //统计数组长度
+                $ArrayLength=count($data['content']['data']);
+                //判断该书是否收费书
+                if($book->is_free==0){
+                    //免费书is_vip全部改成0
+                    for ($i=0;$i<$ArrayLength;$i++){
                         $data['content']['data'][$i]['is_vip']=0;
+                        //加入从多少章节开始收费
+                        $data['content']['data'][$i]['no']=$book->no;
+                    }
+                    return $data;
+                }else{
+                    //查询用户已购书
+                    $purchased=Purchased::findOne(['user_id'=>$user_id,'book_id'=>$book_id]);
+                    if($purchased){
+                        $chapter_no=explode('|',$purchased->chapter_no);//分割成数组
+                        $chapter_no=array_filter($chapter_no);//删除数组中空元素
+                    }else{
+                        //没有购买书
+                        $chapter_no=[];
+                    }
 
+                    //循环更改is_vip和加入no(从多少章节开始收费)
+                    for ($i=0;$i<$ArrayLength;$i++){
+                        //把全部章节更改为收费章节
+                        $data['content']['data'][$i]['is_vip']=1;
+                        //加入从多少章节开始收费
+                        $data['content']['data'][$i]['no']=$book->no;
+                        //判断用户是否已购买该章节,该书从多少章节开始收费.用户购买该章节或者该章节是免费章节,is_vip改成0
+                        if(in_array(($i+1),$chapter_no) || (($i+1)<$book->no && $book->no!=0) ){
+                            $data['content']['data'][$i]['is_vip']=0;
+
+                        }
+                    }
+                    return $data;
+
+                }
+
+            }elseif ($book->ascription==3){
+
+                $get=new PostRequest();
+                $data=$get->send_request('http://api.17k.com/v2/book/'.$book->copyright_book_id.'/volumes',
+
+                    [
+                        '_access_version'=>2,
+                        '_versions'=>958,
+                        'access_token'=>'',
+                        'app_key'=>2222420362,
+                    ]
+                );
+                $datas=(json_decode($data));
+                //return $datas->data->volumes;
+                if($datas->data->volumes[0]->code==100){
+                    foreach ($datas->data->volumes[1]->chapters as $row){
+                        $result['flag']=true;
+                        $result['content']['data'][]=
+                            [
+                                'chapter_id'=>$row->id,
+                                'chapter_name'=>$row->name,
+                                'volume_id'=>$row->volume_id,
+                                'is_vip'=>0,
+                                'sortid'=>$row->id,
+                                'update_time'=>strtotime($row->updated_at),
+                                'no'=>0];
+                        $result['msg']='成功返回章节信息';
+                        //var_dump($row);
+                    }
+
+                }else{
+
+                    foreach ($datas->data->volumes[1]->chapters as $row){
+                        $result['flag']=true;
+                        $result['content']['data'][]=
+                            [
+                                'chapter_id'=>$row->id,
+                                'chapter_name'=>$row->name,
+                                'volume_id'=>$row->volume_id,
+                                'is_vip'=>0,
+                                'sortid'=>$row->id,
+                                'update_time'=>strtotime($row->updated_at),
+                                'no'=>0];
+                        $result['msg']='成功返回章节信息';
+                        //var_dump($row);
                     }
                 }
-                return $data;
-
             }
+
+
 
            //  }
 
@@ -113,16 +169,21 @@ class YuewenController extends \yii\web\Controller{
 
     //获取章节内容
     public function actionChapterContent(){
-        $result = [
+        $relust=[
             'flag'=>false,
+            'content'=>[
+                "totalcount"=>0,
+                'totalpage'=>0,
+            ]
+
         ];
         if(\Yii::$app->request->isPost){
             //验证
             $obj=new Verification();
             $res=$obj->check();
-           if($res){
-                $result['msg']= $res;
-            }else{
+          // if($res){
+               // $result['msg']= $res;
+           // }else{
 
                 //接收手机端传递参数
                 $book_id=\Yii::$app->request->post('book_id');//本地图书id
@@ -130,8 +191,6 @@ class YuewenController extends \yii\web\Controller{
                 //var_dump($copyright_chapter_ids);exit;
                 //解析json
                 $copyright_chapter_ids=json_decode($copyright_chapter_ids);
-                //请求地址
-                $postUrl = 'http://partner.chuangbie.com/partner/chaptercontent';
                 //查找该本书
                 $book=Book::findOne(['id'=>$book_id]);
                 $book->downloads=$book->downloads+1;
@@ -139,20 +198,73 @@ class YuewenController extends \yii\web\Controller{
 
                 //遍历获取多章节内容
                 $datas=[];
-                foreach ( $copyright_chapter_ids->copyright_chapter_id as  $copyright_chapter_id){
-                    $curlPost =[
-                        'partner_id'=>2130,
-                        'partner_sign'=>'b42c36ddd1a5cc2c6895744143f77b7b',
-                        'book_id'=>$book->copyright_book_id,
-                        'chapter_id'=>$copyright_chapter_id,
-                    ];
-                    $post=new PostRequest();
-                    $datas[]=json_decode($post->request_post($postUrl,$curlPost));
+                if($book->ascription==1){
+                    //请求地址
+                    $postUrl = 'http://partner.chuangbie.com/partner/chaptercontent';
+                    foreach ( $copyright_chapter_ids->copyright_chapter_id as  $copyright_chapter_id){
+                        $curlPost =[
+                            'partner_id'=>2130,
+                            'partner_sign'=>'b42c36ddd1a5cc2c6895744143f77b7b',
+                            'book_id'=>$book->copyright_book_id,
+                            'chapter_id'=>$copyright_chapter_id,
+                        ];
+                        $post=new PostRequest();
+                        $datas[]=json_decode($post->request_post($postUrl,$curlPost));
+
+                    }
+                    return $datas;
+
+                }elseif($book->ascription==3){
+                    $get=new PostRequest();
+                    $data=$get->send_request('http://api.17k.com/v2/book/'.$book->copyright_book_id.'/volumes',
+
+                        [
+                            '_access_version'=>2,
+                            '_versions'=>958,
+                            'access_token'=>'',
+                            'app_key'=>2222420362,
+                        ]
+                    );
+                    $datas=(json_decode($data));
+                    //return $datas->data->volumes;
+                    if($datas->data->volumes[0]->code==100){
+                        foreach ($datas->data->volumes[1]->chapters as $row){
+                            $relust['flag']=true;
+                            $relust['content']['data'][]=
+                                [
+                                    'chapter_id'=>$row->id,
+                                    'chapter_name'=>$row->name,
+                                    'volume_id'=>$row->volume_id,
+                                    'is_vip'=>0,
+                                    'sortid'=>$row->id,
+                                    'update_time'=>strtotime($row->updated_at),
+                                    'no'=>0];
+                            $relust['msg']='成功返回章节信息';
+                            //var_dump($row);
+                        }
+
+                    }else{
+
+                        foreach ($datas->data->volumes[1]->chapters as $row){
+                            $relust['flag']=true;
+                            $relust['content']['data'][]=
+                                [
+                                    'chapter_id'=>$row->id,
+                                    'chapter_name'=>$row->name,
+                                    'volume_id'=>$row->volume_id,
+                                    'is_vip'=>0,
+                                    'sortid'=>$row->id,
+                                    'update_time'=>strtotime($row->updated_at),
+                                    'no'=>0];
+                            $relust['msg']='成功返回章节信息';
+                            //var_dump($row);
+                        }
+                    }
 
                 }
-                return $datas;
 
-           }
+
+          // }
 
         }else{
             $result['code']=400;
