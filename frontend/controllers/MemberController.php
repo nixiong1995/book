@@ -352,7 +352,7 @@ class MemberController extends Controller{
     }
 
     //将元宵用户抽取到的书券批量写入阅cool用户表
-    public function actionVoucherRecord(){
+    /*public function actionVoucherRecord(){
         //查询元宵用户表
         $members=Member::find()->where(['>','voucher',0])->all();
         $str='';
@@ -377,10 +377,10 @@ class MemberController extends Controller{
             }
         }
         echo $str;
-    }
+    }*/
 
     //将元宵节用户抽取到的书记录到已购书数据表
-    public function actionBookRecord(){
+   /* public function actionBookRecord(){
         //查询字段book_id不为空的的数据
         $string='';
         $members=Member::find()->where(['not',['book_id'=>null]])->all();
@@ -440,10 +440,10 @@ class MemberController extends Controller{
             }
         }
         echo $string;
-    }
+    }*/
 
     //将元宵用户未提现的现金红包转入阅cool账户,测试
-    public function actionMoneyRecord(){
+    /*public function actionMoneyRecord(){
         //定义执行结果字符串
         $string='';
         //查询member表money字段大于0的用户
@@ -468,5 +468,5 @@ class MemberController extends Controller{
         }
         echo $string;
 
-    }
+    }*/
 }
