@@ -173,7 +173,7 @@ class YuewenController extends \yii\web\Controller{
                 $copyright_chapter_ids=\Yii::$app->request->post('copyright_chapter_id');//版权书章节id
                 //var_dump($copyright_chapter_ids);exit;
                 //解析json
-                //$copyright_chapter_ids=json_decode($copyright_chapter_ids);
+                $copyright_chapter_ids=json_decode($copyright_chapter_ids);
                 //查找该本书
                 $book=Book::findOne(['id'=>$book_id]);
                 $book->downloads=$book->downloads+1;
@@ -184,7 +184,7 @@ class YuewenController extends \yii\web\Controller{
                 if($book->ascription==1){
                     //请求地址
                     $postUrl = 'http://partner.chuangbie.com/partner/chaptercontent';
-                    foreach ( $copyright_chapter_ids as  $copyright_chapter_id){
+                    foreach ( $copyright_chapter_ids->copyright_chapter_id as  $copyright_chapter_id){
                         $curlPost =[
                             'partner_id'=>2130,
                             'partner_sign'=>'b42c36ddd1a5cc2c6895744143f77b7b',
@@ -198,7 +198,7 @@ class YuewenController extends \yii\web\Controller{
                     return $datas;
 
                 }elseif($book->ascription==3){
-                    foreach ($copyright_chapter_ids as  $copyright_chapter_id){
+                    foreach ($copyright_chapter_ids->copyright_chapter_id as  $copyright_chapter_id){
                         $get=new PostRequest();
                         $contents=$get->send_request('http://api.17k.com/v2/book/'.$book->copyright_book_id.'/chapter/'.$copyright_chapter_id.'/content',
 
@@ -210,6 +210,7 @@ class YuewenController extends \yii\web\Controller{
                             ]
                         );
                         $contents=(json_decode($contents));
+                        //var_dump($contents->data->content);exit;
 
                         $result['flag']=true;
                         $result['content']['data']['chapter_content']=$contents->data->content;
