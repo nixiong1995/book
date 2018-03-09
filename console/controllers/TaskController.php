@@ -316,7 +316,7 @@ class TaskController extends Controller{
                     'num' => 20,
                     'page' =>$i,
                     'site' => 2,
-                    'sort_type' =>7
+                    'sort_type' =>6
                 ]
             );
             $datas=(json_decode($data));
@@ -358,77 +358,80 @@ class TaskController extends Controller{
 
                             ////////////////////////存入数据库///////////////////////////////
 
-                            //判断是否有该作者
-                            $author = Author::findOne(['name' => $data->author_name]);
-                            //$author_id='';
-                            if ($author) {
-                                $author_id = $author->id;
-                            } else {
-                                $author2 = new Author();
-                                $author2->name = $data->author_name;
-                                $author2->create_time = time();
-                                $author2->save(false);
-                                $author_id = $author2->id;
+                            if($data->word_count>1000000){
+                                //判断是否有该作者
+                                $author = Author::findOne(['name' => $data->author_name]);
+                                //$author_id='';
+                                if ($author) {
+                                    $author_id = $author->id;
+                                } else {
+                                    $author2 = new Author();
+                                    $author2->name = $data->author_name;
+                                    $author2->create_time = time();
+                                    $author2->save(false);
+                                    $author_id = $author2->id;
+                                }
+
+                                \Yii::$app->db->createCommand()->batchInsert(Book::tableName(),
+                                    [
+                                        'copyright_book_id',
+                                        'name',
+                                        'author_id',
+                                        'category_id',
+                                        'from',
+                                        'ascription',
+                                        'image',
+                                        'intro',
+                                        'is_free',
+                                        'no',
+                                        'size',
+                                        'type',
+                                        'is_end',
+                                        'clicks',
+                                        'score',
+                                        'collection',
+                                        'downloads',
+                                        'price',
+                                        'last_update_chapter_id',
+                                        'last_update_chapter_name',
+                                        'status',
+                                        'create_time'
+                                    ],
+                                    [
+                                        [
+                                            $data->book_id,
+                                            $data->book_name,
+                                            $author_id,
+                                            16,
+                                            3,
+                                            3,
+                                            $data->cover,
+                                            $data->intro,
+                                            0,
+                                            0,
+                                            $data->word_count*2,
+                                            'txt',
+                                            2,
+                                            rand(5000, 10000),
+                                            rand(7, 10),
+                                            rand(5000, 10000),
+                                            rand(5000, 10000),
+                                            0,
+                                            $data->last_update_chapter_id,
+                                            $data->last_update_chapter_name,
+                                            1,
+                                            time()
+                                        ],
+                                    ])->execute();
+
+                                echo  iconv('utf-8','gbk',$i.'存入图书'. $data->book_name."\n");
+
+                            }else{
+                                echo  iconv('utf-8','gbk',$i.'已存在图书'. $data->book_name."\n");
+                            }
+                            //echo '存入图书:' . $data->title;
                             }
 
-                            \Yii::$app->db->createCommand()->batchInsert(Book::tableName(),
-                                [
-                                    'copyright_book_id',
-                                    'name',
-                                    'author_id',
-                                    'category_id',
-                                    'from',
-                                    'ascription',
-                                    'image',
-                                    'intro',
-                                    'is_free',
-                                    'no',
-                                    'size',
-                                    'type',
-                                    'is_end',
-                                    'clicks',
-                                    'score',
-                                    'collection',
-                                    'downloads',
-                                    'price',
-                                    'last_update_chapter_id',
-                                    'last_update_chapter_name',
-                                    'status',
-                                    'create_time'
-                                ],
-                                [
-                                    [
-                                        $data->book_id,
-                                        $data->book_name,
-                                        $author_id,
-                                        16,
-                                        3,
-                                        3,
-                                        $data->cover,
-                                        $data->intro,
-                                        0,
-                                        0,
-                                        $data->word_count*2,
-                                        'txt',
-                                        2,
-                                        rand(5000, 10000),
-                                        rand(7, 10),
-                                        rand(5000, 10000),
-                                        rand(5000, 10000),
-                                        0,
-                                        $data->last_update_chapter_id,
-                                        $data->last_update_chapter_name,
-                                        1,
-                                        time()
-                                    ],
-                                ])->execute();
-
-                            echo  iconv('utf-8','gbk',$i.'存入图书'. $data->book_name."\n");
-
-                        }else{
-                            echo  iconv('utf-8','gbk',$i.'已存在图书'. $data->book_name."\n");
-                        }
-                        //echo '存入图书:' . $data->title;
 
                     }
                 }else {
