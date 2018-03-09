@@ -316,7 +316,7 @@ class TaskController extends Controller{
                     'num' => 20,
                     'page' =>$i,
                     'site' => 2,
-                    'sort_type' => 6
+                    'sort_type' =>7
                 ]
             );
             $datas=(json_decode($data));
@@ -342,11 +342,11 @@ class TaskController extends Controller{
                             //$img = file_get_contents('http://image.voogaa.cn/2017/12/26/5a421e67933d55955.jpg');
                             //  } else {
                             //url正确抓取该图片
-                            $img = file_get_contents($data->cover);
+                           // $img = file_get_contents($data->cover);
                             //}
 
                             //图片存放路径
-                            $uplaods_path = str_replace('\\', '/', realpath(dirname(__FILE__) . '/../../')) . '/uploads/';
+                           /* $uplaods_path = str_replace('\\', '/', realpath(dirname(__FILE__) . '/../../')) . '/uploads/';
                             $dir = $uplaods_path . date("Y") . '/' . date("m") . '/' . date("d") . '/';
                             $fileName = uniqid() . rand(1, 100000) . '.jpg';
                             $uploadSuccessPath = date("Y") . '/' . date("m") . '/' . date("d") . '/' . $fileName;
@@ -354,7 +354,7 @@ class TaskController extends Controller{
                                 mkdir($dir, 0777, true);
                             }
                             //保存图片
-                            file_put_contents($dir . '/' . $fileName, $img);
+                            file_put_contents($dir . '/' . $fileName, $img);*/
 
                             ////////////////////////存入数据库///////////////////////////////
 
@@ -402,15 +402,15 @@ class TaskController extends Controller{
                                         $data->book_name,
                                         $author_id,
                                         16,
-                                        4,
                                         3,
-                                        $uploadSuccessPath,
+                                        3,
+                                        $data->cover,
                                         $data->intro,
                                         0,
                                         0,
                                         $data->word_count*2,
                                         'txt',
-                                        1,
+                                        2,
                                         rand(5000, 10000),
                                         rand(7, 10),
                                         rand(5000, 10000),
