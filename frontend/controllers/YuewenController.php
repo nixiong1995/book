@@ -173,7 +173,7 @@ class YuewenController extends \yii\web\Controller{
                 $copyright_chapter_ids=\Yii::$app->request->post('copyright_chapter_id');//版权书章节id
                 //var_dump($copyright_chapter_ids);exit;
                 //解析json
-               // $copyright_chapter_ids=json_decode($copyright_chapter_ids);
+                $copyright_chapter_ids=json_decode($copyright_chapter_ids);
                 //查找该本书
                 $book=Book::findOne(['id'=>$book_id]);
                 $book->downloads=$book->downloads+1;
