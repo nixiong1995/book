@@ -120,10 +120,11 @@ class YuewenController extends \yii\web\Controller{
                 );
                 $datas=(json_decode($data));
                 //return $datas->data->volumes;
-                if($datas->data->volumes[0]->code==100){
-                    foreach ($datas->data->volumes[1]->chapters as $row){
-                        $result['flag']=true;
-                        $result['content']['data'][]=
+                foreach ($datas->data->volumes as $rows){
+                    foreach ($rows->chapters as $row){
+                        //var_dump($row->name);
+                        $relust['flag']=true;
+                        $relust['content']['data'][]=
                             [
                                 'chapter_id'=>$row->id,
                                 'chapter_name'=>$row->name,
@@ -136,29 +137,7 @@ class YuewenController extends \yii\web\Controller{
                                 'update_time'=>$row->updated_at,
                                 'no'=>0
                             ];
-                        $result['msg']='成功返回章节信息';
-                        //var_dump($row);
-                    }
-
-                }else{
-
-                    foreach ($datas->data->volumes[1]->chapters as $row){
-                        $result['flag']=true;
-                        $result['content']['data'][]=
-                            [
-                                'chapter_id'=>$row->id,
-                                'chapter_name'=>$row->name,
-                                'book_id'=>$book_id,
-                                'vname'=>'第一卷',
-                                'volume_id'=>$row->volume_id,
-                                'is_vip'=>0,
-                                'sortid'=>$row->id,
-                                'word_count'=>$row->word_count,
-                                'update_time'=>$row->updated_at,
-                                'no'=>0
-                            ];
-                        $result['msg']='成功返回章节信息';
-                        //var_dump($row);
+                        $relust['msg']='成功返回章节信息';
                     }
                 }
             }
