@@ -184,7 +184,7 @@ class YuewenController extends \yii\web\Controller{
                 if($book->ascription==1){
                     //请求地址
                     $postUrl = 'http://partner.chuangbie.com/partner/chaptercontent';
-                    foreach ( $copyright_chapter_ids->copyright_chapter_id as  $copyright_chapter_id){
+                    foreach ( $copyright_chapter_ids as  $copyright_chapter_id){
                         $curlPost =[
                             'partner_id'=>2130,
                             'partner_sign'=>'b42c36ddd1a5cc2c6895744143f77b7b',
@@ -198,9 +198,9 @@ class YuewenController extends \yii\web\Controller{
                     return $datas;
 
                 }elseif($book->ascription==3){
-                    foreach ($copyright_chapter_ids->copyright_chapter_id as  $copyright_chapter_id){
+                    foreach ($copyright_chapter_ids as  $copyright_chapter_id){
                         $get=new PostRequest();
-                        $contents=$get->send_request('http://api.17k.com/v2/book/'.$book_id.'/chapter/'.$copyright_chapter_id.'/content',
+                        $contents=$get->send_request('http://api.17k.com/v2/book/'.$book->copyright_book_id.'/chapter/'.$copyright_chapter_id.'/content',
 
                             [
                                 '_access_version'=>2,
@@ -210,7 +210,6 @@ class YuewenController extends \yii\web\Controller{
                             ]
                         );
                         $contents=(json_decode($contents));
-                        //var_dump($contents->data->content);exit;
 
                         $result['flag']=true;
                         $result['content']['data']['chapter_content']=$contents->data->content;
