@@ -302,7 +302,7 @@ class TaskController extends Controller{
         ///////////////获取分类图书列表/////////////////
 
         ////////////////////请求追书神器基本信息接口///////////////////////////////////////
-        for($i=214;$i<=500;$i++){
+        for($i=1;$i<=1000;$i++){
             $get = new PostRequest();
             ////////////////////请求追书神器基本信息接口///////////////////////////////////////
             $data = $get->send_request('http://api.17k.com/v2/book?',
@@ -316,7 +316,7 @@ class TaskController extends Controller{
                     'num' => 20,
                     'page' =>$i,
                     'site' => 2,
-                    'sort_type' =>6
+                    'sort_type' =>7,
                 ]
             );
             $datas=(json_decode($data));
@@ -358,7 +358,7 @@ class TaskController extends Controller{
 
                             ////////////////////////存入数据库///////////////////////////////
 
-                            if($data->word_count>200000){
+                           // if($data->word_count>200000){
                                 //判断是否有该作者
                                 $author = Author::findOne(['name' => $data->author_name]);
                                 //$author_id='';
@@ -425,9 +425,9 @@ class TaskController extends Controller{
                                     ])->execute();
 
                                 echo  iconv('utf-8','gbk',$i.'存入图书'. $data->book_name."\n");
-                            }else{
-                                echo  iconv('utf-8','gbk',$i.'图书内容太少'."\n");
-                            }
+                           // }else{
+                               // echo  iconv('utf-8','gbk',$i.'图书内容太少'."\n");
+                           // }
                             //echo '存入图书:' . $data->title;
                             }else{
                                 echo  iconv('utf-8','gbk',$i.'已存在图书'. $data->book_name."\n");
