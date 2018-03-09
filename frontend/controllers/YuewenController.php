@@ -123,8 +123,8 @@ class YuewenController extends \yii\web\Controller{
                 foreach ($datas->data->volumes as $rows){
                     foreach ($rows->chapters as $row){
                         //var_dump($row->name);
-                        $relust['flag']=true;
-                        $relust['content']['data'][]=
+                        $result['flag']=true;
+                        $result['content']['data'][]=
                             [
                                 'chapter_id'=>$row->id,
                                 'chapter_name'=>$row->name,
@@ -137,7 +137,7 @@ class YuewenController extends \yii\web\Controller{
                                 'update_time'=>$row->updated_at,
                                 'no'=>0
                             ];
-                        $relust['msg']='成功返回章节信息';
+                        $result['msg']='成功返回章节信息';
                     }
                 }
             }
