@@ -156,13 +156,9 @@ class YuewenController extends \yii\web\Controller{
 
     //获取章节内容
     public function actionChapterContent(){
-        $relust=[
+        $result=[
             'flag'=>false,
-            'content'=>[
-                "totalcount"=>0,
-                'totalpage'=>0,
-            ]
-
+            'content'=>[],
         ];
         if(\Yii::$app->request->isPost){
             //验证
@@ -177,7 +173,7 @@ class YuewenController extends \yii\web\Controller{
                 $copyright_chapter_ids=\Yii::$app->request->post('copyright_chapter_id');//版权书章节id
                 //var_dump($copyright_chapter_ids);exit;
                 //解析json
-                $copyright_chapter_ids=json_decode($copyright_chapter_ids);
+               // $copyright_chapter_ids=json_decode($copyright_chapter_ids);
                 //查找该本书
                 $book=Book::findOne(['id'=>$book_id]);
                 $book->downloads=$book->downloads+1;
@@ -202,51 +198,27 @@ class YuewenController extends \yii\web\Controller{
                     return $datas;
 
                 }elseif($book->ascription==3){
-                    $get=new PostRequest();
-                    $data=$get->send_request('http://api.17k.com/v2/book/'.$book->copyright_book_id.'/volumes',
+                    foreach ($copyright_chapter_ids->copyright_chapter_id as  $copyright_chapter_id){
+                        $get=new PostRequest();
+                        $contents=$get->send_request('http://api.17k.com/v2/book/'.$book_id.'/chapter/'.$copyright_chapter_id.'/content',
 
-                        [
-                            '_access_version'=>2,
-                            '_versions'=>958,
-                            'access_token'=>'',
-                            'app_key'=>2222420362,
-                        ]
-                    );
-                    $datas=(json_decode($data));
-                    //return $datas->data->volumes;
-                    if($datas->data->volumes[0]->code==100){
-                        foreach ($datas->data->volumes[1]->chapters as $row){
-                            $relust['flag']=true;
-                            $relust['content']['data'][]=
-                                [
-                                    'chapter_id'=>$row->id,
-                                    'chapter_name'=>$row->name,
-                                    'volume_id'=>$row->volume_id,
-                                    'is_vip'=>0,
-                                    'sortid'=>$row->id,
-                                    'update_time'=>strtotime($row->updated_at),
-                                    'no'=>0];
-                            $relust['msg']='成功返回章节信息';
-                            //var_dump($row);
-                        }
+                            [
+                                '_access_version'=>2,
+                                '_versions'=>958,
+                                'access_token'=>'',
+                                'app_key'=>2222420362,
+                            ]
+                        );
+                        $contents=(json_decode($contents));
+                        //var_dump($contents->data->content);exit;
 
-                    }else{
-
-                        foreach ($datas->data->volumes[1]->chapters as $row){
-                            $relust['flag']=true;
-                            $relust['content']['data'][]=
-                                [
-                                    'chapter_id'=>$row->id,
-                                    'chapter_name'=>$row->name,
-                                    'volume_id'=>$row->volume_id,
-                                    'is_vip'=>0,
-                                    'sortid'=>$row->id,
-                                    'update_time'=>strtotime($row->updated_at),
-                                    'no'=>0];
-                            $relust['msg']='成功返回章节信息';
-                            //var_dump($row);
-                        }
+                        $result['flag']=true;
+                        $result['content']['data']['chapter_content']=$contents->data->content;
+                        $result['msg']='成功返回章节内容';
+                        $datas[]=$result;
+                        //var_dump($contents->data->content);exit;
                     }
+                    return $datas;
 
                 }
 
