@@ -410,7 +410,7 @@ class TaskController extends Controller{
                                             $author_id,
                                             16,
                                             3,
-                                            3,
+                                            4,
                                             $data->cover,
                                             $data->intro,
                                             0,
