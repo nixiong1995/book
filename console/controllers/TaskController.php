@@ -302,7 +302,7 @@ class TaskController extends Controller{
         ///////////////获取分类图书列表/////////////////
 
         ////////////////////请求追书神器基本信息接口///////////////////////////////////////
-        for($i=1;$i<=1000;$i++){
+        for($i=1;$i<=100;$i++){
             $get = new PostRequest();
             ////////////////////请求追书神器基本信息接口///////////////////////////////////////
             $data = $get->send_request('http://api.17k.com/v2/book?',
@@ -310,12 +310,12 @@ class TaskController extends Controller{
                     '_access_version' => 2,
                     '_versions' => 958,
                     'app_key' => 2222420362,
-                    'book_free' => 1,
-                    'book_status' => 0,
+                    'book_free' => 0,
+                    'book_status' =>0,
                     'category_1' => 21,
                     'num' => 20,
                     'page' =>$i,
-                    'site' => 2,
+                    'site' =>2,
                     'sort_type' =>7,
                 ]
             );
@@ -326,7 +326,7 @@ class TaskController extends Controller{
                     //遍历返回图书基本信息
                     foreach ($datas->data as $data) {
                         //查找数据库是否存在该书
-                        $book = Book::findOne(['name' => $data->book_name]);
+                        $book = Book::findOne(['name' =>$data->book_name]);
                         //var_dump($data);exit;
                         //判断是否有该书
                         if (!$book) {
@@ -358,7 +358,7 @@ class TaskController extends Controller{
 
                             ////////////////////////存入数据库///////////////////////////////
 
-                           // if($data->word_count>200000){
+                           if($data->word_count>100000){
                                 //判断是否有该作者
                                 $author = Author::findOne(['name' => $data->author_name]);
                                 //$author_id='';
@@ -370,6 +370,12 @@ class TaskController extends Controller{
                                     $author2->create_time = time();
                                     $author2->save(false);
                                     $author_id = $author2->id;
+                                }
+
+                                if($data->book_status==03){
+                                    $status=2;
+                                }else{
+                                    $status=1;
                                 }
 
                                 \Yii::$app->db->createCommand()->batchInsert(Book::tableName(),
@@ -411,7 +417,7 @@ class TaskController extends Controller{
                                             0,
                                             $data->word_count*2,
                                             'txt',
-                                            2,
+                                            $status,
                                             rand(5000, 10000),
                                             rand(7, 10),
                                             rand(5000, 10000),
@@ -425,9 +431,9 @@ class TaskController extends Controller{
                                     ])->execute();
 
                                 echo  iconv('utf-8','gbk',$i.'存入图书'. $data->book_name."\n");
-                           // }else{
-                               // echo  iconv('utf-8','gbk',$i.'图书内容太少'."\n");
-                           // }
+                            }else{
+                                echo  iconv('utf-8','gbk',$i.'图书内容太少'."\n");
+                            }
                             //echo '存入图书:' . $data->title;
                             }else{
                                 echo  iconv('utf-8','gbk',$i.'已存在图书'. $data->book_name."\n");
@@ -439,7 +445,6 @@ class TaskController extends Controller{
 
             }catch (\Exception $e){
                 var_dump($datas);
-                exit;
             }
 
 
