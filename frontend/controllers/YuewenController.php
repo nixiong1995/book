@@ -106,7 +106,7 @@ class YuewenController extends \yii\web\Controller{
 
                 }
 
-            }elseif ($book->ascription==3){
+            }elseif ($book->ascription==4){
 
                 $get=new PostRequest();
                 $data=$get->send_request('http://api.17k.com/v2/book/'.$book->copyright_book_id.'/volumes',
@@ -197,7 +197,7 @@ class YuewenController extends \yii\web\Controller{
                     }
                     return $datas;
 
-                }elseif($book->ascription==3){
+                }elseif($book->ascription==4){
                     foreach ($copyright_chapter_ids->copyright_chapter_id as  $copyright_chapter_id){
                         $get=new PostRequest();
                         $contents=$get->send_request('http://api.17k.com/v2/book/'.$book->copyright_book_id.'/chapter/'.$copyright_chapter_id.'/content',

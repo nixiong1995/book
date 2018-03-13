@@ -312,10 +312,10 @@ class TaskController extends Controller{
                     'app_key' => 2222420362,
                     'book_free' => 0,
                     'book_status' =>0,
-                    'category_1' => 21,
+                    'category_1' => 17,
                     'num' => 20,
                     'page' =>$i,
-                    'site' =>2,
+                    'site' =>3,
                     'sort_type' =>7,
                 ]
             );
@@ -408,7 +408,7 @@ class TaskController extends Controller{
                                             $data->book_id,
                                             $data->book_name,
                                             $author_id,
-                                            16,
+                                            34,
                                             3,
                                             4,
                                             $data->cover,
