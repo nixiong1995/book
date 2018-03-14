@@ -34,7 +34,7 @@ class SmallprogramController extends Controller{
                     $relust='未传入指定参数';
                     return $relust;
                 }
-                $book=Book::find()->where(['category_id'=>$category_id])->orderBy('update_time DESC')->limit(12)->all();
+                $book=Book::find()->where(['category_id'=>$category_id])->andWhere(['<>','from',4])->orderBy('update_time DESC')->limit(12)->all();
                 if($book){
                     $relust['code']=200;
                     $relust['data']=$book;
