@@ -124,4 +124,61 @@ class SmallprogramController extends Controller{
         }
         return $result;
     }
+
+    //搜索
+    public function actionSearch(){
+        $result = [
+            'code'=>400,
+            'msg'=>'',//错误信息,如果有
+        ];
+        if(\Yii::$app->request->isPost){
+            $obj=new Verification();
+            $res=$obj->check();
+             if($res){
+              $result['msg']= $res;
+             return $result;
+            }else{
+            $keyword=\Yii::$app->request->post('keyword');
+            $category_id=\Yii::$app->request->post('category_id');
+            $keyword=trim($keyword);
+            //var_dump($keyword);exit;
+            if(empty($keyword) || empty($category_id)){
+                $result['msg']='未传入指定参数';
+                return $result;
+            }
+            $books=Book::find()->where(['like','name',$keyword])->andWhere(['category_id'=>$category_id])->all();
+            if(!$books){
+                $result['msg']='未搜索到结果';
+                return $result;
+            }
+
+            if($books){
+                foreach ($books as $book){
+                    $result['data']['book'][]=['book_id'=>$book->id,'name'=>$book->name,
+                        'category'=>$book->category->name,'author'=>$book->author->name,
+                        'view'=>$book->clicks,'image'=>$book->image,'size'=>$book->size,
+                        'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
+                        'download'=>$book->downloads,'collection'=>$book->collection,'author_id'=>$book->author_id,
+                        'category_id'=>$book->category_id,'no_free'=>$book->no,'type'=>$book->type,
+                        'create_time'=>$book->create_time,'update_time'=>$book->update_time,'from'=>$book->from,
+                        'is_free'=>$book->is_free,'price'=>$book->price,'search'=>$book->search,'sale'=>$book->search,
+                        'ascription_name'=>$book->information->name,'ascription_id'=>$book->ascription,
+                        'copyright_book_id'=>$book->copyright_book_id,'last_update_chapter_id'=>$book->last_update_chapter_id,
+                        'last_update_chapter_name'=>$book->last_update_chapter_name];
+
+                    //图书搜索数+1
+                    $book->search=$book->search+1;
+                    $book->save();
+                }
+
+            }
+            $result['code']=200;
+            $result['msg']='搜索信息如下';
+
+            }
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
+    }
 }
