@@ -78,7 +78,8 @@ class SmallprogramController extends Controller{
             $category_id=\Yii::$app->request->get('category_id');
             $page=\Yii::$app->request->get('page');
             $type=\Yii::$app->request->get('type');
-            $query=Book::find()->where(['category_id'=>$category_id])->andWhere(['<>','from',4]);
+            $status=\Yii::$app->request->get('status');
+            $query=Book::find()->where(['category_id'=>$category_id])->andWhere(['<>','from',4])->andWhere(['is_end'=>$status]);
             $count=ceil($query->count()/10);
             if($page>$count){
                 $result['msg']='没有更多了';
