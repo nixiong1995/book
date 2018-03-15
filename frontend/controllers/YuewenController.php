@@ -1,6 +1,7 @@
 <?php
 namespace frontend\controllers;
 use backend\models\Book;
+use backend\models\Chapter;
 use backend\models\Purchased;
 use libs\PostRequest;
 use libs\Verification;
@@ -52,6 +53,7 @@ class YuewenController extends \yii\web\Controller{
             //该书观看数加1
             $book->clicks=$book->clicks+1;
             $book->save();
+            ////////////////////获取凯兴章节列表//////////////////////////
             if($book->ascription==1){
 
                 //请求地址
@@ -105,8 +107,15 @@ class YuewenController extends \yii\web\Controller{
                     return $data;
 
                 }
+                ////////////////////获取凯兴章节列表结束//////////////////////////
+
+
+
+
+                //=======================获取17k小说网章节列表=====================
 
             }elseif ($book->ascription==4){
+
 
                 $get=new PostRequest();
                 $data=$get->send_request('http://api.17k.com/v2/book/'.$book->copyright_book_id.'/volumes',
@@ -140,6 +149,90 @@ class YuewenController extends \yii\web\Controller{
                         $result['msg']='成功返回章节信息';
                     }
                 }
+                //=========================获取17k小说章节结束=============================
+
+
+                //////////////////////////本地图书章节列表//////////////////////////
+            }else{
+                //查询该书章节列表
+                $chapters=Chapter::find()->where(['book_id'=>$book_id])->all();
+                //该书免费
+                if($book->is_free==0){
+                    foreach ($chapters as $chapter){
+                        //var_dump($chapter);exit;
+                        $result['flag']=true;
+                        $result['content']['data'][]=
+                            [
+                                'chapter_id'=>$chapter->id,
+                                'chapter_name'=>$chapter->chapter_name,
+                                'book_id'=>$chapter->book_id,
+                                'vname'=>'第一卷',
+                                'volume_id'=>0,
+                                'is_vip'=>0,
+                                'sortid'=>$chapter->no,
+                                'word_count'=>$chapter->word_count,
+                                'update_time'=>$chapter->update_time,
+                                'no'=>$book->no
+                            ];
+                        $result['msg']='成功返回章节信息';
+                    }
+                }else{
+                    //该书收费书
+                    //查询用户已购书
+                    $purchased=Purchased::findOne(['user_id'=>$user_id,'book_id'=>$book_id]);
+                    if($purchased){
+                        $chapter_no=explode('|',$purchased->chapter_no);//分割成数组
+                        $chapter_no=array_filter($chapter_no);//删除数组中空元素
+                    }else{
+                        //没有购买书
+                        $chapter_no=[];
+                    }
+                    foreach ($chapters as $chapter){
+                        //把全部章节更改为收费章节
+
+                        //判断用户是否已购买该章节,该书从多少章节开始收费.用户购买该章节或者该章节是免费章节,is_vip改成0
+                        if(in_array(($chapter->no),$chapter_no) || ($chapter->no<$book->no && $book->no!=0) ){
+                            $result['flag']=true;
+                            $result['content']['data'][]=
+                                [
+                                    'chapter_id'=>$chapter->id,
+                                    'chapter_name'=>$chapter->chapter_name,
+                                    'book_id'=>$chapter->book_id,
+                                    'vname'=>'第一卷',
+                                    'volume_id'=>0,
+                                    'is_vip'=>0,
+                                    'sortid'=>$chapter->no,
+                                    'word_count'=>$chapter->word_count,
+                                    'update_time'=>$chapter->update_time,
+                                    'no'=>$book->no,
+                                ];
+                            $result['msg']='成功返回章节信息';
+
+
+
+                        }else{
+                            $result['flag']=true;
+                            $result['content']['data'][]=
+                                [
+                                    'chapter_id'=>$chapter->id,
+                                    'chapter_name'=>$chapter->chapter_name,
+                                    'book_id'=>$chapter->book_id,
+                                    'vname'=>'第一卷',
+                                    'volume_id'=>0,
+                                    'is_vip'=>1,
+                                    'sortid'=>$chapter->no,
+                                    'word_count'=>$chapter->word_count,
+                                    'update_time'=>$chapter->update_time,
+                                    'no'=>$book->no,
+                                ];
+                            $result['msg']='成功返回章节信息';
+                        }
+                    }
+                }
+
+
+
+
             }
 
            //  }
@@ -171,7 +264,9 @@ class YuewenController extends \yii\web\Controller{
                 $copyright_chapter_ids=\Yii::$app->request->post('copyright_chapter_id');//版权书章节id
                 //var_dump($copyright_chapter_ids);exit;
                 //解析json
-                $copyright_chapter_ids=json_decode($copyright_chapter_ids);
+               // $copyright_chapter_ids=json_decode($copyright_chapter_ids);
+            $copyright_chapter_ids=explode(',',$copyright_chapter_ids);
+            $copyright_chapter_ids=array_filter($copyright_chapter_ids);
                 //查找该本书
                 $book=Book::findOne(['id'=>$book_id]);
                 $book->downloads=$book->downloads+1;
@@ -180,6 +275,7 @@ class YuewenController extends \yii\web\Controller{
                 //遍历获取多章节内容
                 $datas=[];
                 if($book->ascription==1){
+                    ///////////////////////////////凯兴图书内容//////////////////////////////////////
                     //请求地址
                     $postUrl = 'http://partner.chuangbie.com/partner/chaptercontent';
                     foreach ( $copyright_chapter_ids->copyright_chapter_id as  $copyright_chapter_id){
@@ -194,8 +290,10 @@ class YuewenController extends \yii\web\Controller{
 
                     }
                     return $datas;
+                    ////////////////////////////凯兴内容结束////////////////////////////
 
                 }elseif($book->ascription==4){
+                    //////////////////////////17k小说网章节内容//////////////////////////////////////
                     foreach ($copyright_chapter_ids->copyright_chapter_id as  $copyright_chapter_id){
                         $get=new PostRequest();
                         $contents=$get->send_request('http://api.17k.com/v2/book/'.$book->copyright_book_id.'/chapter/'.$copyright_chapter_id.'/content',
@@ -217,7 +315,19 @@ class YuewenController extends \yii\web\Controller{
                         //var_dump($contents->data->content);exit;
                     }
                     return $datas;
+                    ////////////////////////////17k章节内容结束/////////////////////////
 
+                }else{
+                    //==============================本地图书章节内容================================
+                    foreach ($copyright_chapter_ids as  $copyright_chapter_id){
+                        $model=Chapter::find()->where(['book_id'=>$book_id])->andWhere(['id'=>$copyright_chapter_id])->one();
+                        $string=file_get_contents(BOOK_PATH.$model->path);
+                        $result['flag']=true;
+                        $result['content']['data']['chapter_content']=$string;
+                        $result['msg']='成功返回章节内容';
+                        $datas[]=$result;
+                    }
+                    return $datas;
                 }
 
 
