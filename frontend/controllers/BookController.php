@@ -52,7 +52,7 @@ class BookController extends Controller{
             $book=Book::findOne(['name'=>$book_name]);
             if($book){
                 //判断该书来源
-                if($book->ascription==4){
+                if($book->ascription==3){
                     //保存图片
                     file_put_contents($dir . '/' . $fileName, $img);
                     $book->copyright_book_id=$category_id;
@@ -63,7 +63,7 @@ class BookController extends Controller{
                     $book->ascription=5;
                     $book->image=$uploadSuccessPath;
                     $book->last_update_chapter_name=$last_update_chapter_name;
-                    if($book->save()){
+                    if($book->save(false)){
                         $relust['code']=200;
                         $relust['msg']='修改17K图书成功';
                         $relust['book_id']=$book->id;
@@ -108,7 +108,7 @@ class BookController extends Controller{
                 $model->collection=rand(5000, 10000);
                 $model->downloads=rand(5000, 10000);
                 $model->last_update_chapter_name=$last_update_chapter_name;
-                if($model->save()){
+                if($model->save(false)){
                     $relust['code']=200;
                     $relust['msg']='存书成功';
                     $relust['book_id']=$model->id;
@@ -164,7 +164,7 @@ class BookController extends Controller{
                     $model->path=$uploadSuccessPath;
                     $model->is_free=0;
                     $model->create_time=time();
-                    if($model->save()){
+                    if($model->save(false)){
                         $relust['msg']='成功存入章节';
                     }else{
                         $relust['msg']='存入章节失败';
@@ -172,7 +172,7 @@ class BookController extends Controller{
                     if($status){
                         $book->last_update_chapter_id=$model->id;
                         //$book->last_update_chapter_name=$model->chapter_name;
-                        $book->save();
+                        $book->save(false);
                     }
 
                 }else{
