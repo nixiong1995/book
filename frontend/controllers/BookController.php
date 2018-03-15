@@ -57,6 +57,7 @@ class BookController extends Controller{
                     file_put_contents($dir . '/' . $fileName, $img);
                     $book->copyright_book_id=$category_id;
                     $book->category_id=$category_id;
+                    $book->from=4;
                     $book->intro=$intro;
                     $book->size=$size*2;
                     $book->is_end=$status;
