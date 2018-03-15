@@ -33,10 +33,9 @@ class BookController extends Controller{
             $img_url=\Yii::$app->request->post('img_url');//图片路径
             $intro=\Yii::$app->request->post('intro');//书简介
             $size=\Yii::$app->request->post('size');//书大小
-            $last_update_chapter_id=\Yii::$app->request->post('last_update_chapter_id');//最新章节id
             $last_update_chapter_name=\Yii::$app->request->post('last_update_chapter_name');//最新章节名称
 
-            if(empty($copyright_book_id) || empty($book_name) || empty($author_name) || empty($category_id) || empty($img_url) || empty($intro) || empty($size) || empty($last_update_chapter_id) || empty($last_update_chapter_name) || empty($status)){
+            if(empty($copyright_book_id) || empty($book_name) || empty($author_name) || empty($category_id) || empty($img_url) || empty($intro) || empty($size) || empty($last_update_chapter_name) || empty($status)){
                 $relust['msg']='未传入指定参数';
                 return $relust;
             }
@@ -94,7 +93,7 @@ class BookController extends Controller{
                 $model->price=0;
                 $model->no=0;
                 $model->clicks= rand(5000, 10000);
-                $model->size=$size;
+                $model->size=$size*2;
                 $model->type='txt';
                 $model->score=rand(7, 10);
                 $model->status=1;
@@ -102,7 +101,6 @@ class BookController extends Controller{
                 $model->create_time=time();
                 $model->collection=rand(5000, 10000);
                 $model->downloads=rand(5000, 10000);
-                $model->last_update_chapter_id=$last_update_chapter_id;
                 $model->last_update_chapter_name=$last_update_chapter_name;
                 if($model->save()){
                     $relust['code']=200;
@@ -133,6 +131,7 @@ class BookController extends Controller{
             $chapter_name=\Yii::$app->request->post('chapter_name');
             $word_count=\Yii::$app->request->post('word_count');
             $content=\Yii::$app->request->post('content');
+            $status=\Yii::$app->request->post('status');
             //判断是否传入指定参数
             if(empty($book_id) || empty($sort_id) || empty($chapter_name) || empty($word_count) || empty($content)){
                 $relust['msg']='未传入指定参数';
@@ -163,6 +162,11 @@ class BookController extends Controller{
                         $relust['msg']='成功存入章节';
                     }else{
                         $relust['msg']='存入章节失败';
+                    }
+                    if($status){
+                        $book->last_update_chapter_id=$model->id;
+                        //$book->last_update_chapter_name=$model->chapter_name;
+                        $book->save();
                     }
 
                 }else{
