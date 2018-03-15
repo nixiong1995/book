@@ -51,8 +51,8 @@ class BookController extends Controller{
             //根据书名判断数据库是否有该书
             $book=Book::findOne(['name'=>$book_name]);
             if($book){
-                //判断该书来源
-                if($book->ascription==4){
+                /*//判断该书来源
+                if($book->ascription==4 || $book->ascription==2){
                     //保存图片
                     file_put_contents($dir . '/' . $fileName, $img);
                     $book->copyright_book_id=$category_id;
@@ -73,7 +73,8 @@ class BookController extends Controller{
                     }
                 }else{
                     $relust['msg']='已存在该书';
-                }
+                }*/
+                $relust['msg']='数据库已有该书';
 
             }else{
                 file_put_contents($dir . '/' . $fileName, $img);
@@ -92,7 +93,7 @@ class BookController extends Controller{
                 $model->name=$book_name;
                 $model->author_id=$author_id;
                 $model->category_id=$category_id;
-                $model->from=5;
+                $model->from=3;
                 $model->ascription=5;
                 $model->image=$uploadSuccessPath;
                 $model->intro=$intro;
@@ -113,6 +114,7 @@ class BookController extends Controller{
                     $relust['code']=200;
                     $relust['msg']='存书成功';
                     $relust['book_id']=$model->id;
+                    $relust['book_name']=$model->name;
                 }else{
                     $relust['msg']='存书失败';
                 }
