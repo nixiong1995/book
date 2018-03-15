@@ -167,6 +167,7 @@ class BookController extends Controller{
                     $model->create_time=time();
                     if($model->save(false)){
                         $relust['msg']='成功存入章节';
+                        $relust['sort_id']=$sort_id;
                     }else{
                         $relust['msg']='存入章节失败';
                     }
