@@ -55,8 +55,14 @@ class BookController extends Controller{
                 if($book->ascription==4){
                     //保存图片
                     file_put_contents($dir . '/' . $fileName, $img);
+                    $book->copyright_book_id=$category_id;
+                    $book->category_id=$category_id;
+                    $book->intro=$intro;
+                    $book->size=$size*2;
+                    $book->is_end=$status;
                     $book->ascription=5;
                     $book->image=$uploadSuccessPath;
+                    $book->last_update_chapter_name=$last_update_chapter_name;
                     if($book->save()){
                         $relust['code']=200;
                         $relust['msg']='修改17K图书成功';
