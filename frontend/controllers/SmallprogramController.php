@@ -174,7 +174,6 @@ class SmallprogramController extends Controller{
             }
             $result['code']=200;
             $result['msg']='搜索信息如下';
-
             }
         }else{
             $result['msg']='请求方式错误';
