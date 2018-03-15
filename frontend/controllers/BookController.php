@@ -52,7 +52,7 @@ class BookController extends Controller{
             $book=Book::findOne(['name'=>$book_name]);
             if($book){
                 //判断该书来源
-                if($book->ascription==3){
+                if($book->ascription==4){
                     //保存图片
                     file_put_contents($dir . '/' . $fileName, $img);
                     $book->copyright_book_id=$category_id;
