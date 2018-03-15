@@ -92,7 +92,7 @@ class BookController extends Controller{
                 $model->name=$book_name;
                 $model->author_id=$author_id;
                 $model->category_id=$category_id;
-                $model->from=3;
+                $model->from=4;
                 $model->ascription=5;
                 $model->image=$uploadSuccessPath;
                 $model->intro=$intro;
