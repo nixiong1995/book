@@ -148,6 +148,13 @@ class BookController extends Controller{
             //判断数据库是否有该图书
             $book=Book::findOne(['id'=>$book_id]);
             if($book){
+                //判断数据库是否存在该章节
+                $chapter=Chapter::find()->where(['book_id'=>$book_id])->andWhere(['no'=>$sort_id])->one();
+                if($chapter){
+                    $relust['msg']='已存在该章节';
+                    return $relust;
+                }
+
                 if($book->ascription==5){
                     //将章节内容写入文件保存
                     $dir2 = BOOK_PATH . date("Y") . '/' . date('m') . '/' . date('d') . '/';
@@ -166,6 +173,7 @@ class BookController extends Controller{
                     $model->is_free=0;
                     $model->create_time=time();
                     if($model->save(false)){
+                        $relust['code']=200;
                         $relust['msg']='成功存入章节';
                         $relust['sort_id']=$sort_id;
                     }else{
