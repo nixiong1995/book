@@ -264,9 +264,7 @@ class YuewenController extends \yii\web\Controller{
                 $copyright_chapter_ids=\Yii::$app->request->post('copyright_chapter_id');//版权书章节id
                 //var_dump($copyright_chapter_ids);exit;
                 //解析json
-               // $copyright_chapter_ids=json_decode($copyright_chapter_ids);
-            $copyright_chapter_ids=explode(',',$copyright_chapter_ids);
-            $copyright_chapter_ids=array_filter($copyright_chapter_ids);
+                $copyright_chapter_ids=json_decode($copyright_chapter_ids);
                 //查找该本书
                 $book=Book::findOne(['id'=>$book_id]);
                 $book->downloads=$book->downloads+1;
@@ -319,7 +317,7 @@ class YuewenController extends \yii\web\Controller{
 
                 }else{
                     //==============================本地图书章节内容================================
-                    foreach ($copyright_chapter_ids as  $copyright_chapter_id){
+                    foreach ($copyright_chapter_ids->copyright_chapter_id as  $copyright_chapter_id){
                         $model=Chapter::find()->where(['book_id'=>$book_id])->andWhere(['id'=>$copyright_chapter_id])->one();
                         $string=file_get_contents(BOOK_PATH.$model->path);
                         $result['flag']=true;
