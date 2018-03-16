@@ -211,44 +211,53 @@ class BookController extends Controller{
         if(\Yii::$app->request->isPost){
             //查询ascription=5的图书id
             $bookIds=\Yii::$app->db->createCommand('SELECT id FROM book WHERE ascription=5')->queryColumn();
-            //遍历查询图书是否存在章节信息
-            foreach ($bookIds as $bookId){
-                $chapter=Chapter::findOne(['book_id'=>$bookId]);
-                //如果不存在就删除该图书
-                if(!$chapter){
-                    $book=Book::find()->where(['id'=>$bookId])->one();
-                    $author_id=$book->author_id;//作者id
-                    $path=$book->image;
-                    $transaction=\Yii::$app->db->beginTransaction();//开启事务
-                    try{
-                        $book->delete();
-                        //删除图书
-                        if($path){
-                            $path=UPLOAD_PATH.$path;
-                            unlink($path);
+            if($bookIds){
+                //遍历查询图书是否存在章节信息
+                foreach ($bookIds as $bookId){
+                    $chapter=Chapter::findOne(['book_id'=>$bookId]);
+                    //如果不存在就删除该图书
+                    if(!$chapter){
+                        $book=Book::find()->where(['id'=>$bookId])->one();
+                        $author_id=$book->author_id;//作者id
+                        $path=$book->image;
+                        $transaction=\Yii::$app->db->beginTransaction();//开启事务
+                        try{
+                            $book->delete();
+                            //删除图书
+                            if($path){
+                                $path=UPLOAD_PATH.$path;
+                                unlink($path);
+                            }
+
+                            //删除作者(判断该作者是否还有其他书籍)
+                            $res=Book::findOne(['author_id'=>$author_id]);
+                            //该作者没有其他图书,删除该作者
+                            if(!$res) {
+                                $author = Author::findOne(['id' => $author_id]);
+                                //var_dump($author);exit;
+                                $author->delete();
+                            }
+                            $relust['code']=200;
+                            $relust['msg']='删除空章节图书成功';
+                            $transaction->commit();
+
+                        }catch (Exception $e){
+                            //事务回滚
+                            $relust['msg']='删除空章节图书失败';
+                            $transaction->rollBack();
                         }
 
-                        //删除作者(判断该作者是否还有其他书籍)
-                        $relust=Book::findOne(['author_id'=>$author_id]);
-                        //该作者没有其他图书,删除该作者
-                        if(!$relust) {
-                            $author = Author::findOne(['id' => $author_id]);
-                            //作者照片
-                            $author->delete();
-                        }
-                        $transaction->commit();
+                    }else{
                         $relust['code']=200;
-                        $relust['msg']='删除空章节图书成功';
-                    }catch (Exception $e){
-                        //事务回滚
-                        $transaction->rollBack();
-                        $relust['msg']='删除空章节图书失败';
+                        $relust['msg']='无空章节图书';
                     }
-                }else{
-                    $relust['code']=200;
-                    $relust['msg']='无空章节图书';
                 }
+
+            }else{
+                $relust['msg']='没有api归属图书';
+
             }
+
         }else{
             $relust['msg']='请求方式错误';
         }
