@@ -210,7 +210,7 @@ class BookController extends Controller{
         ];
         if(\Yii::$app->request->isPost){
             //查询ascription=5的图书id
-            $bookIds=\Yii::$app->db->createCommand('SELECT id FROM book WHERE ascription=5')->queryScalar();
+            $bookIds=\Yii::$app->db->createCommand('SELECT id FROM book WHERE ascription=5')->queryColumn();
             //遍历查询图书是否存在章节信息
             foreach ($bookIds as $bookId){
                 $chapter=Chapter::findOne(['book_id'=>$bookId]);
