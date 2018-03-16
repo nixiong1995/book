@@ -155,7 +155,7 @@ class YuewenController extends \yii\web\Controller{
                 //////////////////////////本地图书章节列表//////////////////////////
             }else{
                 //查询该书章节列表
-                $chapters=Chapter::find()->where(['book_id'=>$book_id])->orderBy('sort_id ASC')->all();
+                $chapters=Chapter::find()->where(['book_id'=>$book_id])->orderBy('no ASC')->all();
                 //该书免费
                 if($book->is_free==0){
                     foreach ($chapters as $chapter){
