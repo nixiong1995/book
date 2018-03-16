@@ -40,7 +40,7 @@ class Chapter extends ActiveRecord{
 
     //获取书名名
     public static function getBookName(){
-        $rows=Book::find()->where(['!=','from',3])->all();
+        $rows=Book::find()->where(['is_api'=>0])->all();
         $BookName=[];
         foreach ( $rows as $row){
             $BookName[$row->id]=$row->name;

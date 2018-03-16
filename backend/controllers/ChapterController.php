@@ -13,7 +13,7 @@ class ChapterController extends Controller{
 
     //章节列表
     public function actionIndex(){
-        $id=\Yii::$app->request->get('id');//章节id
+        $id=\Yii::$app->request->get('id');//图书id
         $keyword=\Yii::$app->request->get('keyword');//搜索关键字
         $query=Chapter::find()->where(["book_id"=>$id]);
         if($keyword){
@@ -80,9 +80,9 @@ class ChapterController extends Controller{
     }
 
     //章节修改
-    public function actionEdit($id,$no)
+    public function actionEdit($id)
     {
-        $model = Chapter::find()->where(['id' => $id])->andWhere(['no'=>$no])->one();
+        $model = Chapter::find()->where(['id' => $id])->one();
         $model->scenario=Chapter::SCENARIO_EDIT;
         $model->is_end=$model->book->is_end;
         $old_path=$model->path;
