@@ -80,9 +80,9 @@ class ChapterController extends Controller{
     }
 
     //章节修改
-    public function actionEdit($id)
+    public function actionEdit($id,$no)
     {
-        $model = Chapter::findOne(['id' => $id]);
+        $model = Chapter::find()->where(['id' => $id])->andWhere(['no'=>$no]);
         $model->scenario=Chapter::SCENARIO_EDIT;
         $model->is_end=$model->book->is_end;
         $old_path=$model->path;
