@@ -101,7 +101,7 @@ class BookController extends Controller{
                 $model->is_free=0;
                 $model->price=0;
                 $model->no=0;
-                $model->clicks= rand(5000, 10000);
+                $model->clicks=rand(5000, 10000);
                 $model->size=$size*2;
                 $model->type='txt';
                 $model->score=rand(7, 10);

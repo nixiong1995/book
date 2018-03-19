@@ -25,7 +25,7 @@ class ChapterController extends Controller{
             'totalCount'=>$query->count(),//总条数
             'defaultPageSize'=>20,//每页显示条数
         ]);
-        $models=$query->limit($pager->limit)->offset($pager->offset)->orderBy('create_time DESC')->all();
+        $models=$query->limit($pager->limit)->offset($pager->offset)->orderBy('no DESC')->all();
         return $this->render('index',['models'=>$models,'pager'=>$pager,'book_id'=>$id]);
 
     }
