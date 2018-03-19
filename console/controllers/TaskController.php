@@ -209,7 +209,7 @@ class TaskController extends Controller{
         }
     }*/
     //插入17k章节内容
-    public function actionZhuishuInsert(){
+    public function actionSeventeenInfoContent(){
         //设置脚本执行时间(不终止)
         set_time_limit(0);
         //查询数据库图书,获取17k书id
@@ -295,8 +295,8 @@ class TaskController extends Controller{
         }
     }
 
-    //插入追书神器基本图书信息
-    public function actionZhuishuInfo(){
+    //插入17k基本图书信息
+    public function actionSeventeenInfo(){
         //设置脚本执行时间(不终止)
         set_time_limit(0);
         ///////////////获取分类图书列表/////////////////
@@ -310,12 +310,12 @@ class TaskController extends Controller{
                     '_access_version' => 2,
                     '_versions' => 958,
                     'app_key' => 2222420362,
-                    'book_free' => 0,
+                    'book_free' => 1,
                     'book_status' =>0,
-                    'category_1' => 17,
+                    'category_1' => 24,
                     'num' => 20,
                     'page' =>$i,
-                    'site' =>3,
+                    'site' =>2,
                     'sort_type' =>7,
                 ]
             );
@@ -408,7 +408,7 @@ class TaskController extends Controller{
                                             $data->book_id,
                                             $data->book_name,
                                             $author_id,
-                                            34,
+                                            22,
                                             3,
                                             4,
                                             $data->cover,
@@ -451,5 +451,112 @@ class TaskController extends Controller{
         }
 
     }
+
+    //插入追书神器图书基本信息
+    public function actionZhuishuInfo(){
+        //设置脚本执行时间(不终止)
+        //set_time_limit(0);
+        $k=0;
+        for($i=1;$i<=200;$i++){
+
+            $get = new PostRequest();
+            ////////////////////请求追书神器基本信息接口///////////////////////////////////////
+            $info = $get->send_request('http://api.zhuishushenqi.com/book/by-categories?',
+                [
+                    'gender'=>'male',
+                    'type'=>'hot',
+                    'major'=>'玄幻',
+                    'minor'=>'',
+                    'start'=>$k,
+                    'limit'=>20,
+                ]
+            );
+            $infos = (json_decode($info));
+            $k=$k+20;
+
+            foreach ($infos->books as $info){
+                //var_dump($info);exit;
+                //判断数据库是否已存在该书
+                $book=Book::findOne(['name'=>$info->title]);
+                if(!$book){
+                    $img_url=urldecode(str_replace('/agent/','',$info->cover));
+                    //判断是否有该作者
+                    $author = Author::findOne(['name' =>$info->author]);
+                    if ($author) {
+                        $author_id = $author->id;
+                    } else {
+                        $author2 = new Author();
+                        $author2->name = $info->author;
+                        $author2->create_time = time();
+                        $author2->save(false);
+                        $author_id = $author2->id;
+                    }
+
+                    \Yii::$app->db->createCommand()->batchInsert(Book::tableName(),
+                        [
+                            'copyright_book_id',
+                            'name',
+                            'author_id',
+                            'category_id',
+                            'from',
+                            'ascription',
+                            'image',
+                            'intro',
+                            'is_free',
+                            'no',
+                            'size',
+                            'type',
+                            'is_end',
+                            'clicks',
+                            'score',
+                            'collection',
+                            'downloads',
+                            'price',
+                            'last_update_chapter_id',
+                            'last_update_chapter_name',
+                            'status',
+                            'create_time'
+                        ],
+                        [
+                            [
+                                $info->_id,
+                                $info->title,
+                                $author_id,
+                                16,
+                                3,
+                                4,
+                                $img_url,
+                                $info->shortIntro,
+                                0,
+                                0,
+                                0,
+                                'txt',
+                                1,
+                                rand(5000, 10000),
+                                rand(7, 10),
+                                rand(5000, 10000),
+                                rand(5000, 10000),
+                                0,
+                                $info->latelyFollower,
+                                $info->lastChapter,
+                                1,
+                                time()
+                            ],
+                        ])->execute();
+                    echo  iconv('utf-8','gbk',$i.'存入图书'. $info->title."\n");
+                   // echo  '存入图书'. $info->title."\n";
+
+                }else{
+                    echo  iconv('utf-8','gbk',$i.'图书'.$info->title.'已存在'."\n");
+                    //echo '图书'.$info->title.'已存在'.'\n';
+                }
+
+            }
+
+    }
+
+    }
+
+
 
 }

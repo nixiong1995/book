@@ -42,7 +42,7 @@ class RankingController extends Controller{
                         foreach ( $SellingBooks as $sellingBook) {
                             //判断是否版权图书,不拼接图片域名
                             $ImgUrl=$sellingBook->image;
-                            if($sellingBook->from!=3){
+                            if($sellingBook->is_api==0){
                                 $ImgUrl=HTTP_PATH.$ImgUrl;
                             }
                             $result['data'][] = ['book_id' => $sellingBook->id, 'name' => $sellingBook->name,
@@ -69,7 +69,7 @@ class RankingController extends Controller{
                         foreach (  $NewBooks as $newBook) {
                             //判断是否版权图书,不拼接图片域名
                             $ImgUrl=$newBook->image;
-                            if($newBook->from!=3){
+                            if($newBook->is_api==0){
                                 $ImgUrl=HTTP_PATH.$ImgUrl;
                             }
                             $result['data'][]= ['book_id' => $newBook->id, 'name' => $newBook->name,
@@ -94,7 +94,7 @@ class RankingController extends Controller{
                         foreach ( $UpdateBooks as $updateBook) {
                             //判断是否版权图书,不拼接图片域名
                             $ImgUrl=$updateBook->image;
-                            if($updateBook->from!=3){
+                            if($updateBook->is_api==0){
                                 $ImgUrl=HTTP_PATH.$ImgUrl;
                             }
                             $result['data'][] = ['book_id' => $updateBook->id, 'name' => $updateBook->name,
@@ -120,7 +120,7 @@ class RankingController extends Controller{
                         foreach ($EndBooks as $endBook) {
                             //判断是否版权图书,不拼接图片域名
                             $ImgUrl=$endBook->image;
-                            if($endBook->from!=3){
+                            if($endBook->is_api==0){
                                 $ImgUrl=HTTP_PATH.$ImgUrl;
                             }
                             $result['data'][] = ['book_id' => $endBook->id, 'name' => $endBook->name,
@@ -145,7 +145,7 @@ class RankingController extends Controller{
                         foreach ($HotsearchBooks as $hotsearchBook){
                             //判断是否版权图书,不拼接图片域名
                             $ImgUrl=$hotsearchBook->image;
-                            if($hotsearchBook->from!=3){
+                            if($hotsearchBook->is_api==0){
                                 $ImgUrl=HTTP_PATH.$ImgUrl;
                             }
                             $result['data'][] = ['book_id' => $hotsearchBook->id, 'name' => $hotsearchBook->name,
@@ -175,7 +175,7 @@ class RankingController extends Controller{
                         foreach ( $SellingBooks as $sellingBook) {
                             //判断是否版权图书,不拼接图片域名
                             $ImgUrl=$sellingBook->image;
-                            if($sellingBook->from!=3){
+                            if($sellingBook->is_api==0){
                                 $ImgUrl=HTTP_PATH.$ImgUrl;
                             }
                             $result['data'][] = ['book_id' => $sellingBook->id, 'name' => $sellingBook->name,
@@ -202,7 +202,7 @@ class RankingController extends Controller{
                         foreach (  $NewBooks as $newBook) {
                             //判断是否版权图书,不拼接图片域名
                             $ImgUrl=$newBook->image;
-                            if($newBook->from!=3){
+                            if($newBook->is_api==0){
                                 $ImgUrl=HTTP_PATH.$ImgUrl;
                             }
                             $result['data'][] = ['book_id' => $newBook->id, 'name' => $newBook->name,
@@ -227,7 +227,7 @@ class RankingController extends Controller{
                         foreach ( $UpdateBooks as $updateBook) {
                             //判断是否版权图书,不拼接图片域名
                             $ImgUrl=$updateBook->image;
-                            if($updateBook->from!=3){
+                            if($updateBook->is_api==0){
                                 $ImgUrl=HTTP_PATH.$ImgUrl;
                             }
                             $result['data'][] = ['book_id' => $updateBook->id, 'name' => $updateBook->name,
@@ -253,7 +253,7 @@ class RankingController extends Controller{
                         foreach ($EndBooks as $endBook) {
                             //判断是否版权图书,不拼接图片域名
                             $ImgUrl=$endBook->image;
-                            if($endBook->from!=3){
+                            if($endBook->is_api==0){
                                 $ImgUrl=HTTP_PATH.$ImgUrl;
                             }
                             $result['data'][] =  ['book_id' => $endBook->id, 'name' => $endBook->name,
@@ -278,7 +278,7 @@ class RankingController extends Controller{
                         foreach ($HotsearchBooks as $hotsearchBook){
                             //判断是否版权图书,不拼接图片域名
                             $ImgUrl=$hotsearchBook->image;
-                            if($hotsearchBook->from!=3){
+                            if($hotsearchBook->is_api==0){
                                 $ImgUrl=HTTP_PATH.$ImgUrl;
                             }
                             $result['data'][] = ['book_id' => $hotsearchBook->id, 'name' => $hotsearchBook->name,

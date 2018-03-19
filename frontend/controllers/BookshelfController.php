@@ -48,7 +48,7 @@ class BookshelfController extends Controller{
                             foreach ($Books1 as $book1){
                                 //判断是否版权图书,不拼接图片域名
                                 $ImgUrl=$book1->image;
-                                if($book1->from!=3){
+                                if($book1->is_api==0){
                                     $ImgUrl=HTTP_PATH.$ImgUrl;
                                 }
                                 $result['data'][]=['book_id'=>$book1->id,'name'=>$book1->name,
@@ -82,7 +82,7 @@ class BookshelfController extends Controller{
                             foreach ( $Books2 as $book2){
                                 //判断是否版权图书,不拼接图片域名
                                 $ImgUrl=$book2->image;
-                                if($book2->from!=3){
+                                if($book2->is_api==0){
                                     $ImgUrl=HTTP_PATH.$ImgUrl;
                                 }
                                 $result['data'][]=['book_id'=>$book2->id,'name'=>$book2->name,

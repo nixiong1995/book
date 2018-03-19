@@ -93,9 +93,9 @@ class BookstoreController extends Controller{
             $models1=Book::find()->where(['groom'=>1])->orderBy('groom_time DESC')->limit(5)->all();
 
             foreach ($models1 as $model1){
-                //判断是否版权图书,不是拼接图片域名
+                //判断是否api图书,不是拼接图片域名
                 $ImgUrl=$model1->image;
-                if($model1->from!=3){
+                if($model1->is_api==0){
                     $ImgUrl=HTTP_PATH.$ImgUrl;
                 }
                 $result['data']['read-today'][]=['book_id'=>$model1->id,'name'=>$model1->name,
@@ -117,7 +117,7 @@ class BookstoreController extends Controller{
                 foreach ($models2 as $model2){
                     //判断是否版权图书,不是拼接图片域名
                     $ImgUrl=$model2->book->image;
-                    if($model2->book->from!=3){
+                    if($model2->book->is_api==0){
                         $ImgUrl=HTTP_PATH.$ImgUrl;
                     }
                     $categoty=Category::findOne(['id'=>$model2->book->category_id]);
@@ -157,7 +157,7 @@ class BookstoreController extends Controller{
                    foreach ($books as $book){
                        //判断是否版权图书,不是拼接图片域名
                        $ImgUrl= $book->image;
-                       if( $book->from!=3){
+                       if( $book->is_api==0){
                            $ImgUrl=HTTP_PATH.$ImgUrl;
                        }
                        $result['data']['like'][]=['book_id'=>$book->id,'name'=>$book->name,
@@ -190,7 +190,7 @@ class BookstoreController extends Controller{
             foreach ($books as $book){
                 //判断是否版权图书,不是拼接图片域名
                 $ImgUrl= $book->image;
-                if( $book->from!=3){
+                if( $book->is_api==0){
                     $ImgUrl=HTTP_PATH.$ImgUrl;
                 }
                 $result['data']['like'][]=['book_id'=>$book->id,'name'=>$book->name,
@@ -230,7 +230,7 @@ class BookstoreController extends Controller{
             //查询男频分类
                 $categorys1=Category::find()->where(['type'=>1])->all();
                 foreach ($categorys1 as $category){
-                    $image=\Yii::$app->db->createCommand("select image from book WHERE category_id=$category->id AND `from`!=3 ORDER BY create_time DESC ")->queryScalar();
+                    $image=\Yii::$app->db->createCommand("select image from book WHERE category_id=$category->id AND `is_api`=0 ORDER BY create_time DESC ")->queryScalar();
                     $count1=Book::find()->andWhere(['category_id'=>$category->id])->count('id');//查询分类书的数量
                     $result['data']['male'][]=['name'=>$category->name,'intro'=>$category->intro,
                         'status'=>$category->status,'count'=>$category->count,'type'=>$category->type,
@@ -239,7 +239,7 @@ class BookstoreController extends Controller{
                 //查询女频
             $categorys2=Category::find()->where(['type'=>0])->all();
             foreach ($categorys2 as $category){
-                $image=\Yii::$app->db->createCommand("select image from book WHERE category_id=$category->id AND `from`!=3 ORDER BY create_time DESC ")->queryScalar();
+                $image=\Yii::$app->db->createCommand("select image from book WHERE category_id=$category->id AND `is_api`=0 ORDER BY create_time DESC ")->queryScalar();
                 $count2=Book::find()->andWhere(['category_id'=>$category->id])->count('id');//查询分类书的数量
                 $result['data']['female'][]=['name'=>$category->name,'intro'=>$category->intro,
                     'status'=>$category->status,'count'=>$category->count,'type'=>$category->type,
@@ -291,7 +291,7 @@ class BookstoreController extends Controller{
             foreach ($models as $model){
                 //判断是否版权图书,不是拼接图片域名
                 $ImgUrl=$model->image;
-                if($model->from!=3){
+                if($model->is_api==0){
                     $ImgUrl=HTTP_PATH.$ImgUrl;
                 }
                 $result['data'][]=['book_id'=>$model->id,'name'=>$model->name,
@@ -336,7 +336,7 @@ class BookstoreController extends Controller{
                 foreach ($books1 as $book1){
                     //判断是否版权图书,不是拼接图片域名
                     $ImgUrl=$book1->image;
-                    if($book1->from!=3){
+                    if($book1->is_api==0){
                         $ImgUrl=HTTP_PATH.$ImgUrl;
                     }
                     $result['data']['similar'][]=['book_id'=>$book1->id,'name'=>$book1->name,
@@ -356,7 +356,7 @@ class BookstoreController extends Controller{
                 foreach ($books2 as $book2){
                     //判断是否版权图书,不是拼接图片域名
                     $ImgUrl=$book2->image;
-                    if($book2->from!=3){
+                    if($book2->is_api==0){
                         $ImgUrl=HTTP_PATH.$ImgUrl;
                     }
                     $result['data']['author'][]=['book_id'=>$book2->id,'name'=>$book2->name,
@@ -396,7 +396,7 @@ class BookstoreController extends Controller{
                 $book=Book::findOne(['id'=>$book_id]);
                //判断是否版权图书,不是拼接图片域名
                $ImgUrl=$book->image;
-               if($book->from!=3){
+               if($book->is_api==0){
                    $ImgUrl=HTTP_PATH.$ImgUrl;
                }
                     $result['data']=['book_id'=>$book->id,'name'=>$book->name,
@@ -473,7 +473,7 @@ class BookstoreController extends Controller{
                     foreach ($books as $book){
                //判断是否版权图书,不拼接图片域名
                $ImgUrl=$book->image;
-               if($book->from!=3){
+               if($book->is_api==0){
                    $ImgUrl=HTTP_PATH.$ImgUrl;
                }
                         $result['data']['book'][]=['book_id'=>$book->id,'name'=>$book->name,
@@ -556,7 +556,7 @@ class BookstoreController extends Controller{
                 foreach ($models1 as $model1){
                     //判断是否版权图书,不拼接图片域名
                     $ImgUrl=$model1->image;
-                    if($model1->from!=3){
+                    if($model1->is_api==0){
                         $ImgUrl=HTTP_PATH.$ImgUrl;
                     }
                     $result['data']['category1'][]=['book_id'=>$model1->id,'name'=>$model1->name,
@@ -576,7 +576,7 @@ class BookstoreController extends Controller{
             foreach ($models2 as $model2){
                 //判断是否版权图书,不拼接图片域名
                 $ImgUrl=$model2->image;
-                if($model2->from!=3){
+                if($model2->is_api==0){
                     $ImgUrl=HTTP_PATH.$ImgUrl;
                 }
                 $result['data']['category2'][]=['book_id'=>$model2->id,'name'=>$model2->name,
@@ -596,7 +596,7 @@ class BookstoreController extends Controller{
             foreach ($models3 as $model3){
                 //判断是否版权图书,不拼接图片域名
                 $ImgUrl=$model3->image;
-                if($model3->from!=3){
+                if($model3->is_api==0){
                     $ImgUrl=HTTP_PATH.$ImgUrl;
                 }
                 $result['data']['category3'][]=['book_id'=>$model3->id,'name'=>$model3->name,
@@ -616,7 +616,7 @@ class BookstoreController extends Controller{
             foreach ($models4 as $model4){
                 //判断是否版权图书,不拼接图片域名
                 $ImgUrl=$model4->image;
-                if($model4->from!=3){
+                if($model4->is_api==0){
                     $ImgUrl=HTTP_PATH.$ImgUrl;
                 }
                 $result['data']['category4'][]=['book_id'=>$model4->id,'name'=>$model4->name,
@@ -636,7 +636,7 @@ class BookstoreController extends Controller{
             foreach ($models5 as $model5){
                 //判断是否版权图书,不拼接图片域名
                 $ImgUrl=$model5->image;
-                if($model5->from!=3){
+                if($model5->is_api==0){
                     $ImgUrl=HTTP_PATH.$ImgUrl;
                 }
                 $result['data']['category5'][]=['book_id'=>$model5->id,'name'=>$model5->name,
@@ -677,7 +677,7 @@ class BookstoreController extends Controller{
                 foreach ( $books1 as $book1){
                     //判断是否版权图书,不拼接图片域名
                     $ImgUrl=$book1->image;
-                    if($book1->from!=3){
+                    if($book1->is_api==0){
                         $ImgUrl=HTTP_PATH.$ImgUrl;
                     }
                     $result['data']['today-free'][]=['book_id'=>$book1->id,'name'=>$book1->name,
@@ -698,7 +698,7 @@ class BookstoreController extends Controller{
                 foreach ( $books2 as $book2){
                     //判断是否版权图书,不拼接图片域名
                     $ImgUrl=$book2->image;
-                    if($book2->from!=3){
+                    if($book2->is_api==0){
                         $ImgUrl=HTTP_PATH.$ImgUrl;
                     }
                     $result['data']['female-free'][]=['book_id'=>$book2->id,'name'=>$book2->name,
@@ -719,7 +719,7 @@ class BookstoreController extends Controller{
                 foreach ( $books3 as $book3){
                     //判断是否版权图书,不拼接图片域名
                     $ImgUrl=$book3->image;
-                    if($book3->from!=3){
+                    if($book3->is_api==0){
                         $ImgUrl=HTTP_PATH.$ImgUrl;
                     }
                     $result['data']['male-free'][]=['book_id'=>$book3->id,'name'=>$book3->name,
@@ -763,7 +763,7 @@ class BookstoreController extends Controller{
                 foreach ($ManBooks1 as $Manbook1){
                     //判断是否版权图书,不拼接图片域名
                     $ImgUrl=$Manbook1->image;
-                    if($Manbook1->from!=3){
+                    if($Manbook1->is_api==0){
                         $ImgUrl=HTTP_PATH.$ImgUrl;
                     }
                     $result['data']['end_book'][]=['book_id'=>$Manbook1->id,'name'=>$Manbook1->name,
@@ -785,7 +785,7 @@ class BookstoreController extends Controller{
                 foreach ($ManBooks2 as $Manbook2){
                     //判断是否版权图书,不拼接图片域名
                     $ImgUrl=$Manbook2->image;
-                    if($Manbook2->from!=3){
+                    if($Manbook2->is_api==0){
                         $ImgUrl=HTTP_PATH.$ImgUrl;
                     }
                     $result['data']['end_category'][]=['book_id'=>$Manbook2->id,'name'=>$Manbook2->name,
@@ -826,7 +826,7 @@ class BookstoreController extends Controller{
                 foreach ($books as $book){
                     //判断是否版权图书,不拼接图片域名
                     $ImgUrl=$book->image;
-                    if($book->from!=3){
+                    if($book->is_api==0){
                         $ImgUrl=HTTP_PATH.$ImgUrl;
                     }
                     $result['data'][]=['book_id'=>$book->id,'name'=>$book->name,
