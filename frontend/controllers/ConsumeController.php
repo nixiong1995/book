@@ -137,8 +137,6 @@ class  ConsumeController extends Controller{
                 $RealPrice=$price;//实际价格
                 $discount=0;//定义折扣后价格
 
-
-
                 //图书折扣
                 //本次购买章节数=本书总章节数-(已购买章节数+免费的章节数)
                 if($total_chapter-($no+$charge)<20){//购买20章以下无折扣

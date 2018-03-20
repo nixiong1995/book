@@ -5,6 +5,7 @@
     <p class="col-lg-9">
     <form class="form-inline" method="get" action="<?=\yii\helpers\Url::to(['chapter/index'])?>">
         <input type="text" name="keyword" class="form-control" placeholder="章节名称/章节号"/>
+        <input type="hidden" name="book_id" value="<?=$book_id?>">
         <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search">搜索</span></button>
     </form>
     </p>
