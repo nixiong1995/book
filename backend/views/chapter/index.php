@@ -4,7 +4,7 @@
     <p><a href="<?=\yii\helpers\Url::to(['chapter/add','book_id'=>$book_id])?>" class="btn btn-primary">新增章节</a></p>
     <p class="col-lg-9">
     <form class="form-inline" method="get" action="<?=\yii\helpers\Url::to(['chapter/index'])?>">
-        <input type="text" name="keyword" class="form-control" placeholder="章节名称/章节号"/>
+        <input type="text" name="keyword" class="form-control" placeholder="章节号"/>
         <input type="hidden" name="id" value="<?=$book_id?>">
         <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search">搜索</span></button>
     </form>

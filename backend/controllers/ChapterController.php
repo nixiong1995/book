@@ -17,8 +17,9 @@ class ChapterController extends Controller{
         $keyword=\Yii::$app->request->get('keyword');//搜索关键字
         $query=Chapter::find()->where(["book_id"=>$id]);
         if($keyword){
-            $query->andFilterWhere(['like','chapter_name',$keyword])
-                ->orFilterWhere(['no'=>$keyword]);
+           // $query->andFilterWhere(['like','chapter_name',$keyword])
+               // ->orFilterWhere(['no'=>$keyword]);
+            $query->andWhere(['no'=>$keyword]);
         }
         $pager=new Pagination([
             'totalCount'=>$query->count(),//总条数
