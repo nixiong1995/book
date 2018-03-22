@@ -332,7 +332,10 @@ class BookstoreController extends Controller{
                 $category_id=\Yii::$app->request->post('category_id');
                 $author_id=\Yii::$app->request->post('author_id');
                 //查找同类书
-                $books1=Book::find()->where(['category_id'=>$category_id])->orderBy('score DESC')->limit(4)->all();
+                //$books1=Book::find()->where(['category_id'=>$category_id])->orderBy('score DESC')->limit(4)->all();
+                $books1=\Yii::$app->db->createCommand("SELECT * FROM `book` 
+WHERE id >= (SELECT floor( RAND() * ((SELECT MAX(id) FROM `book` WHERE category_id=$category_id)-(SELECT MIN(id) FROM `book` WHERE category_id=$category_id)) + (SELECT MIN(id) FROM `book` WHERE category_id=$category_id)))  
+ORDER BY id LIMIT 3")->queryAll();
                 foreach ($books1 as $book1){
                     //判断是否版权图书,不是拼接图片域名
                     $ImgUrl=$book1->image;
