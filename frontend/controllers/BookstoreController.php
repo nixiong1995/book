@@ -324,11 +324,11 @@ class BookstoreController extends Controller{
             'msg'=>'',//错误信息,如果有
         ];
         if(\Yii::$app->request->isPost){
-            $obj=new Verification();
+           $obj=new Verification();
            $res=$obj->check();
-            if($res){
-                $result['msg']= $res;
-           }else{
+           // if($res){
+               // $result['msg']= $res;
+          // }else{
                 $category_id=\Yii::$app->request->post('category_id');
                 $author_id=\Yii::$app->request->post('author_id');
                 //查找同类书
@@ -376,7 +376,7 @@ ORDER BY id LIMIT 3")->queryAll();
                 }
                 $result['code']=200;
                 $result['msg']='获取图书详情推荐书籍成功';
-          }
+         // }
         }else{
             $result['msg']='请求方式错误';
         }
