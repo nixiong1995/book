@@ -152,7 +152,8 @@ class BookController extends Controller{
             $book=Book::findOne(['id'=>$book_id]);
             if($book){
                 //判断数据库是否存在该章节
-                $chapter=Chapter::find()->where(['book_id'=>$book_id])->andWhere(['no'=>$sort_id])->one();
+                //$chapter=Chapter::find()->where(['book_id'=>$book_id])->andWhere(['no'=>$sort_id])->one();
+                $chapter=\Yii::$app->db->createCommand("SELECT id FROM chapter WHERE `book_id`=$book_id AND `no`=$sort_id")->queryScalar();
                 if($chapter){
                     $relust['msg']='已存在该章节';
                     return $relust;

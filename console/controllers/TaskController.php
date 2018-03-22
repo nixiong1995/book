@@ -46,6 +46,12 @@ class TaskController extends Controller{
 
     }
 
+    //每日0点清空真实阅读数
+    public function actionRealRead(){
+        Book::updateAll(['real_read'=>0]);
+        echo iconv('utf-8', 'gbk',  '清零每日真实阅读数成功'."\n");
+    }
+
     //爬追书神器存入数据库
     /*public function actionZhuishuInsert(){
         //设置脚本执行时间(不终止)
