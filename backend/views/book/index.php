@@ -17,9 +17,10 @@
     </div>
 
 
-    <p class="col-lg-5">
+    <p class="col-lg-4">
     <form class="form-inline" method="get" action="<?=\yii\helpers\Url::to(['book/index'])?>">
     <?=\yii\bootstrap\Html::dropDownList('category','0',\backend\models\Book::getCategoryName(),['class'=>"form-control"])?>
+    <?=\yii\bootstrap\Html::dropDownList('is_free','',[''=>'请选择...',0=>'免费书',1=>'VIP书',2=>'收费书'],['class'=>"form-control"])?>
         <input type="text" name="book" class="form-control" placeholder="书名"/>
         <input type="text" name="author" class="form-control" placeholder="作者"/>
         <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search">搜索</span></button>

@@ -21,8 +21,9 @@ class BookController extends Controller{
         $category_id=\Yii::$app->request->get('category');
         $book=\Yii::$app->request->get('book');//书名
         $author=\Yii::$app->request->get('author');//作者
+        $is_free=\Yii::$app->request->get('is_free');
         //查询数据库分类第一位
-        if(!$book && !$author){
+        if(!$book && !$author && $is_free){
             $id=\Yii::$app->db->createCommand("SELECT id FROM category ")->queryScalar();
             $category_id=$category_id?$category_id:$id;
         }
@@ -41,6 +42,9 @@ class BookController extends Controller{
         if ($category_id){
             $where.=" and category_id='$category_id'";
             //$query->andWhere(['category_id'=>$category_id]);
+        }
+        if($is_free){
+            $where.=" and is_free='$is_free'";
         }
 
         $total1=Book::find()->count('id');//数据库总书数量

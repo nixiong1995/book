@@ -156,22 +156,23 @@ class YuewenController extends \yii\web\Controller{
             }else{
                 //查询该书章节列表
                 $chapters=Chapter::find()->where(['book_id'=>$book_id])->orderBy('no ASC')->all();
+                $ArrayLength=count($chapters);
                 //该书免费
                 if($book->is_free==0){
-                    foreach ($chapters as $chapter){
+                    for ($i=0;$i<$ArrayLength;$i++){
                         //var_dump($chapter);exit;
                         $result['flag']=true;
                         $result['content']['data'][]=
                             [
-                                'chapter_id'=>$chapter->id,
-                                'chapter_name'=>$chapter->chapter_name,
-                                'book_id'=>$chapter->book_id,
+                                'chapter_id'=>$chapters[$i]->id,
+                                'chapter_name'=>$chapters[$i]->chapter_name,
+                                'book_id'=>$chapters[$i]->book_id,
                                 'vname'=>'第一卷',
                                 'volume_id'=>0,
                                 'is_vip'=>0,
-                                'sortid'=>$chapter->no,
-                                'word_count'=>$chapter->word_count,
-                                'update_time'=>$chapter->update_time,
+                                'sortid'=>$chapters[$i]->no,
+                                'word_count'=>$chapters[$i]->word_count,
+                                'update_time'=>$chapters[$i]->update_time,
                                 'no'=>$book->no
                             ];
                         $result['msg']='成功返回章节信息';
@@ -187,23 +188,23 @@ class YuewenController extends \yii\web\Controller{
                         //没有购买书
                         $chapter_no=[];
                     }
-                    foreach ($chapters as $chapter){
+                    for($i=0;$i<$ArrayLength;$i++){
                         //把全部章节更改为收费章节
 
                         //判断用户是否已购买该章节,该书从多少章节开始收费.用户购买该章节或者该章节是免费章节,is_vip改成0
-                        if(in_array(($chapter->no),$chapter_no) || ($chapter->no<$book->no && $book->no!=0) ){
+                        if(in_array(($i+1),$chapter_no) || (($i+1)<$book->no && $book->no!=0)){
                             $result['flag']=true;
                             $result['content']['data'][]=
                                 [
-                                    'chapter_id'=>$chapter->id,
-                                    'chapter_name'=>$chapter->chapter_name,
-                                    'book_id'=>$chapter->book_id,
+                                    'chapter_id'=>$chapters[$i]->id,
+                                    'chapter_name'=>$chapters[$i]->chapter_name,
+                                    'book_id'=>$chapters[$i]->book_id,
                                     'vname'=>'第一卷',
                                     'volume_id'=>0,
                                     'is_vip'=>0,
-                                    'sortid'=>$chapter->no,
-                                    'word_count'=>$chapter->word_count,
-                                    'update_time'=>$chapter->update_time,
+                                    'sortid'=>$chapters[$i]->no,
+                                    'word_count'=>$chapters[$i]->word_count,
+                                    'update_time'=>$chapters[$i]->update_time,
                                     'no'=>$book->no,
                                 ];
                             $result['msg']='成功返回章节信息';
@@ -214,15 +215,15 @@ class YuewenController extends \yii\web\Controller{
                             $result['flag']=true;
                             $result['content']['data'][]=
                                 [
-                                    'chapter_id'=>$chapter->id,
-                                    'chapter_name'=>$chapter->chapter_name,
-                                    'book_id'=>$chapter->book_id,
+                                    'chapter_id'=>$chapters[$i]->id,
+                                    'chapter_name'=>$chapters[$i]->chapter_name,
+                                    'book_id'=>$chapters[$i]->book_id,
                                     'vname'=>'第一卷',
                                     'volume_id'=>0,
                                     'is_vip'=>1,
-                                    'sortid'=>$chapter->no,
-                                    'word_count'=>$chapter->word_count,
-                                    'update_time'=>$chapter->update_time,
+                                    'sortid'=>$chapters[$i]->no,
+                                    'word_count'=>$chapters[$i]->word_count,
+                                    'update_time'=>$chapters[$i]->update_time,
                                     'no'=>$book->no,
                                 ];
                             $result['msg']='成功返回章节信息';
