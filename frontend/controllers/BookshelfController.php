@@ -198,6 +198,7 @@ class BookshelfController extends Controller{
                                 $model->save();
                                 $book=Book::findOne(['id'=>$book_id]);
                                 $book->collection=$book->collection+1;
+                                $book->real_read=$book->real_read+1;
                                 $book->save();
                                 $transaction->commit();
 
