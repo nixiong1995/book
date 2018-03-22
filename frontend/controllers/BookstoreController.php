@@ -326,15 +326,15 @@ class BookstoreController extends Controller{
         if(\Yii::$app->request->isPost){
            $obj=new Verification();
            $res=$obj->check();
-            if($res){
-                $result['msg']= $res;
-           }else{
+           // if($res){
+               // $result['msg']= $res;
+          // }else{
                 $category_id=\Yii::$app->request->post('category_id');
                 $author_id=\Yii::$app->request->post('author_id');
                 //查找同类书
                 //$books1=Book::find()->where(['category_id'=>$category_id])->orderBy('score DESC')->limit(4)->all();
                 $books1=Book::findBySql("SELECT * FROM `book` 
-WHERE id >= (SELECT floor( RAND() * ((SELECT MAX(id) FROM `book` WHERE category_id=$category_id)-(SELECT MIN(id) FROM `book` WHERE category_id=$category_id)) + (SELECT MIN(id) FROM `book` WHERE category_id=$category_id)))  
+WHERE id >= (SELECT floor( RAND() * ((SELECT MAX(id) FROM `book` WHERE category_id=$category_id)-(SELECT MIN(id) FROM `book` WHERE category_id=$category_id)) + (SELECT MIN(id) FROM `book` WHERE category_id=$category_id)))  AND category_id=$category_id
 ORDER BY id LIMIT 3")->all();
                 foreach ($books1 as $book1){
                     //判断是否版权图书,不是拼接图片域名
@@ -376,7 +376,7 @@ ORDER BY id LIMIT 3")->all();
                 }
                 $result['code']=200;
                 $result['msg']='获取图书详情推荐书籍成功';
-          }
+         // }
         }else{
             $result['msg']='请求方式错误';
         }
