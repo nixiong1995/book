@@ -7,7 +7,7 @@
     </p>
     <p class="col-lg-9">
     <form class="form-inline" method="get" action="<?=\yii\helpers\Url::to(['book/groom-index'])?>">
-        <?=\yii\bootstrap\Html::dropDownList('type','',[1=>'今日必读',2=>'今日限免',3=>'女生限免',4=>'男生限免',5=>'男生完本限免',6=>'女生完本限免',8=>'排行男生畅销',9=>'排行女生畅销',10=>'排行男生热搜',11=>'排行女生热搜'],['class'=>"form-control"])?>
+        <?=\yii\bootstrap\Html::dropDownList('type','',[1=>'今日必读',2=>'今日限免',3=>'女生限免',4=>'男生限免',5=>'男生完本限免',6=>'女生完本限免',8=>'排行男生畅销',9=>'排行女生畅销',10=>'排行男生热搜',11=>'排行女生热搜',12=>'排行男生完结',13=>'排行女生完结'],['class'=>"form-control"])?>
         <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search">搜索</span></button>
     </form>
     </p>
@@ -54,6 +54,12 @@
                             break;
                         case 11:
                             echo '排行女生热搜';
+                            break;
+                        case 12:
+                            echo '排行男生完结';
+                            break;
+                        case 13:
+                            echo '排行女生完结';
                             break;
                         default:
                             echo "今日必读";

@@ -115,7 +115,7 @@ class RankingController extends Controller{
 
                         //男生完结
 
-                        $EndBooks=Book::find()->where(['category_id'=> $ManIds,'is_end'=>1])->orderBy('score DESC')->limit(10)->all();
+                        $EndBooks=Book::find()->where(['groom'=>12])->orderBy('groom_time DESC')->limit(10)->all();
 
                         foreach ($EndBooks as $endBook) {
                             //判断是否版权图书,不拼接图片域名
@@ -248,8 +248,7 @@ class RankingController extends Controller{
 
                         //女生完结
 
-                        $EndBooks=Book::find()->where(['category_id'=> $ManIds,'is_end'=>1])->orderBy('score DESC')->limit(10)->all();
-
+                        $EndBooks=Book::find()->where(['groom'=>13])->orderBy('groom_time DESC')->limit(10)->all();
                         foreach ($EndBooks as $endBook) {
                             //判断是否版权图书,不拼接图片域名
                             $ImgUrl=$endBook->image;
