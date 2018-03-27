@@ -101,4 +101,24 @@ class Chapter extends ActiveRecord{
 
 
     }
+
+    private static $partitionIndex_ = null; // 分表ID
+
+    /**
+     * 重置分区id
+     * @param unknown $uid
+     */
+    private static function resetPartitionIndex($uid = null) {
+        $partitionCount = \Yii::$app->params['chapter']['partitionCount'];
+
+        self::$partitionIndex_ = $uid % $partitionCount;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
+        return 'chapter' . self::$partitionIndex_;
+    }
 }

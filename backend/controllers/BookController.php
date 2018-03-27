@@ -283,59 +283,54 @@ class BookController extends Controller{
                 $book->groom_time=time();
                 $book->save(false);
                 \Yii::$app->session->setFlash('success', '添加推荐成功');
-                if($book->groom==1){
-                    return $this->redirect(['book/today-read']);
-                }elseif ($book->groom==2){
-                    return $this->redirect(['book/today-free']);
-                }elseif ($book->groom==3){
-                    return $this->redirect(['book/girl-free']);
-                }elseif ($book->groom==4){
-                    return $this->redirect(['book/boy-free']);
-                }elseif ($book->groom==5){
-                    return $this->redirect(['book/end-free']);
-                }elseif ($book->groom==6){
-                    return $this->redirect(['book/girl-endfree']);
-                }
+                return $this->redirect(['book/groom-index']);
+
 
             }
         }
         return $this->render('groom-add',['model'=>$model]);
     }
 
-    //今日必读列表列表
-    public function actionTodayRead(){
-        $models=Book::find()->where(['groom'=>1])->orderBy('groom_time DESC')->limit(5)->all();
-        return $this->render('today-read',['models'=>$models]);
-    }
-
-    //今日限免列表
-    public function actionTodayFree(){
-        $models=Book::find()->where(['groom'=>2])->orderBy('groom_time DESC')->limit(3)->all();
-        return $this->render('today-free',['models'=>$models]);
-    }
-
-    //女生限免
-    public function actionGirlFree(){
-        $models=Book::find()->where(['groom'=>3])->orderBy('groom_time DESC')->limit(8)->all();
-        return $this->render('girl-free',['models'=>$models]);
-    }
-
-    //男生限免
-    public function actionBoyFree(){
-        $models=Book::find()->where(['groom'=>4])->orderBy('groom_time DESC')->limit(3)->all();
-        return $this->render('boy-free',['models'=>$models]);
-    }
-
-    //男生完本限免
-    public function actionEndFree(){
-        $models=Book::find()->where(['groom'=>5])->orderBy('groom_time DESC')->limit(6)->all();
-        return $this->render('end-free',['models'=>$models]);
-    }
-
-    //女生完本限免
-    public function actionGirlEndfree(){
-        $models=Book::find()->where(['groom'=>6])->orderBy('groom_time DESC')->limit(6)->all();
-        return $this->render('girl-endfree',['models'=>$models]);
+    //推荐列表
+    public function actionGroomIndex(){
+        //接收参数
+        $type=\Yii::$app->request->get('type');
+        switch ($type)
+        {
+            case 1:
+                $models=Book::find()->where(['groom'=>1])->orderBy('groom_time DESC')->limit(5)->all();
+                break;
+            case 2:
+                $models=Book::find()->where(['groom'=>2])->orderBy('groom_time DESC')->limit(3)->all();
+                break;
+            case 3:
+                $models=Book::find()->where(['groom'=>3])->orderBy('groom_time DESC')->limit(8)->all();
+                break;
+            case 4:
+                $models=Book::find()->where(['groom'=>4])->orderBy('groom_time DESC')->limit(3)->all();
+                break;
+            case 5:
+                $models=Book::find()->where(['groom'=>5])->orderBy('groom_time DESC')->limit(6)->all();
+                break;
+            case 6:
+                $models=Book::find()->where(['groom'=>6])->orderBy('groom_time DESC')->limit(6)->all();
+                break;
+            case 8:
+                $models=Book::find()->where(['groom'=>8])->orderBy('groom_time DESC')->limit(10)->all();
+                break;
+            case 9:
+                $models=Book::find()->where(['groom'=>9])->orderBy('groom_time DESC')->limit(10)->all();
+                break;
+            case 10:
+                $models=Book::find()->where(['groom'=>10])->orderBy('groom_time DESC')->limit(10)->all();
+                break;
+            case 11:
+                $models=Book::find()->where(['groom'=>11])->orderBy('groom_time DESC')->limit(10)->all();
+                break;
+            default:
+                $models=Book::find()->where(['groom'=>1])->orderBy('groom_time DESC')->limit(5)->all();
+        }
+        return $this->render('groom-index',['models'=>$models]);
     }
 
     //精品推荐列表

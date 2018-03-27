@@ -38,7 +38,7 @@ class RankingController extends Controller{
                         //男生畅销
                         //查询消费记录最多的
 
-                        $SellingBooks=Book::find()->where(['category_id'=> $ManIds])->orderBy('sale DESC')->limit(10)->all();
+                        $SellingBooks=Book::find()->where(['groom'=>8])->orderBy('groom_time DESC')->limit(10)->all();
                         foreach ( $SellingBooks as $sellingBook) {
                             //判断是否版权图书,不拼接图片域名
                             $ImgUrl=$sellingBook->image;
@@ -139,7 +139,7 @@ class RankingController extends Controller{
                     }elseif ($type==5){
 
                         //男生热搜
-                        $HotsearchBooks=Book::find()->where(['category_id'=> $ManIds,'is_end'=>1])->orderBy('search DESC')->limit(10)->all();
+                        $HotsearchBooks=Book::find()->where(['groom'=>10])->orderBy('groom_time DESC')->limit(10)->all();
 
 
                         foreach ($HotsearchBooks as $hotsearchBook){
@@ -171,7 +171,7 @@ class RankingController extends Controller{
                         //女生畅销
 
 
-                        $SellingBooks=Book::find()->where(['category_id'=> $ManIds])->orderBy('sale DESC')->limit(10)->all();
+                        $SellingBooks=Book::find()->where(['groom'=>9])->orderBy('groom_time DESC')->limit(10)->all();
                         foreach ( $SellingBooks as $sellingBook) {
                             //判断是否版权图书,不拼接图片域名
                             $ImgUrl=$sellingBook->image;
@@ -272,7 +272,7 @@ class RankingController extends Controller{
                     }elseif ($type==5){
 
                         //女生热搜
-                        $HotsearchBooks=Book::find()->where(['category_id'=> $ManIds,'is_end'=>1])->orderBy('search DESC')->limit(10)->all();
+                        $HotsearchBooks=Book::find()->where(['groom'=>5])->orderBy('groom_time DESC')->limit(10)->all();
 
 
                         foreach ($HotsearchBooks as $hotsearchBook){
