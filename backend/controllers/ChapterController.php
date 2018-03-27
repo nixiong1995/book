@@ -172,6 +172,7 @@ class ChapterController extends Controller{
 
         $data = Book::find()
             ->select('id, name as text')
+            ->where(['is_api'=>0])
                 ->andFilterWhere(['like', 'name', $q])
         ->limit(50)
         ->asArray()
