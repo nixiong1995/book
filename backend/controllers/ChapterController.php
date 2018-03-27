@@ -51,6 +51,7 @@ class ChapterController extends Controller{
                 $model->file->saveAs($path,false);//移动文件
                 $bookPath=date("Y").'/'.date('m').'/'.date('d').'/'.$fileName;//数据库保存路径
                 $model->path=$bookPath;
+                $model->word_count=round($model->file->size/3);
                 //保存所有数据
                 $model->create_time=time();
                 $transaction=\Yii::$app->db->beginTransaction();//开启事务
@@ -101,6 +102,7 @@ class ChapterController extends Controller{
                     $model->file->saveAs($path,false);//移动文件
                     $bookPath=date("Y").'/'.date('m').'/'.date('d').'/'.$fileName;//数据库保存路径
                     $model->path=$bookPath;
+                    $model->word_count=round($model->file->size/3);
                     if($old_path){
                         $old_path=BOOK_PATH.$old_path;
                         unlink($old_path);//删除原文件
@@ -157,6 +159,27 @@ class ChapterController extends Controller{
             return 'error';
         }
     }
+
+    //ajax请求书名
+    public function actionSearchTitle($q)
+    {
+
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $out = ['results' => ['id' => '', 'text' => '']];
+        if (!$q) {
+            return $out;
+        }
+
+        $data = Book::find()
+            ->select('id, name as text')
+                ->andFilterWhere(['like', 'name', $q])
+        ->limit(50)
+        ->asArray()
+        ->all();
+                
+    $out['results'] = array_values($data);
+    return $out;
+}
 
     public function behaviors()
     {

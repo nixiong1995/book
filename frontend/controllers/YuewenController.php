@@ -319,7 +319,7 @@ class YuewenController extends \yii\web\Controller{
                 }else{
                     //==============================本地图书章节内容================================
                     foreach ($copyright_chapter_ids->copyright_chapter_id as  $copyright_chapter_id){
-                        $model=Chapter::find()->where(['book_id'=>$book_id])->andWhere(['id'=>$copyright_chapter_id])->one();
+                        $model=Chapter::find()->where(['id'=>$copyright_chapter_id])->one();
                         $string=file_get_contents(BOOK_PATH.$model->path);
                         $result['flag']=true;
                         $result['content']['data']['chapter_content']=$string;

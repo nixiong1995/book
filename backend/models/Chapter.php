@@ -39,14 +39,14 @@ class Chapter extends ActiveRecord{
     }
 
     //获取书名名
-    public static function getBookName(){
+   /* public static function getBookName(){
         $rows=Book::find()->where(['is_api'=>0])->all();
         $BookName=[];
         foreach ( $rows as $row){
             $BookName[$row->id]=$row->name;
         }
         return $BookName;
-    }
+    }*/
 
     //关联查询书
     public function getBook(){

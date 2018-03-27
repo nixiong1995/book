@@ -1,10 +1,27 @@
 <?php
 use kartik\select2\Select2;
+use yii\web\JsExpression;
+//$url_name=\yii\helpers\Url::to(['chapter/search-title']);
 $form=\yii\bootstrap\ActiveForm::begin();
-$data = \backend\models\Chapter::getBookName();
+//$data = \backend\models\Chapter::getBookName();
 echo $form->field($model,'book_id')->widget(Select2::classname(), [
-    'data' => $data,
+    //'data' => $data,
     'options' => ['placeholder' => '请选择 ...'],
+    'pluginOptions' => [
+        'placeholder' => 'search ...',
+        'allowClear' => true,
+        'language' => [
+            'errorLoading' => new JsExpression("function () { return 'Waiting...'; }"),
+        ],
+        'ajax' => [
+            'url' => \yii\helpers\Url::to(['chapter/search-title']),
+            'dataType' => 'json',
+            'data' => new JsExpression('function(params) { return {q:params.term}; }')
+        ],
+        'escapeMarkup' => new JsExpression('function (markup) { return markup; }'),
+        'templateResult' => new JsExpression('function(res) { return res.text; }'),
+        'templateSelection' => new JsExpression('function (res) { return res.text; }'),
+    ],
 ]);
 echo $form->field($model,'no')->textInput();
 echo $form->field($model,'chapter_name')->textInput();

@@ -14,8 +14,6 @@ class AuthorController extends Controller{
         $query=Author::find()->where(['status'=>1])->orderBy(['popularity'=>SORT_DESC]);
         if($keyword){
             $query->andWhere(['like','name',$keyword]);
-        }else{
-            $query->all();
         }
         $pager=new Pagination([
             'totalCount'=>$query->count(),//总条数
