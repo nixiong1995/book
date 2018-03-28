@@ -380,6 +380,18 @@ class BookController extends Controller{
 
     }
 
+    //置顶图书推荐
+    public function actionGroomTop(){
+        $id=\Yii::$app->request->post('id');
+        $model=Book::findOne(['id'=>$id]);
+        $model->groom_time=time();
+        if($model->save()){
+            return 'success';
+        }else{
+            return 'error';
+        }
+    }
+
     public function behaviors()
     {
         return [
