@@ -271,7 +271,7 @@ class RankingController extends Controller{
                     }elseif ($type==5){
 
                         //女生热搜
-                        $HotsearchBooks=Book::find()->where(['groom'=>5])->orderBy('groom_time DESC')->limit(10)->all();
+                        $HotsearchBooks=Book::find()->where(['groom'=>11])->orderBy('groom_time DESC')->limit(10)->all();
 
 
                         foreach ($HotsearchBooks as $hotsearchBook){
