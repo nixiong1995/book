@@ -210,15 +210,16 @@ class BookController extends Controller{
             'msg'=>'请求失败',
         ];
         if(\Yii::$app->request->isPost){
-            //查询ascription=5的图书id
-            $bookIds=\Yii::$app->db->createCommand('SELECT id FROM book WHERE ascription=5')->queryColumn();
-            if($bookIds){
-                //遍历查询图书是否存在章节信息
-                foreach ($bookIds as $bookId){
-                    $chapter=Chapter::findOne(['book_id'=>$bookId]);
+            //接收图书id
+            $book_id=\Yii::$app->request->post('book_id');
+            if(empty($book_id)){
+                $relust['msg']='未传入指定参数';
+            }
+
+                    $chapter=Chapter::findOne(['book_id'=>$book_id]);
                     //如果不存在就删除该图书
                     if(!$chapter){
-                        $book=Book::find()->where(['id'=>$bookId])->one();
+                        $book=Book::find()->where(['id'=>$book_id])->one();
                         $author_id=$book->author_id;//作者id
                         $path=$book->image;
                         $transaction=\Yii::$app->db->beginTransaction();//开启事务
@@ -248,16 +249,12 @@ class BookController extends Controller{
                             $transaction->rollBack();
                         }
 
-                    }else{
-                        $relust['code']=200;
-                        $relust['msg']='无空章节图书';
+                    }else {
+                        $relust['code'] = 200;
+                        $relust['msg'] = '该书无空章节';
                     }
-                }
 
-            }else{
-                $relust['msg']='没有api归属图书';
 
-            }
 
         }else{
             $relust['msg']='请求方式错误';

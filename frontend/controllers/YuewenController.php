@@ -154,45 +154,16 @@ class YuewenController extends \yii\web\Controller{
 
                 //////////////////////////本地图书章节列表//////////////////////////
             }else{
-                //查询该书章节列表
-                $chapters=Chapter::find()->where(['book_id'=>$book_id])->orderBy('no ASC')->all();
-                $ArrayLength=count($chapters);
-                //该书免费
-                if($book->is_free==0){
-                    for ($i=0;$i<$ArrayLength;$i++){
-                        //var_dump($chapter);exit;
-                        $result['flag']=true;
-                        $result['content']['data'][]=
-                            [
-                                'chapter_id'=>$chapters[$i]->id,
-                                'chapter_name'=>$chapters[$i]->chapter_name,
-                                'book_id'=>$chapters[$i]->book_id,
-                                'vname'=>'第一卷',
-                                'volume_id'=>0,
-                                'is_vip'=>0,
-                                'sortid'=>$chapters[$i]->no,
-                                'word_count'=>$chapters[$i]->word_count,
-                                'update_time'=>$chapters[$i]->update_time,
-                                'no'=>$book->no
-                            ];
-                        $result['msg']='成功返回章节信息';
-                    }
-                }else{
-                    //该书收费书
-                    //查询用户已购书
-                    $purchased=Purchased::findOne(['user_id'=>$user_id,'book_id'=>$book_id]);
-                    if($purchased){
-                        $chapter_no=explode('|',$purchased->chapter_no);//分割成数组
-                        $chapter_no=array_filter($chapter_no);//删除数组中空元素
-                    }else{
-                        //没有购买书
-                        $chapter_no=[];
-                    }
-                    for($i=0;$i<$ArrayLength;$i++){
-                        //把全部章节更改为收费章节
-
-                        //判断用户是否已购买该章节,该书从多少章节开始收费.用户购买该章节或者该章节是免费章节,is_vip改成0
-                        if(in_array(($i+1),$chapter_no) || (($i+1)<$book->no && $book->no!=0)){
+                //分表id
+                $re=Chapter::resetPartitionIndex($book_id);
+                if($re!=0){
+                    //查询该书章节列表
+                    $chapters=Chapter::find()->where(['book_id'=>$book_id])->orderBy('no ASC')->all();
+                    $ArrayLength=count($chapters);
+                    //该书免费
+                    if($book->is_free==0){
+                        for ($i=0;$i<$ArrayLength;$i++){
+                            //var_dump($chapter);exit;
                             $result['flag']=true;
                             $result['content']['data'][]=
                                 [
@@ -205,30 +176,66 @@ class YuewenController extends \yii\web\Controller{
                                     'sortid'=>$chapters[$i]->no,
                                     'word_count'=>$chapters[$i]->word_count,
                                     'update_time'=>$chapters[$i]->update_time,
-                                    'no'=>$book->no,
-                                ];
-                            $result['msg']='成功返回章节信息';
-
-
-
-                        }else{
-                            $result['flag']=true;
-                            $result['content']['data'][]=
-                                [
-                                    'chapter_id'=>$chapters[$i]->id,
-                                    'chapter_name'=>$chapters[$i]->chapter_name,
-                                    'book_id'=>$chapters[$i]->book_id,
-                                    'vname'=>'第一卷',
-                                    'volume_id'=>0,
-                                    'is_vip'=>1,
-                                    'sortid'=>$chapters[$i]->no,
-                                    'word_count'=>$chapters[$i]->word_count,
-                                    'update_time'=>$chapters[$i]->update_time,
-                                    'no'=>$book->no,
+                                    'no'=>$book->no
                                 ];
                             $result['msg']='成功返回章节信息';
                         }
+                    }else{
+                        //该书收费书
+                        //查询用户已购书
+                        $purchased=Purchased::findOne(['user_id'=>$user_id,'book_id'=>$book_id]);
+                        if($purchased){
+                            $chapter_no=explode('|',$purchased->chapter_no);//分割成数组
+                            $chapter_no=array_filter($chapter_no);//删除数组中空元素
+                        }else{
+                            //没有购买书
+                            $chapter_no=[];
+                        }
+                        for($i=0;$i<$ArrayLength;$i++){
+                            //把全部章节更改为收费章节
+
+                            //判断用户是否已购买该章节,该书从多少章节开始收费.用户购买该章节或者该章节是免费章节,is_vip改成0
+                            if(in_array(($i+1),$chapter_no) || (($i+1)<$book->no && $book->no!=0)){
+                                $result['flag']=true;
+                                $result['content']['data'][]=
+                                    [
+                                        'chapter_id'=>$chapters[$i]->id,
+                                        'chapter_name'=>$chapters[$i]->chapter_name,
+                                        'book_id'=>$chapters[$i]->book_id,
+                                        'vname'=>'第一卷',
+                                        'volume_id'=>0,
+                                        'is_vip'=>0,
+                                        'sortid'=>$chapters[$i]->no,
+                                        'word_count'=>$chapters[$i]->word_count,
+                                        'update_time'=>$chapters[$i]->update_time,
+                                        'no'=>$book->no,
+                                    ];
+                                $result['msg']='成功返回章节信息';
+
+
+
+                            }else{
+                                $result['flag']=true;
+                                $result['content']['data'][]=
+                                    [
+                                        'chapter_id'=>$chapters[$i]->id,
+                                        'chapter_name'=>$chapters[$i]->chapter_name,
+                                        'book_id'=>$chapters[$i]->book_id,
+                                        'vname'=>'第一卷',
+                                        'volume_id'=>0,
+                                        'is_vip'=>1,
+                                        'sortid'=>$chapters[$i]->no,
+                                        'word_count'=>$chapters[$i]->word_count,
+                                        'update_time'=>$chapters[$i]->update_time,
+                                        'no'=>$book->no,
+                                    ];
+                                $result['msg']='成功返回章节信息';
+                            }
+                        }
                     }
+
+                }else{
+                    $result['msg']='无可操作数据表';
                 }
 
 
@@ -317,16 +324,23 @@ class YuewenController extends \yii\web\Controller{
                     ////////////////////////////17k章节内容结束/////////////////////////
 
                 }else{
-                    //==============================本地图书章节内容================================
-                    foreach ($copyright_chapter_ids->copyright_chapter_id as  $copyright_chapter_id){
-                        $model=Chapter::find()->where(['id'=>$copyright_chapter_id])->one();
-                        $string=file_get_contents(BOOK_PATH.$model->path);
-                        $result['flag']=true;
-                        $result['content']['data']['chapter_content']=$string;
-                        $result['msg']='成功返回章节内容';
-                        $datas[]=$result;
+                    //分区id
+                    $re=Chapter::resetPartitionIndex($book_id);
+                    if($re!=0){
+                        //==============================本地图书章节内容================================
+                        foreach ($copyright_chapter_ids->copyright_chapter_id as  $copyright_chapter_id){
+                            $model=Chapter::find()->where(['id'=>$copyright_chapter_id])->one();
+                            $string=file_get_contents(BOOK_PATH.$model->path);
+                            $result['flag']=true;
+                            $result['content']['data']['chapter_content']=$string;
+                            $result['msg']='成功返回章节内容';
+                            $datas[]=$result;
+                        }
+                        return $datas;
+                    }else{
+                        $result['msg']='无可操作数据表';
                     }
-                    return $datas;
+
                 }
 
 

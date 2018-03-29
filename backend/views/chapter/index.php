@@ -9,7 +9,7 @@
         <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search">搜索</span></button>
     </form>
     </p>
-    <table class="table table-bordered">
+    <table class="table table-bordered" data-bookId="<?=$book_id?>">
         <tr>
             <th>章节排序ID</th>
             <th>章节名称</th>
@@ -35,7 +35,7 @@
                 <td><?=date("Ymd",$model->create_time);?></td>
                 <td><?=date("Ymd",$model->update_time);?></td>
                 <td>
-                    <a href="<?=\yii\helpers\Url::to(['chapter/edit','id'=>$model->id,'no'=>$model->no])?>"><span class="glyphicon glyphicon-pencil btn btn-default btn-sm"></a>
+                    <a href="<?=\yii\helpers\Url::to(['chapter/edit','id'=>$model->id,'no'=>$model->no,'book_id'=>$model->book_id])?>"><span class="glyphicon glyphicon-pencil btn btn-default btn-sm"></a>
                     <a href="javascript:;" class="delete"><span class="glyphicon glyphicon-trash btn btn-danger btn-sm" ></a>
                 </td>
             </tr>
@@ -60,7 +60,9 @@ $('.delete').on('click',function() {
     if(confirm('你确定要删除吗?')){
         var tr=$(this).closest('tr');
         var id=tr.attr('data-id');
-        $.post("$url_del",{id:id},function(data) {
+        var book_id=$('.table').attr('data-bookId');
+        console.debug(book_id);
+        $.post("$url_del",{id:id,book_id:book_id},function(data) {
             if(data=='success'){
                 alert('删除成功');
                 tr.hide('slow')

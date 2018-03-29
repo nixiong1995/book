@@ -1,10 +1,12 @@
 <?php
 namespace backend\models;
 use yii\db\ActiveRecord;
+use yii\web\ForbiddenHttpException;
 
 class Chapter extends ActiveRecord{
     public $file;
     public $is_end;
+    private static $partitionIndex_ = null; // 分表ID
     //常量定义场景
     const SCENARIO_Add ='add';
     const SCENARIO_EDIT ='edit';
@@ -69,19 +71,33 @@ class Chapter extends ActiveRecord{
 
     //验证添加章节号唯一性
     public function validateNo(){
-        $res=Chapter::findOne(['book_id'=>$this->book_id,'no'=>$this->no]);
-        if($res){
-            $this->addError('no','该书已存在该章节');
-        };
+        //获取分表ID
+        $result=Chapter::resetPartitionIndex($this->book_id);
+        if($result!=0){
+            $res=Chapter::findOne(['book_id'=>$this->book_id,'no'=>$this->no]);
+            if($res){
+                $this->addError('no','该书已存在该章节');
+            };
+        }else{
+            throw  new ForbiddenHttpException('对不起,无可操作数据表');
+        }
+
     }
 
     //验证修改章节号唯一性
     public function validateEditNo(){
         if(\Yii::$app->request->get('no')!=$this->no){
-            $res=Chapter::findOne(['book_id'=>$this->book_id,'no'=>$this->no]);
-            if($res){
-                $this->addError('no','该书已存在该章节');
-            };
+            //获取分表ID
+            $result=Chapter::resetPartitionIndex($this->book_id);
+            if($result!=0){
+                $res=Chapter::findOne(['book_id'=>$this->book_id,'no'=>$this->no]);
+                if($res){
+                    $this->addError('no','该书已存在该章节');
+                };
+            }else{
+                throw  new ForbiddenHttpException('对不起,无可操作数据表');
+            }
+
         }
     }
 
@@ -102,16 +118,97 @@ class Chapter extends ActiveRecord{
 
     }
 
-    private static $partitionIndex_ = null; // 分表ID
 
     /**
      * 重置分区id
-     * @param unknown $uid
+     * @param int $uid
      */
-    private static function resetPartitionIndex($uid = null) {
-        $partitionCount = \Yii::$app->params['chapter']['partitionCount'];
+   public static function resetPartitionIndex($book_id = null) {
+       if($book_id>0 && $book_id<=120000){
+           self::$partitionIndex_ = 1;
+       }elseif ($book_id>120000 && $book_id<=130000){
+           self::$partitionIndex_ = 2;
+       }elseif ($book_id>130000 && $book_id<=140000){
+           self::$partitionIndex_ = 3;
+       }elseif ($book_id>140000 && $book_id<=150000){
+           self::$partitionIndex_ = 4;
+       }elseif ($book_id>150000 && $book_id<=160000){
+           self::$partitionIndex_ = 5;
+       }elseif ($book_id>160000 && $book_id<=170000){
+           self::$partitionIndex_ = 6;
+       }elseif ($book_id>170000 && $book_id<=180000){
+           self::$partitionIndex_ = 7;
+       }elseif ($book_id>180000 && $book_id<=190000){
+           self::$partitionIndex_ = 8;
+       }elseif ($book_id>190000 && $book_id<=200000){
+           self::$partitionIndex_ = 9;
+       }elseif ($book_id>200000 && $book_id<=210000){
+           self::$partitionIndex_ = 10;
+       }elseif ($book_id>210000 && $book_id<=220000){
+           self::$partitionIndex_ = 11;
+       }elseif ($book_id>220000 && $book_id<=230000){
+           self::$partitionIndex_ = 12;
+       }elseif ($book_id>230000 && $book_id<=240000){
+           self::$partitionIndex_ = 13;
+       }elseif ($book_id>240000 && $book_id<=250000){
+           self::$partitionIndex_ = 14;
+       }elseif ($book_id>250000 && $book_id<=260000){
+           self::$partitionIndex_ = 15;
+       }elseif ($book_id>260000 && $book_id<=270000){
+           self::$partitionIndex_ = 16;
+       }elseif ($book_id>270000 && $book_id<=280000){
+           self::$partitionIndex_ = 17;
+       }elseif ($book_id>280000 && $book_id<=290000){
+           self::$partitionIndex_ = 18;
+       }elseif ($book_id>290000 && $book_id<=300000){
+           self::$partitionIndex_ = 19;
+       }elseif ($book_id>300000 && $book_id<=310000){
+           self::$partitionIndex_ = 20;
+       }elseif ($book_id>310000 && $book_id<=320000){
+           self::$partitionIndex_ = 21;
+       }elseif ($book_id>320000 && $book_id<=330000){
+           self::$partitionIndex_ = 22;
+       }elseif ($book_id>330000 && $book_id<=340000){
+           self::$partitionIndex_ = 23;
+       }elseif ($book_id>340000 && $book_id<=350000){
+           self::$partitionIndex_ = 24;
+       }elseif ($book_id>350000 && $book_id<=360000){
+           self::$partitionIndex_ = 25;
+       }elseif ($book_id>360000 && $book_id<=370000){
+           self::$partitionIndex_ = 26;
+       }elseif ($book_id>370000 && $book_id<=380000){
+           self::$partitionIndex_ = 27;
+       }elseif ($book_id>380000 && $book_id<=390000){
+           self::$partitionIndex_ = 28;
+       }elseif ($book_id>390000 && $book_id<=400000){
+           self::$partitionIndex_ = 29;
+       }elseif ($book_id>400000 && $book_id<=410000){
+           self::$partitionIndex_ = 30;
+       }elseif ($book_id>410000 && $book_id<=420000){
+           self::$partitionIndex_ = 31;
+       }elseif ($book_id>420000 && $book_id<=430000){
+           self::$partitionIndex_ = 32;
+       }elseif ($book_id>430000 && $book_id<=440000){
+           self::$partitionIndex_ = 33;
+       }elseif ($book_id>440000 && $book_id<=450000){
+           self::$partitionIndex_ = 34;
+       }elseif ($book_id>450000 && $book_id<=460000){
+           self::$partitionIndex_ = 35;
+       }elseif ($book_id>460000 && $book_id<=470000){
+           self::$partitionIndex_ = 36;
+       }elseif ($book_id>470000 && $book_id<=480000){
+           self::$partitionIndex_ = 37;
+       }elseif ($book_id>480000 && $book_id<=490000){
+           self::$partitionIndex_ = 38;
+       }elseif ($book_id>490000 && $book_id<=500000){
+           self::$partitionIndex_ = 39;
+       }else{
+           self::$partitionIndex_ = 0;
+       }
 
-        self::$partitionIndex_ = $uid % $partitionCount;
+
+       return self::$partitionIndex_;
+
     }
 
     /**

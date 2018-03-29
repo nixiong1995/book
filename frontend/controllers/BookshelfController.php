@@ -33,13 +33,13 @@ class BookshelfController extends Controller{
                 $user_id=\Yii::$app->request->post('user_id');
                 if($user_id){
                     //查询用户收藏过的书id
-                    $collect=\Yii::$app->db->createCommand("SELECT collect FROM user_details WHERE user_id=$user_id")->queryScalar();
-                    $user=UserDetails::find()->where(['user_id'=>$user_id])->one();
+                   // $collect=\Yii::$app->db->createCommand("SELECT collect FROM user_details WHERE user_id=$user_id")->queryScalar();
+                    $user_details=UserDetails::find()->where(['user_id'=>$user_id])->one();
 
-                    if($user->collect){
+                    if( $user_details->collect){
 
                         //将收藏过的书分割成数组
-                        $CollectIds=explode('|',$collect);
+                        $CollectIds=explode('|',$user_details->collect);
                         //去除数组中空元素
                         $CollectIds=array_filter($CollectIds);
                         //根据书id查询书信息
@@ -77,8 +77,8 @@ class BookshelfController extends Controller{
                             $Books2=Book::find()->where(['id'=>$GroomIds])->all();
                             //将推荐的书的通过|符号转成字符串存入数据库
                             $collect=implode('|',$GroomIds);
-                            $user->collect=$collect;
-                            $user->save();
+                            $user_details->collect=$collect;
+                            $user_details->save();
                             foreach ( $Books2 as $book2){
                                 //判断是否版权图书,不拼接图片域名
                                 $ImgUrl=$book2->image;

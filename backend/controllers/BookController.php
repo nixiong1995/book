@@ -23,8 +23,9 @@ class BookController extends Controller{
         $author=\Yii::$app->request->get('author');//作者
         $is_free=\Yii::$app->request->get('is_free');
         //查询数据库分类第一位
-        if(!$book && !$author && $is_free){
+        if(!$book && !$author && !$is_free){
             $id=\Yii::$app->db->createCommand("SELECT id FROM category ")->queryScalar();
+            //var_dump($id);exit;
             $category_id=$category_id?$category_id:$id;
         }
         $where='';
@@ -283,7 +284,7 @@ class BookController extends Controller{
                 $book->groom_time=time();
                 $book->save(false);
                 \Yii::$app->session->setFlash('success', '添加推荐成功');
-                return $this->redirect(['book/groom-index']);
+                return $this->redirect(['book/groom-index','type'=>$model->groom]);
 
 
             }
