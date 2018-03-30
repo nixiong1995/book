@@ -4,6 +4,7 @@ namespace backend\controllers;
 use backend\filters\RbacFilter;
 use backend\models\Book;
 use backend\models\Chapter;
+use backend\models\Uuid;
 use yii\data\Pagination;
 use yii\db\Exception;
 use yii\web\Controller;
@@ -49,6 +50,10 @@ class ChapterController extends Controller{
             $request=\Yii::$app->request;
             if($request->isPost){
                 $model->load($request->post());
+                $Uuid=new Uuid();
+                $Uuid->name='chapter'.$result;
+                $Uuid->save();
+                $model->id=$Uuid->id;
                 $model->file=UploadedFile::getInstance($model,'file');
                 if($model->validate()){
                     $dir=BOOK_PATH.date("Y").'/'.date('m').'/'.date('d').'/';

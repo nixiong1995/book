@@ -19,7 +19,7 @@ class Book extends ActiveRecord{
             ['type', 'in', 'range' => ['txt', 'epub'],'message'=>'只能输入txt,epub文本类型'],
             [['no','clicks','score','sale','downloads','search'],'integer'],
             ['score', 'in', 'range' => [0,1, 2, 3,4,5,6,7,8,9,10],'message'=>'只能输入0-10的整数'],
-            [['ascription','author_name','price'],'safe'],
+            [['ascription','author_name','price','file'],'safe'],
             ['ascription','validateFromAscription'],
            // ['no','validateNO'],
            // ['price','validatePrice'],

@@ -3,6 +3,8 @@ namespace frontend\controllers;
 use backend\models\Author;
 use backend\models\Book;
 use backend\models\Chapter;
+use backend\models\Uuid;
+use DeepCopy\f004\UnclonableItem;
 use yii\db\Exception;
 use yii\web\Controller;
 use yii\web\Response;
@@ -153,44 +155,54 @@ class BookController extends Controller{
             if($book){
                 //判断数据库是否存在该章节
                 //$chapter=Chapter::find()->where(['book_id'=>$book_id])->andWhere(['no'=>$sort_id])->one();
-                $chapter=\Yii::$app->db->createCommand("SELECT id FROM chapter WHERE `book_id`=$book_id AND `no`=$sort_id")->queryScalar();
-                if($chapter){
-                    $relust['msg']='已存在该章节';
-                    return $relust;
-                }
+                $res=Chapter::resetPartitionIndex($book_id);
+                if($res!=0){
 
-                if($book->ascription==5){
-                    //将章节内容写入文件保存
-                    $dir2 = BOOK_PATH . date("Y") . '/' . date('m') . '/' . date('d') . '/';
-                    if (!is_dir($dir2)) {
-                        mkdir($dir2, 0777, true);
+                    $chapter=\Yii::$app->db->createCommand("SELECT id FROM chapter WHERE `book_id`=$book_id AND `no`=$sort_id")->queryScalar();
+                    if($chapter){
+                        $relust['msg']='已存在该章节';
+                        return $relust;
                     }
-                    $fileName2 = uniqid() . rand(1, 100000) . '.' . 'txt';//文件名
-                    $uploadSuccessPath = date("Y") . '/' . date("m") . '/' . date("d") . '/' . $fileName2;
-                    file_put_contents($dir2 . '/' . $fileName2, $content);
-                    $model=new Chapter();
-                    $model->book_id=$book_id;
-                    $model->no=$sort_id;
-                    $model->chapter_name=$chapter_name;
-                    $model->word_count=$word_count;
-                    $model->path=$uploadSuccessPath;
-                    $model->is_free=0;
-                    $model->create_time=time();
-                    if($model->save(false)){
-                        $relust['code']=200;
-                        $relust['msg']='成功存入章节'.$model->chapter_name;
-                        $relust['sort_id']=$sort_id;
+
+                    if($book->ascription==5){
+                        //将章节内容写入文件保存
+                        $dir2 = BOOK_PATH . date("Y") . '/' . date('m') . '/' . date('d') . '/';
+                        if (!is_dir($dir2)) {
+                            mkdir($dir2, 0777, true);
+                        }
+                        $fileName2 = uniqid() . rand(1, 100000) . '.' . 'txt';//文件名
+                        $uploadSuccessPath = date("Y") . '/' . date("m") . '/' . date("d") . '/' . $fileName2;
+                        file_put_contents($dir2 . '/' . $fileName2, $content);
+                        $Uuid=new Uuid();
+                        $Uuid->name='chapter'.$res;
+                        $Uuid->save();
+                        $model=new Chapter();
+                        $model->id=$Uuid->id;
+                        $model->book_id=$book_id;
+                        $model->no=$sort_id;
+                        $model->chapter_name=$chapter_name;
+                        $model->word_count=$word_count;
+                        $model->path=$uploadSuccessPath;
+                        $model->is_free=0;
+                        $model->create_time=time();
+                        if($model->save(false)){
+                            $relust['code']=200;
+                            $relust['msg']='成功存入章节'.$model->chapter_name;
+                            $relust['sort_id']=$sort_id;
+                        }else{
+                            $relust['msg']='存入章节失败';
+                        }
+                        if($status){
+                            $book->last_update_chapter_id=$model->id;
+                            //$book->last_update_chapter_name=$model->chapter_name;
+                            $book->save(false);
+                        }
+
                     }else{
-                        $relust['msg']='存入章节失败';
+                        $relust['msg']='该书不是分章节存取图书';
                     }
-                    if($status){
-                        $book->last_update_chapter_id=$model->id;
-                        //$book->last_update_chapter_name=$model->chapter_name;
-                        $book->save(false);
-                    }
-
                 }else{
-                    $relust['msg']='该书不是分章节存取图书';
+                    $relust['msg']='数据库无可操作数据表';
                 }
 
             }else{
@@ -215,44 +227,52 @@ class BookController extends Controller{
             if(empty($book_id)){
                 $relust['msg']='未传入指定参数';
             }
+            //分表查询
+            $result=Chapter::resetPartitionIndex($book_id);
+            if($result!=0){
 
-                    $chapter=Chapter::findOne(['book_id'=>$book_id]);
-                    //如果不存在就删除该图书
-                    if(!$chapter){
-                        $book=Book::find()->where(['id'=>$book_id])->one();
-                        $author_id=$book->author_id;//作者id
-                        $path=$book->image;
-                        $transaction=\Yii::$app->db->beginTransaction();//开启事务
-                        try{
-                            $book->delete();
-                            //删除图书
-                            if($path){
-                                $path=UPLOAD_PATH.$path;
-                                unlink($path);
-                            }
-
-                            //删除作者(判断该作者是否还有其他书籍)
-                            $res=Book::findOne(['author_id'=>$author_id]);
-                            //该作者没有其他图书,删除该作者
-                            if(!$res) {
-                                $author = Author::findOne(['id' => $author_id]);
-                                //var_dump($author);exit;
-                                $author->delete();
-                            }
-                            $relust['code']=200;
-                            $relust['msg']='删除空章节图书成功';
-                            $transaction->commit();
-
-                        }catch (Exception $e){
-                            //事务回滚
-                            $relust['msg']='删除空章节图书失败';
-                            $transaction->rollBack();
+                $chapter=Chapter::findOne(['book_id'=>$book_id]);
+                //如果不存在就删除该图书
+                if(!$chapter){
+                    $book=Book::find()->where(['id'=>$book_id])->one();
+                    $author_id=$book->author_id;//作者id
+                    $path=$book->image;
+                    $transaction=\Yii::$app->db->beginTransaction();//开启事务
+                    try{
+                        $book->delete();
+                        //删除图书
+                        if($path){
+                            $path=UPLOAD_PATH.$path;
+                            unlink($path);
                         }
 
-                    }else {
-                        $relust['code'] = 200;
-                        $relust['msg'] = '该书无空章节';
+                        //删除作者(判断该作者是否还有其他书籍)
+                        $res=Book::findOne(['author_id'=>$author_id]);
+                        //该作者没有其他图书,删除该作者
+                        if(!$res) {
+                            $author = Author::findOne(['id' => $author_id]);
+                            //var_dump($author);exit;
+                            $author->delete();
+                        }
+                        $relust['code']=200;
+                        $relust['msg']='删除空章节图书成功';
+                        $transaction->commit();
+
+                    }catch (Exception $e){
+                        //事务回滚
+                        $relust['msg']='删除空章节图书失败';
+                        $transaction->rollBack();
                     }
+
+                }else {
+                    $relust['code'] = 200;
+                    $relust['msg'] = '该书无空章节';
+                }
+            }else{
+                $relust['msg']='无可操作数据表';
+            }
+
+
 
 
 

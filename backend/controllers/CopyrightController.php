@@ -87,12 +87,16 @@ class CopyrightController extends Controller{
         $data=\Yii::$app->request->get('data');
         if($data){
             //将数组通过&符号链接
-            $s = urldecode(http_build_query($data));
+            $s = '?'.urldecode(http_build_query($data));
+        }else{
+            $s='';
         }
         $model=Book::findOne(['id'=>$id]);
         $Author=Author::findOne(['id'=>$model->author_id]);
         $model->author_name=$Author->name;
+       $model->file =$model->image;//书封面
         $request = \Yii::$app->request;
+
         if($request->isPost){
             $model->load($request->post());
             if($model->validate()){
@@ -102,6 +106,7 @@ class CopyrightController extends Controller{
                     //保存作者信息
                     $Author->save(false);
                     $model->author_id=$Author->id;
+                    $model->image=$model->file;
                     $model->update_time=time();
                     //保存所有数据
                     $model->save();
@@ -113,7 +118,7 @@ class CopyrightController extends Controller{
                     $transaction->rollBack();
                 }
 
-                return $this->redirect(['copyright/index?'.$s]);
+                return $this->redirect(['copyright/index'.$s]);
             }
         }
         return $this->render('edit',['model'=>$model]);

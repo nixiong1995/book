@@ -124,7 +124,7 @@ class Chapter extends ActiveRecord{
      * @param int $uid
      */
    public static function resetPartitionIndex($book_id = null) {
-       if($book_id>0 && $book_id<=120000){
+    /*   if($book_id>0 && $book_id<=120000){
            self::$partitionIndex_ = 1;
        }elseif ($book_id>120000 && $book_id<=130000){
            self::$partitionIndex_ = 2;
@@ -204,9 +204,20 @@ class Chapter extends ActiveRecord{
            self::$partitionIndex_ = 39;
        }else{
            self::$partitionIndex_ = 0;
-       }
-
-
+       }*/
+    if($book_id>0 && $book_id<=19601){
+        self::$partitionIndex_ = 1;
+    }elseif ($book_id>19601 && $book_id<=19611){
+        self::$partitionIndex_ = 2;
+    }elseif ($book_id>19611 && $book_id<=19621){
+        self::$partitionIndex_ = 3;
+    }elseif ($book_id>19621 && $book_id<=19631){
+        self::$partitionIndex_ = 4;
+    }elseif ($book_id>19631 && $book_id<=19641){
+        self::$partitionIndex_ = 5;
+    }elseif ($book_id>19641 && $book_id<=19651) {
+        self::$partitionIndex_ = 6;
+    }
        return self::$partitionIndex_;
 
     }

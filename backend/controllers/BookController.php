@@ -146,7 +146,9 @@ class BookController extends Controller{
         $data=\Yii::$app->request->get('data');
         if($data){
             //将数组通过&符号链接
-            $s = urldecode(http_build_query($data));
+            $s = '?'.urldecode(http_build_query($data));
+        }else{
+            $s='';
         }
         $model = Book::findOne(['id' => $id]);
         $Author=Author::findOne(['id'=>$model->author_id]);
@@ -193,7 +195,7 @@ class BookController extends Controller{
                     $transaction->rollBack();
                 }
                 //跳转
-                return $this->redirect(['book/index?'.$s]);
+                return $this->redirect(['book/index'.$s]);
             }
         }
         return $this->render('add', ['model' => $model]);
