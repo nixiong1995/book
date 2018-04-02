@@ -121,7 +121,6 @@ class BookController extends Controller{
                 }else{
                     $relust['msg']='存书失败';
                 }
-
             }
 
         }else{

@@ -308,7 +308,7 @@ class TaskController extends Controller{
         ///////////////获取分类图书列表/////////////////
 
         ////////////////////请求追书神器基本信息接口///////////////////////////////////////
-        for($i=1;$i<=100;$i++){
+        for($i=1;$i<=2;$i++){
             $get = new PostRequest();
             ////////////////////请求追书神器基本信息接口///////////////////////////////////////
             $data = $get->send_request('http://api.17k.com/v2/book?',
@@ -407,14 +407,15 @@ class TaskController extends Controller{
                                         'last_update_chapter_id',
                                         'last_update_chapter_name',
                                         'status',
-                                        'create_time'
+                                        'create_time',
+                                        'is_api'
                                     ],
                                     [
                                         [
                                             $data->book_id,
                                             $data->book_name,
                                             $author_id,
-                                            22,
+                                            16,
                                             3,
                                             4,
                                             $data->cover,
@@ -432,7 +433,8 @@ class TaskController extends Controller{
                                             $data->last_update_chapter_id,
                                             $data->last_update_chapter_name,
                                             1,
-                                            time()
+                                            time(),
+                                            1
                                         ],
                                     ])->execute();
 

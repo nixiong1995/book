@@ -676,7 +676,8 @@ class  ConsumeController extends Controller{
                     $re=Chapter::resetPartitionIndex($book_id);
                     if($re!=0){
                         //查询章节字数
-                        $word_count=\Yii::$app->db->createCommand("SELECT word_count FROM chapter WHERE id=$chapter_id ")->queryScalar();
+                        //$word_count=\Yii::$app->db->createCommand("SELECT word_count FROM chapter WHERE id=$chapter_id ")->queryScalar();
+                        $word_count=Chapter::find()->select('word_count')->where(['id'=>$chapter_id])->column();
                         //计算购书价格
                         $price=round($book->price*($word_count/1000));
                         $RealPrice=$price;//实际价格
