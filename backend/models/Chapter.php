@@ -205,17 +205,17 @@ class Chapter extends ActiveRecord{
        }else{
            self::$partitionIndex_ = 0;
        }*/
-    if($book_id>0 && $book_id<=19601){
+    if($book_id>0 && $book_id<=19610){
         self::$partitionIndex_ = 1;
-    }elseif ($book_id>19601 && $book_id<=19611){
+    }elseif ($book_id>19610 && $book_id<=19620){
         self::$partitionIndex_ = 2;
-    }elseif ($book_id>19611 && $book_id<=19621){
+    }elseif ($book_id>19620 && $book_id<=19630){
         self::$partitionIndex_ = 3;
-    }elseif ($book_id>19621 && $book_id<=19631){
+    }elseif ($book_id>19630 && $book_id<=19640){
         self::$partitionIndex_ = 4;
-    }elseif ($book_id>19631 && $book_id<=19641){
+    }elseif ($book_id>19640 && $book_id<=19650){
         self::$partitionIndex_ = 5;
-    }elseif ($book_id>19641 && $book_id<=19651) {
+    }elseif ($book_id>19650 && $book_id<=19660) {
         self::$partitionIndex_ = 6;
     }
        return self::$partitionIndex_;
