@@ -47,7 +47,9 @@ $('.delete').on('click',function() {
             if(data=='success'){
                 alert('删除成功');
                 tr.hide('slow')
-            }else{
+            }else if(data='error1'){
+                alert('该分类下有图书,不允许删除');
+            }else {
                 alert('删除失败');
             }
         })

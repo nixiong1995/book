@@ -1,6 +1,7 @@
 <?php
 namespace backend\controllers;
 use backend\filters\RbacFilter;
+use backend\models\Book;
 use backend\models\Category;
 use yii\data\Pagination;
 use yii\web\Controller;
@@ -54,12 +55,18 @@ class CategoryController extends Controller{
     public function actionDel(){
         //接收id
         $id=\Yii::$app->request->post('id');
-        $category=Category::findOne(['id'=>$id]);
-        if($category->delete()){
-            return 'success';
+        $result=Book::find()->where(['category_id'=>$id])->one();
+        if($result){
+            return 'error1';
         }else{
-            return 'error';
+            $category=Category::findOne(['id'=>$id]);
+            if($category->delete()){
+                return 'success';
+            }else{
+                return 'error';
+            }
         }
+
     }
 
     //推荐分类

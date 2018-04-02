@@ -86,30 +86,42 @@ class BookstoreController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-           if($res){
-              $result['msg']= $res;
-           }else{
+          // if($res){
+             // $result['msg']= $res;
+          // }else{
+
+               $user_id=\Yii::$app->request->post('user_id');
+               if(empty($user_id)){
+                   $result['msg']='未传入指定参数';
+                   return $result;
+               }
+
             //今日必读
             $models1=Book::find()->where(['groom'=>1])->orderBy('groom_time DESC')->limit(5)->all();
-
-            foreach ($models1 as $model1){
-                //判断是否api图书,不是拼接图片域名
-                $ImgUrl=$model1->image;
-                if($model1->is_api==0){
-                    $ImgUrl=HTTP_PATH.$ImgUrl;
+            if($models1){
+                foreach ($models1 as $model1){
+                    //判断是否api图书,不是拼接图片域名
+                    $ImgUrl=$model1->image;
+                    if($model1->is_api==0){
+                        $ImgUrl=HTTP_PATH.$ImgUrl;
+                    }
+                    $result['data']['read-today'][]=['book_id'=>$model1->id,'name'=>$model1->name,
+                        'category'=>$model1->category->name,'author'=>$model1->author->name,
+                        'view'=>$model1->clicks,'image'=>$ImgUrl,'size'=>$model1->size,
+                        'score'=>$model1->score,'intro'=>$model1->intro,'is_end'=>$model1->is_end,
+                        'download'=>$model1->downloads,'collection'=>$model1->collection,'author_id'=>$model1->author_id,
+                        'category_id'=>$model1->category_id,'no_free'=>$model1->no,'type'=>$model1->type,
+                        'create_time'=>$model1->create_time,'update_time'=>$model1->update_time,'from'=>$model1->from,
+                        'is_free'=>$model1->is_free,'price'=>$model1->price,'search'=>$model1->search,'sale'=>$model1->search,
+                        'ascription_name'=>$model1->information->name,'ascription_id'=>$model1->ascription,
+                        'copyright_book_id'=>$model1->copyright_book_id,'last_update_chapter_id'=>$model1->last_update_chapter_id,
+                        'last_update_chapter_name'=>$model1->last_update_chapter_name];
                 }
-                $result['data']['read-today'][]=['book_id'=>$model1->id,'name'=>$model1->name,
-                    'category'=>$model1->category->name,'author'=>$model1->author->name,
-                    'view'=>$model1->clicks,'image'=>$ImgUrl,'size'=>$model1->size,
-                    'score'=>$model1->score,'intro'=>$model1->intro,'is_end'=>$model1->is_end,
-                    'download'=>$model1->downloads,'collection'=>$model1->collection,'author_id'=>$model1->author_id,
-                    'category_id'=>$model1->category_id,'no_free'=>$model1->no,'type'=>$model1->type,
-                    'create_time'=>$model1->create_time,'update_time'=>$model1->update_time,'from'=>$model1->from,
-                    'is_free'=>$model1->is_free,'price'=>$model1->price,'search'=>$model1->search,'sale'=>$model1->search,
-                    'ascription_name'=>$model1->information->name,'ascription_id'=>$model1->ascription,
-                    'copyright_book_id'=>$model1->copyright_book_id,'last_update_chapter_id'=>$model1->last_update_chapter_id,
-                    'last_update_chapter_name'=>$model1->last_update_chapter_name];
+            }else{
+                $result['data']['read-today'][]='';
             }
+
+
 
             //限时秒杀
             $models2=Seckill::find()->orderBy('create_time DESC')->limit(4)->all();
@@ -135,50 +147,79 @@ class BookstoreController extends Controller{
                         'copyright_book_id'=>$model2->book->copyright_book_id,'last_update_chapter_id'=>$model2->book->last_update_chapter_id,
                         'last_update_chapter_name'=>$model2->book->last_update_chapter_name];
                 }
+            }else{
+                $result['data']['seckill'][]='';
             }
 
 
 
             //猜你喜欢
-            $user_id=\Yii::$app->request->post('user_id');
             //根据用户id查找喜欢的类型
-            if($user_id){
                 //是注册用户
                 $userdetail=UserDetails::findOne(['user_id'=>$user_id]);
-                if($userdetail->f_type){
-                    //有自己喜欢的类型
-                    $category_ids=explode('|',$userdetail->f_type);
-                    //去除数组中空元素
-                    $category_ids=array_filter($category_ids);
-                    $index=array_rand($category_ids);
-                    //遍历查询书
-                   // $books=Book::find()->where(['category_id'=>$category_ids[$index]])->orderBy('score DESC')->limit(3)->all();
-                    $books=Book::findBySql("SELECT * FROM book WHERE category_id=$category_ids[$index] and id >= ((SELECT MAX(id) FROM book)-(SELECT MIN(id) FROM book)) * RAND() + (SELECT MIN(id) FROM book)  LIMIT 3")->all();
-                   foreach ($books as $book){
-                       //判断是否版权图书,不是拼接图片域名
-                       $ImgUrl= $book->image;
-                       if( $book->is_api==0){
-                           $ImgUrl=HTTP_PATH.$ImgUrl;
-                       }
-                       $result['data']['like'][]=['book_id'=>$book->id,'name'=>$book->name,
-                           'category'=>$book->category->name,'author'=>$book->author->name,
-                           'view'=>$book->clicks,'image'=>$ImgUrl,'size'=>$book->size,
-                           'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
-                           'download'=>$book->downloads,'collection'=>$book->collection,'author_id'=>$book->author_id,
-                           'category_id'=>$book->category_id,'no_free'=>$book->no,'type'=>$book->type,
-                           'create_time'=>$book->create_time,'update_time'=>$book->update_time,'from'=>$book->from,
-                           'is_free'=>$book->is_free,'price'=>$book->price,'search'=>$book->search,'sale'=>$book->search,
-                           'ascription_name'=>$book->information->name,'ascription_id'=>$book->ascription,
-                           'copyright_book_id'=>$book->copyright_book_id,'last_update_chapter_id'=>$book->last_update_chapter_id,
-                           'last_update_chapter_name'=>$book->last_update_chapter_name];
-                   }
-                    $result['code']=200;
-                    $result['msg']='获取书城信息成功';
-                    return  $result;
+                if($userdetail){
+
+                    if($userdetail->f_type){
+                        //有自己喜欢的类型
+                        $category_ids=explode('|',$userdetail->f_type);
+                        //去除数组中空元素
+                        $category_ids=array_filter($category_ids);
+                        $index=array_rand($category_ids);
+                        //遍历查询书
+                        // $books=Book::find()->where(['category_id'=>$category_ids[$index]])->orderBy('score DESC')->limit(3)->all();
+                        $books=Book::findBySql("SELECT * FROM book WHERE category_id=$category_ids[$index] and id >= ((SELECT MAX(id) FROM book)-(SELECT MIN(id) FROM book)) * RAND() + (SELECT MIN(id) FROM book)  LIMIT 3")->all();
+                        foreach ($books as $book){
+                            //判断是否版权图书,不是拼接图片域名
+                            $ImgUrl= $book->image;
+                            if( $book->is_api==0){
+                                $ImgUrl=HTTP_PATH.$ImgUrl;
+                            }
+                            $result['data']['like'][]=['book_id'=>$book->id,'name'=>$book->name,
+                                'category'=>$book->category->name,'author'=>$book->author->name,
+                                'view'=>$book->clicks,'image'=>$ImgUrl,'size'=>$book->size,
+                                'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
+                                'download'=>$book->downloads,'collection'=>$book->collection,'author_id'=>$book->author_id,
+                                'category_id'=>$book->category_id,'no_free'=>$book->no,'type'=>$book->type,
+                                'create_time'=>$book->create_time,'update_time'=>$book->update_time,'from'=>$book->from,
+                                'is_free'=>$book->is_free,'price'=>$book->price,'search'=>$book->search,'sale'=>$book->search,
+                                'ascription_name'=>$book->information->name,'ascription_id'=>$book->ascription,
+                                'copyright_book_id'=>$book->copyright_book_id,'last_update_chapter_id'=>$book->last_update_chapter_id,
+                                'last_update_chapter_name'=>$book->last_update_chapter_name];
+                        }
+                        $result['code']=200;
+                        $result['msg']='获取书城信息成功';
+                        return  $result;
+                    }else{
+                        //没有注册以及没有喜欢的类型
+                        $books=Book::findBySql("SELECT * FROM book WHERE id >= ((SELECT MAX(id) FROM book)-(SELECT MIN(id) FROM book)) * RAND() + (SELECT MIN(id) FROM book)  LIMIT 3")->all();
+                        foreach ($books as $book){
+                            //判断是否版权图书,不是拼接图片域名
+                            $ImgUrl= $book->image;
+                            if( $book->is_api==0){
+                                $ImgUrl=HTTP_PATH.$ImgUrl;
+                            }
+                            $result['data']['like'][]=['book_id'=>$book->id,'name'=>$book->name,
+                                'category'=>$book->category->name,'author'=>$book->author->name,
+                                'view'=>$book->clicks,'image'=>$ImgUrl,'size'=>$book->size,
+                                'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
+                                'download'=>$book->downloads,'collection'=>$book->collection,'author_id'=>$book->author_id,
+                                'category_id'=>$book->category_id,'no_free'=>$book->no,'type'=>$book->type,
+                                'create_time'=>$book->create_time,'update_time'=>$book->update_time,'from'=>$book->from,
+                                'is_free'=>$book->is_free,'price'=>$book->price,'search'=>$book->search,'sale'=>$book->search,
+                                'ascription_name'=>$book->information->name,'ascription_id'=>$book->ascription,
+                                'copyright_book_id'=>$book->copyright_book_id,'last_update_chapter_id'=>$book->last_update_chapter_id,
+                                'last_update_chapter_name'=>$book->last_update_chapter_name];
+                        }
+                        $result['code']=200;
+                        $result['msg']='获取书城信息成功';
+                    }
+
+                }else{
+                    $result['msg']='数据库无该用户';
                 }
 
-            }
-            //没有注册以及没有喜欢的类型
+
+
             /*$ids=[];
             $categorys=Category::findBySql("select id from category")->all();
             foreach ($categorys as $category){
@@ -186,28 +227,8 @@ class BookstoreController extends Controller{
             }
             $index2=array_rand($ids);
             $books=Book::find()->where(['category_id'=>$index2])->orderBy('score DESC')->limit(3)->all();*/
-            $books=Book::findBySql("SELECT * FROM book WHERE id >= ((SELECT MAX(id) FROM book)-(SELECT MIN(id) FROM book)) * RAND() + (SELECT MIN(id) FROM book)  LIMIT 3")->all();
-            foreach ($books as $book){
-                //判断是否版权图书,不是拼接图片域名
-                $ImgUrl= $book->image;
-                if( $book->is_api==0){
-                    $ImgUrl=HTTP_PATH.$ImgUrl;
-                }
-                $result['data']['like'][]=['book_id'=>$book->id,'name'=>$book->name,
-                    'category'=>$book->category->name,'author'=>$book->author->name,
-                    'view'=>$book->clicks,'image'=>$ImgUrl,'size'=>$book->size,
-                    'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
-                    'download'=>$book->downloads,'collection'=>$book->collection,'author_id'=>$book->author_id,
-                    'category_id'=>$book->category_id,'no_free'=>$book->no,'type'=>$book->type,
-                    'create_time'=>$book->create_time,'update_time'=>$book->update_time,'from'=>$book->from,
-                    'is_free'=>$book->is_free,'price'=>$book->price,'search'=>$book->search,'sale'=>$book->search,
-                    'ascription_name'=>$book->information->name,'ascription_id'=>$book->ascription,
-                    'copyright_book_id'=>$book->copyright_book_id,'last_update_chapter_id'=>$book->last_update_chapter_id,
-                    'last_update_chapter_name'=>$book->last_update_chapter_name];
-            }
-            $result['code']=200;
-            $result['msg']='获取书城信息成功';
-           }
+
+          // }
 
         }else{
            $result['msg']='请求方式错误';
