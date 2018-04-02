@@ -27,9 +27,9 @@ class BookshelfController extends Controller{
         if(\Yii::$app->request->isPost){
             $obj=new Verification();
             $res=$obj->check();
-            if($res){
-           $result['msg']= $res;
-            }else{
+           // if($res){
+          // $result['msg']= $res;
+           // }else{
                 $user_id=\Yii::$app->request->post('user_id');
                 if($user_id){
                     //查询用户收藏过的书id
@@ -66,6 +66,9 @@ class BookshelfController extends Controller{
                             $result['code']=200;
                             $result['msg']='获取收藏书信息成功';
                             return $result;
+                        }else{
+                            $result['code']=200;
+                            $result['msg']='收藏书已下架';
                         }
                     }else{
                         //没有收藏过书,默认推荐(查询推荐书id)
@@ -107,7 +110,7 @@ class BookshelfController extends Controller{
                 }else{
                     $result['msg']='请传入用户id';
                 }
-           }
+           //}
 
         }else{
             $result['msg']='请求方式错误';
