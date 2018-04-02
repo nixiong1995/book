@@ -231,17 +231,24 @@ class BookController extends Controller{
             }
 
             //删除该书的所有章节
-            $chapters=Chapter::find()->where(['book_id'=>$id])->all();
-            foreach ($chapters as $chapter){
-                $path2=$chapter->path;//章节文件路径
-                $chapter->delete();
-                if($path2){
-                    $path2=BOOK_PATH.$path2;
-                    unlink($path2);
+            $result=Chapter::resetPartitionIndex($id);
+            if($result!=0){
+                $chapters=Chapter::find()->where(['book_id'=>$id])->all();
+                foreach ($chapters as $chapter){
+                    $path2=$chapter->path;//章节文件路径
+                    $chapter->delete();
+                    if($path2){
+                        $path2=BOOK_PATH.$path2;
+                        unlink($path2);
+                    }
                 }
+                $transaction->commit();
+                return 'success';
+            }else{
+                return 'error';
             }
-            $transaction->commit();
-            return 'success';
+
+
         }catch (Exception $e){
             //事务回滚
             $transaction->rollBack();

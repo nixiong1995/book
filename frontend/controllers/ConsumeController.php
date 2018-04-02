@@ -621,7 +621,7 @@ class  ConsumeController extends Controller{
             $obj = new Verification();
             $res = $obj->check();
             if($res){
-             $relust['msg']= $res;
+              $relust['msg']= $res;
             }else{
                 //接收手机端传递的参数
                 $book_id=\Yii::$app->request->post('book_id');//图书id
@@ -674,10 +674,11 @@ class  ConsumeController extends Controller{
 
                 }else{
                     $re=Chapter::resetPartitionIndex($book_id);
+                    //var_dump($re);exit;
                     if($re!=0){
                         //查询章节字数
                         //$word_count=\Yii::$app->db->createCommand("SELECT word_count FROM chapter WHERE id=$chapter_id ")->queryScalar();
-                        $word_count=Chapter::find()->select('word_count')->where(['id'=>$chapter_id])->column();
+                        $word_count=Chapter::find()->select('word_count')->where(['id'=>$chapter_id])->scalar();
                         //计算购书价格
                         $price=round($book->price*($word_count/1000));
                         $RealPrice=$price;//实际价格

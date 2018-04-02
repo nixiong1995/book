@@ -157,7 +157,8 @@ class BookController extends Controller{
                 $res=Chapter::resetPartitionIndex($book_id);
                 if($res!=0){
 
-                    $chapter=\Yii::$app->db->createCommand("SELECT id FROM chapter WHERE `book_id`=$book_id AND `no`=$sort_id")->queryScalar();
+                   // $chapter=\Yii::$app->db->createCommand("SELECT id FROM chapter WHERE `book_id`=$book_id AND `no`=$sort_id")->queryScalar();
+                    $chapter=Chapter::find()->select('id')->where(['book_id'=>$book_id])->andWhere(['no'=>$sort_id])->scalar();
                     if($chapter){
                         $relust['msg']='已存在该章节';
                         return $relust;
