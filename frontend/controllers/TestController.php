@@ -509,19 +509,6 @@ class TestController extends Controller
 
     }
 
-   //测试分表
-    public function actionDelAuthor(){
-        //查询出作者id
-        $author_ids=Author::find()->select('id')->column();
-        foreach ($author_ids as $author_id){
-            $result=Book::find()->select('id')->where(['author_id'=>$author_id])->scalar();
-           if(!$result){
-                $author=Author::find()->where(['id'=>$author_id])->one();
-                $author->delete();
-
-            }
-        }
-    }
 
 
 }
