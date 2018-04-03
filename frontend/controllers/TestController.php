@@ -510,38 +510,17 @@ class TestController extends Controller
     }
 
    //测试分表
-    public function actionSubmeter(){
+    public function actionDelAuthor(){
+        //查询出作者id
+        $author_ids=Author::find()->select('id')->column();
+        foreach ($author_ids as $author_id){
+            $result=Book::find()->select('id')->where(['author_id'=>$author_id])->scalar();
+           if(!$result){
+                $author=Author::find()->where(['id'=>$author_id])->one();
+                $author->delete();
 
-
-       // $total=\Yii::$app->db->createCommand('SELECT COUNT(id) FROM chapter WHERE book_id%10=0')->queryScalar();
-       // $cishu=ceil($total/100);
-        //$k=0;
-       // for($i=0;$i<=$cishu;$i++){
-           // $model=\Yii::$app->db->createCommand("SELECT * FROM chapter where book_id%10=0 lIMIT 1")->queryOne();
-            //var_dump($model);exit;
-            //var_dump($chapters);exit;
-             $table_name=Chapter::resetPartitionIndex();
-             var_dump($table_name);exit;
-
-             $chapter->book_id=$model['id'];
-             $chapter->no=$model['no'];
-             $chapter->path=$model['path'];
-             $chapter->is_free=$model['is_free'];
-             $chapter->chapter_name=$model['chapter_name'];
-             $chapter->word_count=$model['word_count'];
-             $chapter->create_time=$model['create_time'];
-             $chapter->update_time=$model['update_time'];
-             if($chapter->save()){
-                 echo '迁移成功';
-             }else{
-                 echo '迁移失败';
-             }
-
-
-
-      //  }
-
-
+            }
+        }
     }
 
 
