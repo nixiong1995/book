@@ -500,14 +500,14 @@ class TestController extends Controller
     }*/
 
     //查看最近三天以前用户看的书
-    /*public function actionSelectRead(){
-        $time=strtotime('20180330');
+    public function actionSelectRead(){
+        //$time=strtotime('20180330');
         $models=Reading::find()->orderBy('create_time DESC')->all();
         foreach ($models as  $model){
-            echo $model->book->from.'--'.$model->book->name."\n";
+            echo $model->user->tel."</br>";
         }
 
-    }*/
+    }
 
 
 
