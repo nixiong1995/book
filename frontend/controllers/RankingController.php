@@ -6,7 +6,7 @@ use frontend\models\Word;
 use libs\Verification;
 use yii\web\Controller;
 use yii\web\Response;
-
+header("Access-Control-Allow-Origin: *");
 class RankingController extends Controller{
     public $enableCsrfValidation=false;
 
