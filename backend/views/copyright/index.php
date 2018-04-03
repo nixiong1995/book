@@ -31,7 +31,7 @@
         <th>观看数</th>
         <th>本月转定率</th>
         <th>评分</th>
-        <th>销售阅票累计</th>
+        <th>归属于</th>
         <th>书本大小</th>
         <th>状态</th>
         <th>操作</th>
@@ -46,10 +46,10 @@
             <td><?=$model->category->name?></td>
             <td><?=yii\bootstrap\Html::img($model->image,['class'=>'img-cricle','style'=>'width:70px'])?></td>
             <td><?php if($model->is_free==1){echo 'vip专属';}elseif($model->is_free==2){echo '收费';}else{echo '免费';}?></td>
-            <td><?=$model->clicks?></td>
+            <td><?=$model->real_read?></td>
             <td><?php echo @\backend\models\Book::getData($model->id)?></td>
             <td><?=$model->score?></td>
-            <td><?=$model->ticket?></td>
+            <td><?=$model->information->name?></td>
             <td><?=\backend\models\Chapter::getSize($model->size)?></td>
             <td><?php if($model->is_end==1){echo '连载';}else{echo '完结';}?></td>
             <td>
