@@ -5,7 +5,7 @@ use libs\Verification;
 use yii\data\Pagination;
 use yii\web\Controller;
 use yii\web\Response;
-
+header("Access-Control-Allow-Origin: *");
 //微信小程序
 class SmallprogramController extends Controller{
 
@@ -79,7 +79,7 @@ class SmallprogramController extends Controller{
             $page=\Yii::$app->request->get('page');
             $type=\Yii::$app->request->get('type');
             $status=\Yii::$app->request->get('status');
-            $query=Book::find()->where(['category_id'=>$category_id])->andWhere(['<>','from',4])->andWhere(['is_end'=>$status]);
+            $query=Book::find()->where(['category_id'=>$category_id])->andWhere(['is_end'=>$status]);
             $count=ceil($query->count()/10);
             if($page>$count){
                 $result['msg']='没有更多了';
