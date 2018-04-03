@@ -326,22 +326,22 @@ class BookController extends Controller{
                 $models=Book::find()->where(['groom'=>6])->orderBy('groom_time DESC')->limit(6)->all();
                 break;
             case 8:
-                $models=Book::find()->where(['groom'=>8])->orderBy('groom_time DESC')->limit(10)->all();
+                $models=Book::find()->where(['groom'=>8])->orderBy('groom_time DESC')->limit(20)->all();
                 break;
             case 9:
-                $models=Book::find()->where(['groom'=>9])->orderBy('groom_time DESC')->limit(10)->all();
+                $models=Book::find()->where(['groom'=>9])->orderBy('groom_time DESC')->limit(20)->all();
                 break;
             case 10:
-                $models=Book::find()->where(['groom'=>10])->orderBy('groom_time DESC')->limit(10)->all();
+                $models=Book::find()->where(['groom'=>10])->orderBy('groom_time DESC')->limit(20)->all();
                 break;
             case 11:
-                $models=Book::find()->where(['groom'=>11])->orderBy('groom_time DESC')->limit(10)->all();
+                $models=Book::find()->where(['groom'=>11])->orderBy('groom_time DESC')->limit(20)->all();
                 break;
             case 12:
-                $models=Book::find()->where(['groom'=>12])->orderBy('groom_time DESC')->limit(10)->all();
+                $models=Book::find()->where(['groom'=>12])->orderBy('groom_time DESC')->limit(20)->all();
                 break;
             case 13:
-                $models=Book::find()->where(['groom'=>13])->orderBy('groom_time DESC')->limit(10)->all();
+                $models=Book::find()->where(['groom'=>13])->orderBy('groom_time DESC')->limit(20)->all();
                 break;
             default:
                 $models=Book::find()->where(['groom'=>1])->orderBy('groom_time DESC')->limit(5)->all();
