@@ -404,7 +404,7 @@ class TestController extends Controller
     }
 
     //插入追书神器图书基本信息
-    public function actionZhuishuInfo(){
+    /*public function actionZhuishuInfo(){
         //设置脚本执行时间(不终止)
         //set_time_limit(0);
         $get = new PostRequest();
@@ -497,17 +497,17 @@ class TestController extends Controller
             }
 
         }
-    }
+    }*/
 
     //查看最近三天以前用户看的书
-    public function actionSelectRead(){
+    /*public function actionSelectRead(){
         $time=strtotime('20180330');
         $models=Reading::find()->orderBy('create_time DESC')->all();
         foreach ($models as  $model){
             echo $model->book->from.'--'.$model->book->name."\n";
         }
 
-    }
+    }*/
 
 
 
