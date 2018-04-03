@@ -938,4 +938,79 @@ ORDER BY id LIMIT 3")->all();
         }
         return $result;
     }
+
+    //免费更多
+    public function actionFreeMore(){
+        $result=[
+            'code'=>400,
+            'msg'=>'请求失败',
+        ];
+        if(\Yii::$app->request->isGet){
+            $obj=new Verification();
+            $res=$obj->check();
+            //验证接口
+            if($res){
+                $result['msg']= $res;
+            }else{
+                //接口验证通过
+                //接收参数
+                $type=\Yii::$app->request->get('type');//1是今日免费;2女生免费;3男生免费
+                $page=\Yii::$app->request->get('page');
+                if(empty($type)){
+                    $result['msg']='未传入指定参数';
+                    return $result;
+                }
+                if($type==1){
+                    $query=Book::find()->where(['is_free'=>0]);
+                }elseif($type==2){
+                    //查询属于女生的分类id
+                    $ManIds=\Yii::$app->db->createCommand("SELECT id FROM category WHERE type=0")->queryColumn();
+                    $query=Book::find()->where(['category_id'=>$ManIds])->andWhere(['is_free'=>0]);
+                }elseif($type==3){
+                    $ManIds=\Yii::$app->db->createCommand("SELECT id FROM category WHERE type=1")->queryColumn();
+                    $query=Book::find()->where(['category_id'=>$ManIds])->andWhere(['is_free'=>0]);
+                }
+
+                $count=ceil($query->count()/5);
+                if($page>$count){
+                    $result['msg']='没有更多了';
+                    return $result;
+                }
+                $pager=new Pagination([
+                    'totalCount'=>$query->count(),
+                    'defaultPageSize'=>5,
+                ]);
+                $models=$query->limit($pager->limit)->offset($pager->offset)->all();
+                if($models){
+                    foreach ($models as $model){
+                        //判断是否版权图书,不是拼接图片域名
+                        $ImgUrl=$model->image;
+                        if($model->is_api==0){
+                            $ImgUrl=HTTP_PATH.$ImgUrl;
+                        }
+                        $result['data'][]=['book_id'=>$model->id,'name'=>$model->name,
+                            'category'=>$model->category->name,'author'=>$model->author->name,
+                            'view'=>$model->clicks,'image'=>$ImgUrl,'size'=>$model->size,
+                            'score'=>$model->score,'intro'=>$model->intro,'is_end'=>$model->is_end,
+                            'download'=>$model->downloads,'collection'=>$model->collection,'author_id'=>$model->author_id,
+                            'category_id'=>$model->category_id,'no_free'=>$model->no,'type'=>$model->type,
+                            'create_time'=>$model->create_time,'update_time'=>$model->update_time,'from'=>$model->from,
+                            'is_free'=>$model->is_free,'price'=>$model->price,'search'=>$model->search,'sale'=>$model->search,
+                            'ascription_name'=>$model->information->name,'ascription_id'=>$model->ascription,
+                            'copyright_book_id'=>$model->copyright_book_id,'last_update_chapter_id'=>$model->last_update_chapter_id,
+                            'last_update_chapter_name'=>$model->last_update_chapter_name];
+                    }
+                    $result['code']=200;
+                    $result['msg']='成功获取图书信息';
+                }else{
+                    $result['code']=404;
+                    $result['msg']='没有图书';
+                }
+            }
+
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
+    }
 }
