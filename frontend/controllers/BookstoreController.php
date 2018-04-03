@@ -881,7 +881,7 @@ ORDER BY id LIMIT 3")->all();
           'code'=>400,
           'msg'=>'请求失败',
         ];
-        if(\Yii::$app->request->get()){
+        if(\Yii::$app->request->isGet){
             $obj=new Verification();
              $res=$obj->check();
              //验证接口
