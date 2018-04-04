@@ -2,11 +2,11 @@
 /yii
 /yii_test
 /yii_test.bat
-
+libs
 # phpstorm project files
 .idea
-/books/
-/uoloads/
+books/
+libs/
 
 # netbeans project files
 nbproject
@@ -21,8 +21,7 @@ Thumbs.db
 
 # composer vendor dir
 /vendor
-/books
-/uploads
+
 
 # composer itself is not needed
 composer.phar
