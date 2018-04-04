@@ -501,8 +501,8 @@ class TestController extends Controller
 
     //查看最近三天以前用户看的书
     public function actionSelectRead(){
-        //$time=strtotime('20180330');
-        $models=Reading::find()->orderBy('create_time DESC')->all();
+        $time=strtotime('20180301');
+        $models=Reading::find()->where(['>','create_time',$time])->all();
         foreach ($models as  $model){
             echo $model->user->tel."</br>";
         }

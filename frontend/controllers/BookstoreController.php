@@ -461,7 +461,7 @@ ORDER BY id LIMIT 3")->all();
                 //var_dump($keyword);exit;
                 if(!$keyword){
                     $result['msg']='请输入搜索关键字';
-                   return $result;
+                    return $result;
                 }
                 //查询是否存在该关键字热词
                 $word=Word::findOne(['name'=>$keyword]);
@@ -477,8 +477,8 @@ ORDER BY id LIMIT 3")->all();
                     $model->count=1;
                     $model->save();
                 }
-                $authors=Author::find()->where(['like','name',$keyword])->all();
-                $books=Book::find()->where(['like','name',$keyword])->all();
+                $authors=Author::find()->where(['like','name',$keyword])->limit(50)->all();
+                $books=Book::find()->where(['like','name',$keyword])->limit(50)->all();
                 if(!$books && !$authors){
                     $result['msg']='未搜索到结果';
                     return $result;
