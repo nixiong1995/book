@@ -15,7 +15,8 @@ $i=1;
 
     <table class="table">
 
-        <tr><th></th>
+        <tr>
+            <th></th>
             <th>书名</th>
             <th>加入时间</th>
             <th>推荐位置</th>
@@ -26,7 +27,7 @@ $i=1;
         <?php foreach ($models as $model):?>
 
             <tr data-id="<?=$model->id?>">
-                <td><?=$i+1?></td>
+                <td><?=$i++?></td>
                 <td><?=$model->name?></td>
                 <td><?=date("Y-m-d H:i:s",$model->groom_time)?></td>
                 <td>
