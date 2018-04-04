@@ -1024,9 +1024,9 @@ ORDER BY id LIMIT 3")->all();
             $obj=new Verification();
             $res=$obj->check();
             //验证接口
-            if($res){
-                $result['msg']= $res;
-            }else{
+            //if($res){
+               // $result['msg']= $res;
+            //}else{
                 //接口验证通过
                 //接收参数
                 $category_id=\Yii::$app->request->get('category_id');
@@ -1125,7 +1125,7 @@ ORDER BY id LIMIT 3")->all();
                 }
 
 
-           }
+          // }
 
         }else{
             $result['msg']='请求方式错误';
