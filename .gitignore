@@ -6,7 +6,7 @@ libs
 # phpstorm project files
 .idea
 books/
-libs/
+libs/Verification.php
 
 # netbeans project files
 nbproject
