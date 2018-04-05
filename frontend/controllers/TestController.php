@@ -413,6 +413,31 @@ class TestController extends Controller
 
     }
 
+    //删除数据库无章节图书
+    public function actionDelBook(){
+       //查询数据库追书神器书id
+        $BookIds=Book::find()->select('id')->where(['ascription'=>5])->column();
+        foreach ($BookIds as $bookId){
+            $result=Chapter::resetPartitionIndex($bookId);
+            if($result!=0){
+                $ChapterId=Chapter::find()->select('id')->where(['book_id'=>$bookId])->scalar();
+                if(!$ChapterId){
+                    $Book=Book::find()->where(['id'=>$bookId])->one();
+                    $book_name=$Book->name;
+                    $ascription=$Book->ascription;
+                    if($Book->delete()){
+                        echo '删除书----'.$book_name.'----来自于----'.$ascription;
+                    }else{
+                        echo '数据库无空章节书';
+                    }
+                }
+
+            }else{
+                echo '数据路无可操作章节表';
+            }
+        }
+    }
+
 
 
 }
