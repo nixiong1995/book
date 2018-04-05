@@ -423,7 +423,8 @@ class TestController extends Controller
                 $ChapterId=Chapter::find()->select('id')->where(['book_id'=>$bookId])->scalar();
                 if(!$ChapterId){
                     $Book=Book::find()->where(['id'=>$bookId])->one();
-                    $author_id=$Book->author_id;//作者id
+                    echo '</br>'.$Book->name;
+                    /*$author_id=$Book->author_id;//作者id
                     $path=$Book->image;
                     $book_name=$Book->name;
                     $ascription=$Book->ascription;
@@ -449,17 +450,17 @@ class TestController extends Controller
                             }
                         }
                         $transaction->commit();
-                        echo '删除书----'.$book_name.'----来自于----'.$ascription;
+                        echo '</br>删除书----'.$book_name.'----来自于----'.$ascription;
                 }catch (Exception $e){
                         //事务回滚
                         $transaction->rollBack();
-                    }
+                    }*/
                 }else{
                     echo '数据库无空章节书';
                 }
 
             }else{
-                echo '数据路无可操作章节表';
+                echo '</br>数据路无可操作章节表';
             }
         }
     }
