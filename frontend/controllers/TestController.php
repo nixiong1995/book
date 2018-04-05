@@ -455,8 +455,6 @@ class TestController extends Controller
                         //事务回滚
                         $transaction->rollBack();
                     }*/
-                }else{
-                    echo '数据库无空章节书';
                 }
 
             }else{
