@@ -423,13 +423,39 @@ class TestController extends Controller
                 $ChapterId=Chapter::find()->select('id')->where(['book_id'=>$bookId])->scalar();
                 if(!$ChapterId){
                     $Book=Book::find()->where(['id'=>$bookId])->one();
+                    $author_id=$Book->author_id;//作者id
+                    $path=$Book->image;
                     $book_name=$Book->name;
                     $ascription=$Book->ascription;
-                    if($Book->delete()){
+                    $transaction=\Yii::$app->db->beginTransaction();//开启事务
+                    try{
+                        //删除书
+                        $Book->delete();
+                        if($path){
+                            $path=UPLOAD_PATH.$path;
+                            unlink($path);
+                        }
+
+                        //删除作者(判断该作者是否还有其他书籍)
+                        $re=Book::findOne(['author_id'=>$author_id]);
+                        if(!$re){
+                            $author=Author::findOne(['id'=>$author_id]);
+                            //作者照片
+                            $path3=$author->image;
+                            $author->delete();
+                            if($path3){
+                                $path3=UPLOAD_PATH.$path3;
+                                unlink($path3);
+                            }
+                        }
+                        $transaction->commit();
                         echo '删除书----'.$book_name.'----来自于----'.$ascription;
-                    }else{
-                        echo '数据库无空章节书';
+                }catch (Exception $e){
+                        //事务回滚
+                        $transaction->rollBack();
                     }
+                }else{
+                    echo '数据库无空章节书';
                 }
 
             }else{
