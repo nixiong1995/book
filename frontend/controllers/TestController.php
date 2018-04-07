@@ -463,6 +463,50 @@ class TestController extends Controller
         }
     }
 
+    //删除数据库txt图书
+    public function actionDelTxt()
+    {
+        //查询txt图书
+        $BookIds = Book::find()->select('id')->where(['from' => 4])->column();
+        foreach ($BookIds as $bookId) {
+            $book = Book::find()->where(['id' => $bookId])->one();
+            $author_id=$book->author_id;//作者id
+            $transaction=\Yii::$app->db->beginTransaction();//开启事务
+            try{
+                //删除书
+                $book->delete();
+
+                //删除作者(判断该作者是否还有其他书籍)
+                $relust=Book::findOne(['author_id'=>$author_id]);
+                if(!$relust){
+                    $author=Author::findOne(['id'=>$author_id]);
+                    //作者照片
+                    $author->delete();
+                }
+
+                //删除该书的所有章节
+                $result=Chapter::resetPartitionIndex($bookId);
+                if($result!=0){
+                    $chapters=Chapter::find()->where(['book_id'=>$bookId])->all();
+                    foreach ($chapters as $chapter){
+                        $chapter->delete();
+                    }
+                    $transaction->commit();
+                    echo '删除txt图书成功';
+                }else{
+                    echo '删除txt图书失败';
+                }
+
+
+            }catch (Exception $e){
+                //事务回滚
+                $transaction->rollBack();
+            }
+
+
+        }
+    }
+
 
 
 }
