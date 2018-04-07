@@ -273,6 +273,73 @@ class CopyrightController extends Controller{
         var_dump($rows);
     }
 
+    //版权方章节列表
+    public function actionChapterList($copyright_book_id,$ascription){
+        if($ascription==1){
+            //请求地址
+            $postUrl = 'http://partner.chuangbie.com/partner/chapterlist';
+            $curlPost = [
+                'partner_id' => 2130,
+                'partner_sign' => 'b42c36ddd1a5cc2c6895744143f77b7b',
+                'book_id' => $copyright_book_id,
+            ];
+            $post = new PostRequest();
+            $data = $post->request_post($postUrl, $curlPost);
+            $data = json_decode($data, true);
+            return $this->render('chapter_list-kaixing',['datas'=>$data['content']['data'],'ascription'=>$ascription,'copyright_book_id'=>$copyright_book_id]);
+
+        }elseif($ascription==4){
+            $get=new PostRequest();
+            $data=$get->send_request('http://api.17k.com/v2/book/'.$copyright_book_id.'/volumes',
+
+                [
+                    '_access_version'=>2,
+                    '_versions'=>958,
+                    'access_token'=>'',
+                    'app_key'=>2222420362,
+                ]
+            );
+            $datas=(json_decode($data));
+            return $this->render('chapter_list-17k',['datas'=>$datas->data->volumes,'ascription'=>$ascription,'copyright_book_id'=>$copyright_book_id]);
+
+        }
+
+    }
+
+    //版权方章节内容
+    public function actionChapterContent($copyright_chapter_id,$ascription,$copyright_book_id,$chapter_name){
+        if($ascription==1){
+            $postUrl = 'http://partner.chuangbie.com/partner/chaptercontent';
+            $curlPost = [
+                'partner_id' => 2130,
+                'partner_sign' => 'b42c36ddd1a5cc2c6895744143f77b7b',
+                'book_id' => $copyright_book_id,
+                'chapter_id' => $copyright_chapter_id,
+            ];
+            $post = new PostRequest();
+            $data= json_decode($post->request_post($postUrl, $curlPost));
+            return $this->render('chapter-content',['chapter_content'=>$data->content->data->chapter_content,'chapter_name'=>$chapter_name]);
+
+
+            }elseif ($ascription==4){
+
+            $get=new PostRequest();
+            $contents=$get->send_request('http://api.17k.com/v2/book/'.$copyright_book_id.'/chapter/'.$copyright_chapter_id.'/content',
+
+                [
+                    '_access_version'=>2,
+                    '_versions'=>958,
+                    'access_token'=>'',
+                    'app_key'=>2222420362,
+                ]
+            );
+            $contents=(json_decode($contents));
+            return $this->render('chapter-content',['chapter_content'=>$contents->data->content,'chapter_name'=>$chapter_name]);
+
+        }
+
+    }
+
 
     public function behaviors()
     {

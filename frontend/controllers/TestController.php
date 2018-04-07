@@ -414,57 +414,10 @@ class TestController extends Controller
     }
 
     //删除数据库无章节图书
-    public function actionDelBook(){
-       //查询数据库追书神器书id
-        $BookIds=Book::find()->select('id')->where(['ascription'=>5])->column();
-        foreach ($BookIds as $bookId){
-            $result=Chapter::resetPartitionIndex($bookId);
-            if($result!=0){
-                $ChapterId=Chapter::find()->select('id')->where(['book_id'=>$bookId])->scalar();
-                if(!$ChapterId){
-                    $Book=Book::find()->where(['id'=>$bookId])->one();
-                    //echo '</br>'.$Book->name;
-                    $author_id=$Book->author_id;//作者id
-                    $path=$Book->image;
-                    $book_name=$Book->name;
-                    $ascription=$Book->ascription;
-                    $transaction=\Yii::$app->db->beginTransaction();//开启事务
-                    try{
-                        //删除书
-                        $Book->delete();
-                        if($path){
-                            $path=UPLOAD_PATH.$path;
-                            unlink($path);
-                        }
 
-                        //删除作者(判断该作者是否还有其他书籍)
-                        $re=Book::findOne(['author_id'=>$author_id]);
-                        if(!$re){
-                            $author=Author::findOne(['id'=>$author_id]);
-                            //作者照片
-                            $path3=$author->image;
-                            $author->delete();
-                            if($path3){
-                                $path3=UPLOAD_PATH.$path3;
-                                unlink($path3);
-                            }
-                        }
-                        $transaction->commit();
-                        echo '</br>删除书----'.$book_name.'----来自于----'.$ascription;
-                }catch (Exception $e){
-                        //事务回滚
-                        $transaction->rollBack();
-                    }
-                }
-
-            }else{
-                echo '</br>数据路无可操作章节表';
-            }
-        }
-    }
 
     //删除数据库txt图书
-    public function actionDelTxt()
+    /*public function actionDelTxt()
     {
         //查询txt图书
         $BookIds = Book::find()->select('id')->where(['from' => 4])->column();
@@ -503,9 +456,8 @@ class TestController extends Controller
                 $transaction->rollBack();
             }
 
-
         }
-    }
+    }*/
 
 
 
