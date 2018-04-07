@@ -36,6 +36,7 @@
                 <td><?=date("Ymd",$model->update_time);?></td>
                 <td>
                     <a href="<?=\yii\helpers\Url::to(['chapter/edit','id'=>$model->id,'no'=>$model->no,'book_id'=>$model->book_id])?>"><span class="glyphicon glyphicon-pencil btn btn-default btn-sm"></a>
+                    <a href="<?=\yii\helpers\Url::to(['chapter/select-content','id'=>$model->id,'book_id'=>$model->book_id])?>"><span class="glyphicon glyphicon-eye-open btn btn-info btn-sm"></a>
                     <a href="javascript:;" class="delete"><span class="glyphicon glyphicon-trash btn btn-danger btn-sm" ></a>
                 </td>
             </tr>

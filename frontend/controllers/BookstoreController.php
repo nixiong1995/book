@@ -44,7 +44,7 @@ class BookstoreController extends Controller{
                     return $result;
                 }
 
-                if($version==1.0 && $client==2){
+                if($version==1.2 && $client==2){
                     $models=Advert::find()->where(['position'=>$position])->andWhere(['checked'=>1])->orderBy('sort ASC')->limit(4)->all();
                     if($models){
                         foreach ($models as $model){
@@ -55,18 +55,6 @@ class BookstoreController extends Controller{
                     }else{
                         $result['msg']='没有广告图';
                     }
-                }elseif($version==1.1 && $client==2){
-                    $models=Advert::find()->where(['position'=>$position])->andWhere(['checked'=>3])->orderBy('sort ASC')->limit(4)->all();
-                    if($models){
-                        foreach ($models as $model){
-                            $result['data'][]=['id'=>$model->id,'title'=>$model->title,'position'=>$model->position ,'sort'=>$model->sort,'image'=>HTTP_PATH.$model->image,'url'=>$model->url,'client'=>$model->client,'version'=>$model->version];
-                        }
-                        $result['code']=200;
-                        $result['msg']='获取广告图成功';
-                    }else{
-                        $result['msg']='没有广告图';
-                    }
-
                 }else{
 
                     $models=Advert::find()->where(['position'=>$position])->andWhere(['<>','checked',1])->orderBy('sort ASC')->limit(4)->all();

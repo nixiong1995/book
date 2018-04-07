@@ -214,6 +214,18 @@ class ChapterController extends Controller{
     return $out;
 }
 
+    //查看章节内容
+    public function actionSelectContent($id,$book_id){
+        $result=Chapter::resetPartitionIndex($book_id);
+        if($result!=0){
+            $data=Chapter::find()->select(['path','chapter_name'])->where(['id'=>$id])->one();
+            $chapter_content=file_get_contents(BOOK_PATH.$data->path);
+            return $this->render('content',['chapter_content'=>$chapter_content,'chapter_name'=>$data->chapter_name]);
+        }else{
+            throw new ForbiddenHttpException('对不起,无可操作数据表');
+        }
+    }
+
     public function behaviors()
     {
         return [
