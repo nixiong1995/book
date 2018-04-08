@@ -2,12 +2,12 @@
 /yii
 /yii_test
 /yii_test.bat
-libs
 # phpstorm project files
 .idea
-books/
-uploads/
+/books/
+/uploads/
 libs/Verification.php
+frontend/controllers/AlipayController.php
 
 # netbeans project files
 nbproject
