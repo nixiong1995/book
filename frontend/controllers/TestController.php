@@ -412,12 +412,11 @@ class TestController extends Controller
 
     }
 
-    //删除数据库无章节图书
+    //删除数据库昨日插入无章节图书
     public function actionDelBook(){
         //查询数据库追书神器书id
         //$BookIds=Book::find()->select('id')->where(['ascription'=>5])->andWhere([''])->column();
         $BookIds=\Yii::$app->db->createCommand('SELECT id FROM book WHERE ascription=5 AND TO_DAYS(NOW()) - TO_DAYS(from_unixtime(create_time,\'%Y-%m-%d\')) = 1')->queryColumn();
-        var_dump($BookIds);exit;
         foreach ($BookIds as $bookId){
             $result=Chapter::resetPartitionIndex($bookId);
             if($result!=0){

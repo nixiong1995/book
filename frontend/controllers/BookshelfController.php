@@ -33,7 +33,6 @@ class BookshelfController extends Controller{
                 $user_id=\Yii::$app->request->post('user_id');
                 if($user_id){
                     //查询用户收藏过的书id
-                   // $collect=\Yii::$app->db->createCommand("SELECT collect FROM user_details WHERE user_id=$user_id")->queryScalar();
                     $user_details=UserDetails::find()->where(['user_id'=>$user_id])->one();
 
                     if( $user_details->collect){
@@ -42,6 +41,19 @@ class BookshelfController extends Controller{
                         $CollectIds=explode('|',$user_details->collect);
                         //去除数组中空元素
                         $CollectIds=array_filter($CollectIds);
+
+                        //删除已下架图书
+                        foreach ($CollectIds as $collectId){
+                            $book_id=Book::find()->select('id')->where(['id'=>$collectId])->scalar();
+                            if(!$book_id){
+                                $key=array_search($collectId,$CollectIds);
+                                unset($CollectIds[$key]);
+                            }
+                        }
+                        //通过|分割数组,保存
+                        $user_details->collect=implode('|',$CollectIds);
+                        $user_details->save();
+                        //var_dump($CollectIds);exit;
                         //根据书id查询书信息
                         $Books1=Book::find()->where(['id'=>$CollectIds])->all();
                         if($Books1){

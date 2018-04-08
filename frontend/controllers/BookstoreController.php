@@ -44,7 +44,7 @@ class BookstoreController extends Controller{
                     return $result;
                 }
 
-                if($version==1.2 && $client==2){
+                if($version=='1.1.1' && $client==2){
                     $models=Advert::find()->where(['position'=>$position])->andWhere(['checked'=>1])->orderBy('sort ASC')->limit(4)->all();
                     if($models){
                         foreach ($models as $model){
@@ -189,6 +189,29 @@ class BookstoreController extends Controller{
                         $result['code']=200;
                         $result['msg']='获取书城信息成功';
                         return  $result;
+                    }else{
+                        $books=Book::findBySql("SELECT * FROM book WHERE id >= ((SELECT MAX(id) FROM book)-(SELECT MIN(id) FROM book)) * RAND() + (SELECT MIN(id) FROM book)  LIMIT 3")->all();
+                        foreach ($books as $book){
+                            //判断是否版权图书,不是拼接图片域名
+                            $ImgUrl= $book->image;
+                            if( $book->is_api==0){
+                                $ImgUrl=HTTP_PATH.$ImgUrl;
+                            }
+                            $result['data']['like'][]=['book_id'=>$book->id,'name'=>$book->name,
+                                'category'=>$book->category->name,'author'=>$book->author->name,
+                                'view'=>$book->clicks,'image'=>$ImgUrl,'size'=>$book->size,
+                                'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
+                                'download'=>$book->downloads,'collection'=>$book->collection,'author_id'=>$book->author_id,
+                                'category_id'=>$book->category_id,'no_free'=>$book->no,'type'=>$book->type,
+                                'create_time'=>$book->create_time,'update_time'=>$book->update_time,'from'=>$book->from,
+                                'is_free'=>$book->is_free,'price'=>$book->price,'search'=>$book->search,'sale'=>$book->search,
+                                'ascription_name'=>$book->information->name,'ascription_id'=>$book->ascription,
+                                'copyright_book_id'=>$book->copyright_book_id,'last_update_chapter_id'=>$book->last_update_chapter_id,
+                                'last_update_chapter_name'=>$book->last_update_chapter_name];
+                        }
+                        $result['code']=200;
+                        $result['msg']='获取书城信息成功';
+
                     }
 
                 }else{
