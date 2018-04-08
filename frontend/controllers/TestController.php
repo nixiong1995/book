@@ -17,9 +17,8 @@ class TestController extends Controller
     public function actionSign()
     {
 
-        var_dump(94837%20);exit;
-        //$time=strtotime("2018-03-07");
-        //var_dump($time);exit;
+        $time=strtotime("2018-04-07");
+        var_dump($time);exit;
         //var_dump(time());exit;
        // $p = ['category_id' =>34,'password'=>123456,'captcha'=>656618,'imei'=>86634103769185,'address'=>'四川省绵阳市'];
         //$p = ['time' =>103, 'user_id'=>40,'chapter_id'=>3152,'ticket'=>19,'voucher'=>0];
@@ -414,6 +413,56 @@ class TestController extends Controller
     }
 
     //删除数据库无章节图书
+    public function actionDelBook(){
+        //查询数据库追书神器书id
+        //$BookIds=Book::find()->select('id')->where(['ascription'=>5])->andWhere([''])->column();
+        $BookIds=\Yii::$app->db->createCommand('SELECT id FROM book WHERE ascription=5 AND TO_DAYS(NOW()) - TO_DAYS(from_unixtime(create_time,\'%Y-%m-%d\')) = 1')->queryColumn();
+        var_dump($BookIds);exit;
+        foreach ($BookIds as $bookId){
+            $result=Chapter::resetPartitionIndex($bookId);
+            if($result!=0){
+                $ChapterId=Chapter::find()->select('id')->where(['book_id'=>$bookId])->scalar();
+                if(!$ChapterId){
+                    $Book=Book::find()->where(['id'=>$bookId])->one();
+                    //echo '</br>'.$Book->name;
+                    $author_id=$Book->author_id;//作者id
+                    $path=$Book->image;
+                    $book_name=$Book->name;
+                    $ascription=$Book->ascription;
+                    $transaction=\Yii::$app->db->beginTransaction();//开启事务
+                    try{
+                        //删除书
+                        $Book->delete();
+                        if($path){
+                            $path=UPLOAD_PATH.$path;
+                            unlink($path);
+                        }
+
+                        //删除作者(判断该作者是否还有其他书籍)
+                        $re=Book::findOne(['author_id'=>$author_id]);
+                        if(!$re){
+                            $author=Author::findOne(['id'=>$author_id]);
+                            //作者照片
+                            $path3=$author->image;
+                            $author->delete();
+                            if($path3){
+                                $path3=UPLOAD_PATH.$path3;
+                                unlink($path3);
+                            }
+                        }
+                        $transaction->commit();
+                        echo '</br>删除书----'.$book_name.'----来自于----'.$ascription;
+                    }catch (Exception $e){
+                        //事务回滚
+                        $transaction->rollBack();
+                    }
+                }
+
+            }else{
+                echo '</br>数据路无可操作章节表';
+            }
+        }
+    }
 
 
     //删除数据库txt图书

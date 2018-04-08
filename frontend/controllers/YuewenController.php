@@ -52,6 +52,7 @@ class YuewenController extends \yii\web\Controller{
             $book = Book::findOne(['id' => $book_id]);
             //该书观看数加1
             $book->clicks=$book->clicks+1;
+            $book->real_read=$book->real_read+1;
             $book->save();
             ////////////////////获取凯兴章节列表//////////////////////////
             if($book->ascription==1){
