@@ -475,10 +475,10 @@ ORDER BY id LIMIT 3")->all();
                     $model->count=1;
                     $model->save();
                 }
-                //$authors=Author::find()->where(['like','name',$keyword])->limit(50)->all();
-                $authors=\Yii::$app->db->createCommand("select * ,(length(name)-length('$keyword')) as rn from author where name like '%$keyword%' order by rn limit 50")->queryAll();
-                //$books=Book::find()->where(['like','name',$keyword])->limit(50)->all();
-                $books=\Yii::$app->db->createCommand("select * ,(length(name)-length('$keyword')) as rn from book where name like '%$keyword%' order by rn limit 50")->queryAll();
+                $authors=Author::find()->where(['like','name',$keyword])->limit(50)->all();
+                //$authors=\Yii::$app->db->createCommand("select * ,(length(name)-length('$keyword')) as rn from author where name like '%$keyword%' order by rn limit 50")->queryAll();
+                $books=Book::find()->where(['like','name',$keyword])->limit(50)->all();
+                //$books=\Yii::$app->db->createCommand("select * ,(length(name)-length('$keyword')) as rn from book where name like '%$keyword%' order by rn limit 50")->queryAll();
                 if(!$books && !$authors){
                     $result['msg']='未搜索到结果';
                     return $result;
