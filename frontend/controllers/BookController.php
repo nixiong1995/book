@@ -43,7 +43,7 @@ class BookController extends Controller{
                 return $relust;
             }
 
-            $img = file_get_contents($img_url);
+            $img =file_get_contents($img_url);
             $dir = UPLOAD_PATH .date("Y") . '/' . date("m") . '/' . date("d") . '/';
             $fileName = uniqid() . rand(1, 100000) . '.jpg';
             $uploadSuccessPath = date("Y") . '/' . date("m") . '/' . date("d") . '/' . $fileName;

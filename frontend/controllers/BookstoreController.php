@@ -12,7 +12,7 @@ use libs\Verification;
 use yii\data\Pagination;
 use yii\web\Controller;
 use yii\web\Response;
-header("Access-Control-Allow-Origin: http://www.voogaa.cn");
+header("Access-Control-Allow-Origin: *");
 class BookstoreController extends Controller{
 
     public $enableCsrfValidation=false;
