@@ -6,7 +6,7 @@ use backend\models\Purchased;
 use libs\PostRequest;
 use libs\Verification;
 use yii\web\Response;
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin:http://www.voogaa.cn");
 class YuewenController extends \yii\web\Controller{
 
     public $enableCsrfValidation=false;

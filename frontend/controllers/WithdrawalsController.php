@@ -7,7 +7,7 @@ use frontend\models\Withdrawals;
 use yii\db\Exception;
 use yii\web\Controller;
 use yii\web\Response;
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://www.voogaa.cn");
 class WithdrawalsController extends Controller{
     public $enableCsrfValidation=false;
 

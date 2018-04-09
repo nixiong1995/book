@@ -10,7 +10,7 @@ use libs\PostRequest;
 use yii\db\Exception;
 use yii\web\Controller;
 use yii\web\Response;
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://www.voogaa.cn");
 //元宵节活动用户控制器
 class MemberController extends Controller{
 

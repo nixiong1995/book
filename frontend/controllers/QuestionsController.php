@@ -6,7 +6,7 @@ use backend\models\Question;
 use frontend\models\Member;
 use yii\web\Controller;
 use yii\web\Response;
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://www.voogaa.cn");
 class QuestionsController extends Controller{
     public $enableCsrfValidation=false;
 

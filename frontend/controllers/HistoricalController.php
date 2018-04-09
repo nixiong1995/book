@@ -6,7 +6,7 @@ use frontend\models\Historical;
 use libs\PostRequest;
 use yii\web\Controller;
 use yii\web\Response;
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://www.voogaa.cn");
 class HistoricalController extends Controller{
 
     public $enableCsrfValidation=false;

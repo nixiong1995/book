@@ -6,7 +6,7 @@ use frontend\models\Word;
 use libs\Verification;
 use yii\web\Controller;
 use yii\web\Response;
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://www.voogaa.cn");
 class RankingController extends Controller{
     public $enableCsrfValidation=false;
 

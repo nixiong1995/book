@@ -5,7 +5,7 @@ use libs\Verification;
 use yii\data\Pagination;
 use yii\web\Controller;
 use yii\web\Response;
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://www.voogaa.cn");
 //微信小程序
 class SmallprogramController extends Controller{
 
