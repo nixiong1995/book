@@ -4,10 +4,12 @@ use backend\models\Advert;
 use backend\models\Author;
 use backend\models\Book;
 use backend\models\Category;
+use backend\models\Chapter;
 use backend\models\Reading;
 use backend\models\Seckill;
 use backend\models\UserDetails;
 use frontend\models\Word;
+use libs\PostRequest;
 use libs\Verification;
 use yii\data\Pagination;
 use yii\web\Controller;
@@ -439,6 +441,48 @@ ORDER BY id LIMIT 3")->all();
             }else{
                 $book_id=\Yii::$app->request->post('book_id');
                 $book=Book::findOne(['id'=>$book_id]);
+                //根据图书归属查询最后一个章节
+               if($book->ascription==1){
+                   //请求地址
+                   $postUrl = 'http://partner.chuangbie.com/partner/chapterlist';
+                   $curlPost = [
+                       'partner_id' => 2130,
+                       'partner_sign' => 'b42c36ddd1a5cc2c6895744143f77b7b',
+                       'book_id' => $book->copyright_book_id,
+                   ];
+
+                   $post = new PostRequest();
+                   $data = $post->request_post($postUrl, $curlPost);
+                   $data = json_decode($data, true);
+                   $last_chapter=$data['content']['data'][count($data['content']['data'])-1];
+                   $last_chapter_name=$last_chapter['chapter_name'];
+               }elseif($book->ascription==4){
+                   $get=new PostRequest();
+                   $data=$get->send_request('http://api.17k.com/v2/book/'.$book->copyright_book_id.'/volumes',
+
+                       [
+                           '_access_version'=>2,
+                           '_versions'=>958,
+                           'access_token'=>'',
+                           'app_key'=>2222420362,
+                       ]
+                   );
+                   $datas=(json_decode($data));
+                   foreach ($datas->data->volumes as $rows){
+                       $last_chapter=$rows->chapters[count($rows->chapters)-1];
+                       $last_chapter_name=$last_chapter->name;
+                   }
+
+               }elseif($book->ascription==5){
+                   $table=Chapter::resetPartitionIndex($book_id);
+                   if($table!=0){
+                       $chapter=Chapter::find()->select('chapter_name')->where(['book_id'=>$book_id])->orderBy('no ASC')->column();
+                       $last_chapter_name=$chapter[count($chapter)-1];
+                   }else{
+                       $last_chapter_name='查看目录';
+
+                   }
+               }
                //判断是否版权图书,不是拼接图片域名
                $ImgUrl=$book->image;
                if($book->is_api==0){
@@ -456,6 +500,7 @@ ORDER BY id LIMIT 3")->all();
                         'copyright_book_id'=>$book->copyright_book_id,'last_update_chapter_id'=>$book->last_update_chapter_id,
                         'last_update_chapter_name'=>$book->last_update_chapter_name];
                     $result['code']=200;
+                    $result['last_chapter_name']=$last_chapter_name;
                     $result['msg']='获取图书信息成功';
           }
         }else{
