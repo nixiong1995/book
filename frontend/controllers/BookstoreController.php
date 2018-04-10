@@ -46,7 +46,7 @@ class BookstoreController extends Controller{
                     return $result;
                 }
 
-                if($version=='1.1.1' && $client==2){
+                if($version==1.3 && $client==2){
                     $models=Advert::find()->where(['position'=>$position])->andWhere(['checked'=>1])->orderBy('sort ASC')->limit(4)->all();
                     if($models){
                         foreach ($models as $model){
