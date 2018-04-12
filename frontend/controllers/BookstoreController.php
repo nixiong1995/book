@@ -555,8 +555,13 @@ ORDER BY id LIMIT 3")->all();
 
                     foreach ($authors as $author){
                         $count=Book::find()->andWhere(['author_id'=>$author->id])->count('id');
+                        $category_id=\Yii::$app->db->createCommand("SELECT category_id, count(*) AS count FROM book WHERE author_id=$author->id GROUP BY category_id ORDER BY count DESC")->queryScalar();
+                        $good_type=Category::find()->select('name')->where(['id'=>$category_id])->scalar();
+
+
+
                         $result['data']['author'][]=['author_id'=>$author->id,'author_name'=>$author->name,'author_image'=>HTTP_PATH.$author->image,
-                            'author_intro'=>$author->intro,'popularity'=>$author->popularity,'sign'=>$author->sign,'count'=>$count,'good_type'=>$author->type];
+                            'author_intro'=>$author->intro,'popularity'=>$author->popularity,'sign'=>$author->sign,'count'=>$count,'good_type'=>$good_type];
                     }
 
                 }
@@ -914,7 +919,7 @@ ORDER BY id LIMIT 3")->all();
            //  $result['msg']= $res;
            // }else{
                 $author_id=\Yii::$app->request->post('author_id');
-                $books=Book::find()->where(['author_id'=>$author_id])->orderBy('score DESC')->limit(4)->all();
+                $books=Book::find()->where(['author_id'=>$author_id])->orderBy('score DESC')->all();
                 foreach ($books as $book){
                     //判断是否版权图书,不拼接图片域名
                     $ImgUrl=$book->image;
