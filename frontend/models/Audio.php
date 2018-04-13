@@ -9,7 +9,7 @@ class Audio extends ActiveRecord{
             $access_token = self::getAccessToken();
             $path = \Yii::getAlias('@webroot').'/audio/'.date('md').'/';   //保存路径，相对当前文件的路径
             if(!is_dir($path)){
-                mkdir($path);
+                mkdir($path,0777,true);
             }
 
             //微 信上传下载媒体文件
@@ -19,7 +19,7 @@ class Audio extends ActiveRecord{
             self::downAndSaveFile($url,$path."/".$filename);
 
             //$data=$outPath.$filename;
-            return $filename;
+            return '/audio/'.date('md').'/'.$filename;
             //$data["msg"] = "download record audio success!";
             // $data["url"] = $url;
 
@@ -35,7 +35,6 @@ class Audio extends ActiveRecord{
                 $appsecret = "e1aca895f340c21512a8976aa07f3d93";  //自己的appsecret
                 $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={$appid}&secret={$appsecret}";
                 $res = json_decode(file_get_contents($url));
-                var_dump($res);exit;
                 $access_token = $res->access_token;
                 if ($access_token) {
                     $data->expire_time = time() + 7000;
