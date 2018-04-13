@@ -46,7 +46,7 @@ class BookstoreController extends Controller{
                     return $result;
                 }
 
-                if($version==1.3 && $client==2){
+                if($version=='1.1.2' && $client==2){
                     $models=Advert::find()->where(['position'=>$position])->andWhere(['checked'=>1])->orderBy('sort ASC')->limit(4)->all();
                     if($models){
                         foreach ($models as $model){
@@ -93,10 +93,10 @@ class BookstoreController extends Controller{
           // }else{
 
                $user_id=\Yii::$app->request->post('user_id');
-               if(empty($user_id)){
-                   $result['msg']='未传入指定参数';
-                   return $result;
-               }
+               /*if(empty($user_id)){
+                $result['msg']='未传入指定参数';
+                return $result;
+            }*/
 
             //今日必读
             $models1=Book::find()->where(['groom'=>1])->orderBy('groom_time DESC')->limit(5)->all();
