@@ -93,10 +93,10 @@ class BookstoreController extends Controller{
           // }else{
 
                $user_id=\Yii::$app->request->post('user_id');
-               /*if(empty($user_id)){
-                $result['msg']='未传入指定参数';
-                return $result;
-            }*/
+               if(empty($user_id)){
+                   $result['msg']='未传入指定参数';
+                   return $result;
+               }
 
             //今日必读
             $models1=Book::find()->where(['groom'=>1])->orderBy('groom_time DESC')->limit(5)->all();
