@@ -37,7 +37,7 @@ class YuewenController extends \yii\web\Controller{
             //接收手机端传递参数
             $user_id = \Yii::$app->request->post('user_id');//用户id
             $book_id = \Yii::$app->request->post('book_id');//本地图书id
-            $min_chapter_id = \Yii::$app->request->post('min_chapter_id ');//起始章节 ID 默认为 0(不含该章)
+            $min_chapter_id = \Yii::$app->request->post('min_chapter_id');//起始章节 ID 默认为 0(不含该章)
             $page_now = \Yii::$app->request->post('page_now');//分页显示时，为当前第几页，默认为 1
             $page_size = \Yii::$app->request->post('page_size');//分页显示时，为每页大小，默认全部显示
 
@@ -238,14 +238,8 @@ class YuewenController extends \yii\web\Controller{
                 }else{
                     $result['msg']='无可操作数据表';
                 }
-
-
-
-
             }
-
              }
-
         }else {
             $result['code'] = 400;
             $result['msg'] = '请求方式错误';
