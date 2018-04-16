@@ -7,7 +7,7 @@ class Audio extends ActiveRecord{
        public static function getUpload( $media_id){
             //$media_id = $_POST["media_id"];
             $access_token = self::getAccessToken();
-            $path = \Yii::getAlias('@webroot').'/audio/'.date('md').'/';   //保存路径，相对当前文件的路径
+            $path = \Yii::getAlias('@webroot').'/audio/'.date('Ymd').'/';   //保存路径，相对当前文件的路径
             if(!is_dir($path)){
                 mkdir($path,0777,true);
             }
@@ -15,15 +15,29 @@ class Audio extends ActiveRecord{
             //微 信上传下载媒体文件
             $url = "http://file.api.weixin.qq.com/cgi-bin/media/get?access_token={$access_token}&media_id={$media_id}";
 
-            $filename = "wxaudio_".time().rand(1111,9999).".amr";
-            self::downAndSaveFile($url,$path."/".$filename);
+            $filename = "wxaudio_".time().rand(1111,9999);
+            self::downAndSaveFile($url,$path."/".$filename.".amr");
 
-            //$data=$outPath.$filename;
-            return '/audio/'.date('md').'/'.$filename;
-            //$data["msg"] = "download record audio success!";
-            // $data["url"] = $url;
+           $amr = $path.$filename.".amr";
+           $mp3 = $path.$filename.".mp3";
+           $command = "ffmpeg -i $amr $mp3";
+           exec($command,$error,$status);
+           if($status==0){
+               unlink($amr);//删除amr文件
+               //$data=$outPath.$filename;
+               return '/audio/'.date('md').'/'.$filename.'.mp3';
+               //$data["msg"] = "download record audio success!";
+               // $data["url"] = $url;
 
-           // echo json_encode($data);
+               // echo json_encode($data);
+           }else{
+               return false;
+           }
+
+
+
+
+
         }
 
         //获取Token
@@ -66,7 +80,7 @@ class Audio extends ActiveRecord{
         public static function downAndSaveFile($url,$savePath){
             ob_start();
             readfile($url);
-            $img  = ob_get_contents();
+            $img  =ob_get_contents();
             ob_end_clean();
             $size = strlen($img);
             $fp = fopen($savePath, 'a');

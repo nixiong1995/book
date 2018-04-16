@@ -463,49 +463,21 @@ class TestController extends Controller
         }
     }
 
+    //测试音频转码
+    public function actionTranscoding(){
 
-    //删除数据库txt图书
-    /*public function actionDelTxt()
-    {
-        //查询txt图书
-        $BookIds = Book::find()->select('id')->where(['from' => 4])->column();
-        foreach ($BookIds as $bookId) {
-            $book = Book::find()->where(['id' => $bookId])->one();
-            $author_id=$book->author_id;//作者id
-            $transaction=\Yii::$app->db->beginTransaction();//开启事务
-            try{
-                //删除书
-                $book->delete();
+         $amr = \Yii::getAlias('@webroot').'/audio/0416/wxaudio_152385378532601.amr';
+         $mp3 = $amr.'.mp3';
 
-                //删除作者(判断该作者是否还有其他书籍)
-                $relust=Book::findOne(['author_id'=>$author_id]);
-                if(!$relust){
-                    $author=Author::findOne(['id'=>$author_id]);
-                    //作者照片
-                    $author->delete();
-                }
+         if(file_exists($mp3) == true){
+                         // exit('无需转换');
+         }else{
+            $command = "ffmpeg -i $amr $mp3";
+            exec($command,$error,$status);
+            print_r($error);
 
-                //删除该书的所有章节
-                $result=Chapter::resetPartitionIndex($bookId);
-                if($result!=0){
-                    $chapters=Chapter::find()->where(['book_id'=>$bookId])->all();
-                    foreach ($chapters as $chapter){
-                        $chapter->delete();
-                    }
-                    $transaction->commit();
-                    echo '删除txt图书成功';
-                }else{
-                    echo '删除txt图书失败';
-                }
-
-
-            }catch (Exception $e){
-                //事务回滚
-                $transaction->rollBack();
-            }
-
-        }
-    }*/
+         }
+    }
 
 
 
