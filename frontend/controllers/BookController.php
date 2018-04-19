@@ -194,6 +194,8 @@ class BookController extends Controller{
                             //事务回滚
                             $transaction->rollBack();
                         }
+                        $result['msg']=201;
+                        $result['msg']='该书无章节已删除';
                     }
 
                 }else {
