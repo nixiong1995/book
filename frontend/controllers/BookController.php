@@ -5,6 +5,7 @@ use backend\models\Book;
 use backend\models\Chapter;
 use backend\models\Uuid;
 use DeepCopy\f004\UnclonableItem;
+use yii\data\Pagination;
 use yii\db\Exception;
 use yii\web\Controller;
 use yii\web\Response;
@@ -127,6 +128,82 @@ class BookController extends Controller{
             $relust['msg']='请求方式错误';
         }
         return $relust;
+    }
+
+    //更新图书
+    public function actionUpdateBook()
+    {
+        $result = [
+            'code' => 400,
+            'msg' => '请求失败',
+        ];
+        if (\Yii::$app->request->isGet) {
+            $page=\Yii::$app->request->get('page');
+            $query=Book::find()->where(['ascription'=>5]);
+            $count=ceil($query->count()/10);
+            if($page>$count){
+                $result['msg']='没有更多了';
+                return $result;
+            }
+            $pager=new Pagination([
+                'totalCount'=>$query->count(),//总条数
+                'defaultPageSize'=>10,//每页显示条数
+            ]);
+            $books=$query->limit($pager->limit)->offset($pager->offset)->all();
+            foreach ($books as $book){
+                $path=$book->image;
+                $author_id=$book->author_id;//作者id
+                $res=Chapter::resetPartitionIndex($book->id);
+                if($res!=0){
+                    $last_chapter=Chapter::find()->where(['book_id'=>$book->id])->orderBy('no DESC')->one();
+                    if($last_chapter){
+                        $result['code']=200;
+                        $result['msg']='成功返回信息';
+                        $result['data'][]=[
+                            'book_id'=>$book->id,
+                            'copyright_book_id'=>$book->copyright_book_id,
+                            'book_name'=>$book->name,
+                            'author_name'=>$book->author->name,
+                            'max_sort_id'=>$last_chapter->no,
+                            'last_chapter_name'=>$last_chapter->chapter_name,
+                        ];
+                    }else{
+                        $transaction=\Yii::$app->db->beginTransaction();//开启事务
+                        try{
+                            //删除书
+                            $book->delete();
+                            if($path){
+                                $path=UPLOAD_PATH.$path;
+                                unlink($path);
+                            }
+
+                            //删除作者(判断该作者是否还有其他书籍)
+                            $re=Book::findOne(['author_id'=>$author_id]);
+                            if(!$re){
+                                $author=Author::findOne(['id'=>$author_id]);
+                                //作者照片
+                                $path3=$author->image;
+                                $author->delete();
+                                if($path3){
+                                    $path3=UPLOAD_PATH.$path3;
+                                    unlink($path3);
+                                }
+                            }
+                            $transaction->commit();
+                        }catch (Exception $e){
+                            //事务回滚
+                            $transaction->rollBack();
+                        }
+                    }
+
+                }else {
+                    $result['msg'] = '无可操作数据表';
+                }
+            }
+
+        } else {
+            $result['msg']='请求方式错误';
+        }
     }
 
     //插入章节目录

@@ -25,7 +25,7 @@ class Audio extends ActiveRecord{
            if($status==0){
                unlink($amr);//删除amr文件
                //$data=$outPath.$filename;
-               return '/audio/'.date('md').'/'.$filename.'.mp3';
+               return '/audio/'.date('Ymd').'/'.$filename.'.mp3';
                //$data["msg"] = "download record audio success!";
                // $data["url"] = $url;
 
@@ -87,5 +87,10 @@ class Audio extends ActiveRecord{
             fwrite($fp, $img);
             fclose($fp);
         }
+
+        //关联查询录音书名
+    public function getMaterial(){
+        return $this->hasOne(Material::className(),['id'=>'material_id']);
+    }
 
 }

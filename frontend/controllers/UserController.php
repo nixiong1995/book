@@ -169,7 +169,7 @@ class UserController extends Controller {
                     $User->address=$address;
                     $User->source=$source;
                     $User->created_at=time();
-                    $User->imei='';
+                    $User->imei=$imei;
                     $User->status=1;
                     $transaction=\Yii::$app->db->beginTransaction();//开启事务
                     try{
@@ -189,15 +189,6 @@ class UserController extends Controller {
                         //事务回滚
                         $transaction->rollBack();
                     }
-
-
-
-
-
-
-
-
-
                 }
             }
         }else{
