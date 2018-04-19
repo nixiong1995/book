@@ -206,6 +206,7 @@ class BookController extends Controller{
                 }
 
             }else{
+                $result['msg']='没有数据';
 
             }
 
