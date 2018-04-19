@@ -280,7 +280,7 @@ class BookController extends Controller{
                         }
                         if($status){
                             $book->last_update_chapter_id=$model->id;
-                            //$book->last_update_chapter_name=$model->chapter_name;
+                            $book->last_update_chapter_name=$model->chapter_name;
                             $book->save(false);
                         }
 
