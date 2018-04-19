@@ -8,8 +8,8 @@ class Wechat extends Model{
      */
 
     //高级功能-》开发者模式-》获取
-    private $app_id = 'wxec5331ded31af4c7';
-    private $app_secret = 'e1aca895f340c21512a8976aa07f3d93';
+    private $app_id = '';
+    private $app_secret = '';
 
     /**
      * 获取微信授权链接
