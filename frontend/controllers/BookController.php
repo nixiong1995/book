@@ -151,7 +151,6 @@ class BookController extends Controller{
             ]);
             $books=$query->limit($pager->limit)->offset($pager->offset)->all();
             if($books){
-
                 foreach ($books as $book){
                     $path=$book->image;
                     $author_id=$book->author_id;//作者id
@@ -213,6 +212,7 @@ class BookController extends Controller{
         } else {
             $result['msg']='请求方式错误';
         }
+        return $result;
     }
 
     //插入章节目录
