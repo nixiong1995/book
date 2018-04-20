@@ -428,9 +428,7 @@ class BookController extends Controller{
 
             $book=Book::find()->where(['id'=>$book_id])->one();
 
-
             if($book){
-
                 if($book->ascription!=5){
                     $result['msg']='该书不属于追书神器';
                     return $result;
@@ -445,8 +443,7 @@ class BookController extends Controller{
                         )
                     );
 
-                    $cnt=0;
-                    while($cnt<3 && ($img=file_get_contents($img_url, false, stream_context_create($opts)))===FALSE) $cnt++;
+                   $img=file_get_contents($img_url, false, stream_context_create($opts));
                 }catch (\Exception $exception){
                     $img =file_get_contents('http://image.voogaa.cn/2018/03/16/default.jpg');
                 }
