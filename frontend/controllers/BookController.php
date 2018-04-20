@@ -43,8 +43,18 @@ class BookController extends Controller{
                 $relust['msg']='未传入指定参数';
                 return $relust;
             }
+            try{
+                $opts = array(
+                    'http'=>array(
+                        'method'=>"GET",
+                        'timeout'=>1,//单位秒
+                    )
+                );
 
-            $img =file_get_contents($img_url);
+                $img=file_get_contents($img_url, false, stream_context_create($opts));
+            }catch (\Exception $exception){
+                $img =file_get_contents('http://image.voogaa.cn/2018/03/16/default.jpg');
+            }
             $dir = UPLOAD_PATH .date("Y") . '/' . date("m") . '/' . date("d") . '/';
             $fileName = uniqid() . rand(1, 100000) . '.jpg';
             $uploadSuccessPath = date("Y") . '/' . date("m") . '/' . date("d") . '/' . $fileName;
