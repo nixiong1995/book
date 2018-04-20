@@ -389,7 +389,7 @@ class BookController extends Controller{
             //接收参数
             $page=\Yii::$app->request->get('page');
             $query=Book::find()->where(['ascription'=>5]);
-            $count=ceil($query->count()/10);
+            $count=ceil($query->count()/50);
             if($page>$count){
                 $result['msg']='没有更多了';
                 return $result;
