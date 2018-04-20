@@ -279,6 +279,7 @@ class BookController extends Controller{
                             $relust['msg']='存入章节失败';
                         }
                         if($status){
+                            $book->update_time=time();
                             $book->last_update_chapter_id=$model->id;
                             $book->last_update_chapter_name=$model->chapter_name;
                             $book->save(false);
@@ -366,5 +367,109 @@ class BookController extends Controller{
             $relust['msg']='请求方式错误';
         }
         return $relust;
+    }
+
+    //传入page返回图书id,书名,作者名
+    public function actionObtainBookinfo(){
+        $result=[
+            'code'=>400,
+            'msg'=>'请求失败',
+        ];
+        if(\Yii::$app->request->isGet){
+            //接收参数
+            $page=\Yii::$app->request->get('page');
+            $query=Book::find()->where(['ascription'=>5]);
+            $count=ceil($query->count()/10);
+            if($page>$count){
+                $result['msg']='没有更多了';
+                return $result;
+            }
+            $pager=new Pagination([
+                'totalCount'=>$query->count(),//总条数
+                'defaultPageSize'=>50,//每页显示条数
+            ]);
+            $books=$query->limit($pager->limit)->offset($pager->offset)->all();
+            if($books){
+                $result['code']=200;
+                $result['msg']='成功返回信息';
+                foreach ($books as $book){
+                    $result['data'][]=
+                        [
+                            'book_id'=>$book->id,
+                            'book_name'=>$book->name,
+                            'author_name'=>$book->author->name
+                        ];
+                }
+            }else{
+                $result['code']=404;
+                $result['msg']='暂无数据';
+            }
+
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
+    }
+
+    //替换书图片
+    public function actionReplaceBooking(){
+        $result=[
+            'code'=>200,
+            'msg'=>'请求失败',
+        ];
+        if(\Yii::$app->request->isPost){
+            //接收参数
+            $book_id=\Yii::$app->request->post('book_id');
+            $img_url=\Yii::$app->request->post('img_url');
+            if(empty($book_id) || empty($img_url)){
+                $result['msg']='未传入指定参数';
+                return $result;
+            }
+
+            $book=Book::find()->where(['id'=>$book_id])->one();
+
+
+            if($book){
+
+                if($book->ascription!=5){
+                    $result['msg']='该书不属于追书神器';
+                    return $result;
+                }
+
+                $path=$book->image;
+                try{
+                    $img =file_get_contents($img_url);
+                }catch (\Exception $exception){
+                    $img =file_get_contents('http://image.voogaa.cn/2018/03/16/default.jpg');
+                }
+
+                $dir = UPLOAD_PATH .date("Y") . '/' . date("m") . '/' . date("d") . '/';
+                $fileName = uniqid() . rand(1, 100000) . '.jpg';
+                $uploadSuccessPath = date("Y") . '/' . date("m") . '/' . date("d") . '/' . $fileName;
+                if (!is_dir($dir)) {
+                    mkdir($dir, 0777, true);
+                }
+                file_put_contents($dir . '/' . $fileName, $img);
+                $book->image=$uploadSuccessPath;
+                if($book->save()){
+                    if($path){
+                        $path=UPLOAD_PATH.$path;
+                        unlink($path);
+                    }
+                    $result['code']=200;
+                    $result['msg']='替换成功';
+                }else{
+                    $result['msg']='替换失败';
+                }
+
+            }else{
+                $result['code']=404;
+                $result['msg']='未找到该书';
+            }
+
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
     }
 }

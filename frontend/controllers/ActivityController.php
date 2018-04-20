@@ -69,7 +69,7 @@ class ActivityController extends Controller{
                 $model=new Audio();
                 $model->material_id=$material_id;
                 $model->member_id=$member_id;
-                $model->path= $path;
+                $model->path=$path;
                 $model->duration=$duration;
                 $model->status=1;
                 $model->create_time=time();
@@ -80,8 +80,6 @@ class ActivityController extends Controller{
                     $relust['msg']='存入音频失败';
                 }
             }
-
-
         }else{
             $relust['msg']='请求方式错误';
         }
@@ -421,8 +419,7 @@ class ActivityController extends Controller{
         if(\Yii::$app->request->isPost){
             //接收参数
             $author_id=\Yii::$app->request->post('author_id');
-            $member_id=\Yii::$app->request->post('member_id');
-            if(empty($member_id) || empty($author_id)){
+            if(empty($author_id)){
                 $result['msg']='未传入指定参数';
                 return $result;
             }
@@ -434,13 +431,9 @@ class ActivityController extends Controller{
                 return $result;
             }
 
-            //查询作者作品id
-            $audio_ids=Audio::find()->select('id')->where(['member_id'=>$author_id])->scalar();
-            $num=0;
-            if($audio_ids){
-                //统计用户给这些作品的点赞数
-                $num=Praise::find()->where(['audio_id'=>$audio_ids])->andWhere(['member_id'=>$member_id])->count('id');
-            }
+            //查询作者赞数
+            $praise=Audio::find()->where(['member_id'=>$author_id])->sum('praise');
+            $praise=$praise?$praise:0;
             $result['code']=200;
             $result['msg']='成功返回数据';
             foreach ($photos as $photo){
@@ -451,7 +444,7 @@ class ActivityController extends Controller{
                     'limit'=>$photo->limit,
                     'status'=>$photo->status,
                     'create_time'=>$photo->create_time,
-                    'praise'=>$num,
+                    'praise'=>$praise,
 
                     ];
             }
