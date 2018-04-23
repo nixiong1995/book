@@ -523,6 +523,8 @@ class TestController extends Controller
 
 
     public function actionDiaoYong(){
+        //设置脚本执行时间(不终止)
+        set_time_limit(0);
         for ($i=1;$i<=4;$i++){
             $this->actionReplaceBooking($i);
             echo '<p style="color: red">第'.$i.'页</p>';
