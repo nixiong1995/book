@@ -417,6 +417,7 @@ class TestController extends Controller
         //查询数据库追书神器书id
         //$BookIds=Book::find()->select('id')->where(['ascription'=>5])->andWhere([''])->column();
         $BookIds=\Yii::$app->db->createCommand('SELECT id FROM book WHERE ascription=5 AND TO_DAYS(NOW()) - TO_DAYS(from_unixtime(create_time,\'%Y-%m-%d\')) = 1')->queryColumn();
+        //$BookIds=\Yii::$app->db->createCommand('SELECT id FROM book WHERE ascription=5 AND DATE_SUB(CURDATE(), INTERVAL 7 DAY) <= from_unixtime(create_time,\'%Y-%m-%d\')')->queryColumn();
         foreach ($BookIds as $bookId){
             $result=Chapter::resetPartitionIndex($bookId);
             if($result!=0){
@@ -463,21 +464,6 @@ class TestController extends Controller
         }
     }
 
-    //测试音频转码
-    public function actionTranscoding(){
-
-         $amr = \Yii::getAlias('@webroot').'/audio/0416/wxaudio_152385378532601.amr';
-         $mp3 = $amr.'.mp3';
-
-         if(file_exists($mp3) == true){
-                         // exit('无需转换');
-         }else{
-            $command = "ffmpeg -i $amr $mp3";
-            exec($command,$error,$status);
-            print_r($error);
-
-         }
-    }
 
 
 

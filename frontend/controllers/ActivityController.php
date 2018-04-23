@@ -1,6 +1,7 @@
 <?php
 namespace frontend\controllers;
 use frontend\models\Audio;
+use frontend\models\Gift;
 use frontend\models\Material;
 use frontend\models\Member;
 use frontend\models\Photos;
@@ -54,22 +55,40 @@ class ActivityController extends Controller{
             'msg'=>'请求失败',
         ];
         if(\Yii::$app->request->isPost){
-            $audio_id=\Yii::$app->request->post('audio_id');
+            $file=$_FILES['filePath'];
             $material_id=\Yii::$app->request->post('material_id');
             $member_id=\Yii::$app->request->post('member_id');
             $duration=\Yii::$app->request->post('duration');
-            if(empty($audio_id) || empty($member_id) || empty($duration) || empty($audio_content_id)){
+            if(empty($file) || empty($member_id) || empty($duration) || empty($material_id)){
                 $relust['msg']='未传入指定参数';
                 return $relust;
             }
-            $path=Audio::getUpload( $audio_id);
-            if($path==false){
-                $relust['msg']='音频转换失败';
-            }else{
+            $name = $file['name'];
+            $type = strtolower(substr($name,strrpos($name,'.')+1)); //得到文件类型，并且都转化成小写
+            $allow_type = array('mp3','silk','arm','avi'); //定义允许上传的类型
+            //判断文件类型是否被允许上传
+            if(!in_array($type, $allow_type)){
+                //如果不被允许，则直接停止程序运行
+                $result['msg']='图片格式不允许';
+                return $result;
+            }
+            $dir =\Yii::getAlias('@webroot') .'/audio/'.date("Ymd").'/';
+            if (!is_dir($dir)) {
+                mkdir($dir,0777,true);
+            }
+            $fileName =uniqid() . rand(1, 100000)  . '.'.$type;
+            $dir = $dir . "/" . $fileName;
+            //移动文件
+            move_uploaded_file($file['tmp_name'],$dir);
+            $uploadSuccessPath = '/audio/'.date("Ymd").'/' . $fileName;
+           // $path=Audio::getUpload( $audio_id);
+          //  if($path==false){
+               // $relust['msg']='音频转换失败';
+           // }else{
                 $model=new Audio();
                 $model->material_id=$material_id;
                 $model->member_id=$member_id;
-                $model->path=$path;
+                $model->path=$uploadSuccessPath;
                 $model->duration=$duration;
                 $model->status=1;
                 $model->create_time=time();
@@ -79,7 +98,7 @@ class ActivityController extends Controller{
                 }else{
                     $relust['msg']='存入音频失败';
                 }
-            }
+          //  }
         }else{
             $relust['msg']='请求方式错误';
         }
@@ -517,6 +536,58 @@ class ActivityController extends Controller{
                 $result['code']=201;
                 $result['msg']='未找到该照片';
             }
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
+    }
+
+    //赠送阅票或者书券
+    public function actionGift(){
+        $result=[
+            'code'=>400,
+            'msg'=>'请求失败',
+        ];
+        if(\Yii::$app->request->isPost){
+            //接收参数
+            $phone=\Yii::$app->request->post('phone');
+            $ticket=\Yii::$app->request->post('ticket');
+            $voucher=\Yii::$app->request->post('voucher');
+            if(empty($phone) || (empty($ticket) && empty($voucher))){
+                $result['msg']='未传入指定参数';
+                return $result;
+            }
+            $model=Gift::find()->where(['phone'=>$phone])->one();
+            if($model){
+                //已有赠送记录
+                if($ticket){
+                    $model->ticket=$model->ticket+$ticket;
+                }else{
+                    $model->voucher=$model->voucher+$voucher;
+                }
+                if($model->save()){
+                    $result['code']=200;
+                    $result['msg']='记录成功';
+                }else{
+                    $result['msg']='记录失败';
+                }
+            }else{
+                //未有赠送记录
+                $model=new Gift();
+                $model->phone=$phone;
+                if($ticket){
+                    $model->ticket=$ticket;
+                }else{
+                    $model->voucher=$voucher;
+                }
+                if($model->save()){
+                    $result['code']=200;
+                    $result['msg']='记录成功';
+                }else{
+                    $result['msg']='记录失败';
+                }
+            }
+
         }else{
             $result['msg']='请求方式错误';
         }
