@@ -479,19 +479,51 @@ class TestController extends Controller
             'defaultPageSize'=>50,//每页显示条数
         ]);
         $books=$query->limit($pager->limit)->offset($pager->offset)->all();
-        foreach ($books as $book){
-            $get=new PostRequest();
-            $data=$get->send_request('http://api.zhuishushenqi.com/book/'.$book->copyright_book_id,
+        foreach ($books as $book) {
+            $get = new PostRequest();
+            $data = $get->send_request('http://api.zhuishushenqi.com/book/' . $book->copyright_book_id,
 
                 [
-                    '_access_version'=>2,
-                    '_versions'=>958,
-                    'access_token'=>'',
-                    'app_key'=>2222420362,
+                    '_access_version' => 2,
+                    '_versions' => 958,
+                    'access_token' => '',
+                    'app_key' => 2222420362,
                 ]
             );
-            $datas=(json_decode($data));
-            var_dump($datas);exit;
+            $datas = (json_decode($data));
+            //var_dump($datas);
+            $img_url = 'http://statics.zhuishushenqi.com' . $datas->cover;
+            $path = $book->image;
+            try {
+                $opts = array(
+                    'http' => array(
+                        'method' => "GET",
+                        'timeout' => 1,//单位秒
+                    )
+                );
+
+                $img = file_get_contents($img_url, false, stream_context_create($opts));
+            } catch (\Exception $exception) {
+                $img = file_get_contents('http://image.voogaa.cn/2018/03/16/default.jpg');
+            }
+
+            $dir = UPLOAD_PATH . date("Y") . '/' . date("m") . '/' . date("d") . '/';
+            $fileName = uniqid() . rand(1, 100000) . '.jpg';
+            $uploadSuccessPath = date("Y") . '/' . date("m") . '/' . date("d") . '/' . $fileName;
+            if (!is_dir($dir)) {
+                mkdir($dir, 0777, true);
+            }
+            file_put_contents($dir . '/' . $fileName, $img);
+            $book->image = $uploadSuccessPath;
+            if ($book->save()) {
+                if ($path) {
+                $path = UPLOAD_PATH . $path;
+                unlink($path);
+                }
+                echo '替换书' . $book->name . '封面成功';
+            } else {
+                echo '替换失败';
+            }
 
         }
     }

@@ -565,6 +565,4 @@ class TaskController extends Controller{
 
     }
 
-
-
 }
