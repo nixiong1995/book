@@ -511,10 +511,10 @@ class TestController extends Controller
             $book->image = $uploadSuccessPath;
             if ($book->save()) {
                 if ($path) {
-                $path = UPLOAD_PATH . $path;
+                $path = UPLOAD_PATH .$path;
                 unlink($path);
                 }
-                echo ++$i.'替换书' . $book->name . '封面成功</br>';
+                echo ++$i.$book->name .'</br>';
             } else {
                 echo ++$i.'替换失败</br>';
             }
