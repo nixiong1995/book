@@ -55,7 +55,7 @@ class ActivityController extends Controller{
             'msg'=>'请求失败',
         ];
         if(\Yii::$app->request->isPost){
-            $file=$_FILES['filePath'];
+            $file=$_FILES['file'];
             $material_id=\Yii::$app->request->post('material_id');
             $member_id=\Yii::$app->request->post('member_id');
             $duration=\Yii::$app->request->post('duration');
@@ -76,7 +76,7 @@ class ActivityController extends Controller{
             if (!is_dir($dir)) {
                 mkdir($dir,0777,true);
             }
-            $fileName =uniqid() . rand(1, 100000)  . '.'.$type;
+            $fileName ='wx_'.uniqid() . rand(1, 100000)  . '.'.$type;
             $dir = $dir . "/" . $fileName;
             //移动文件
             move_uploaded_file($file['tmp_name'],$dir);
