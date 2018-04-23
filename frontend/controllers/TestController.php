@@ -465,9 +465,9 @@ class TestController extends Controller
     }
 
     //替换追书封面
-    public function actionReplaceBooking(){
+    public function actionReplaceBooking($page){
         //查询追书神器图书
-        $page=\Yii::$app->request->get('page');
+       // $page=\Yii::$app->request->get('page');
         $query=Book::find()->where(['ascription'=>5])->andWhere(['NOT',['copyright_book_id'=>null]]);
         $count=ceil($query->count()/50);
         if($page>$count){
@@ -519,6 +519,15 @@ class TestController extends Controller
                 echo ++$i.'替换失败</br>';
             }
         }
+    }
+
+
+    public function actionDiaoYong(){
+        for ($i=1;$i<=4;$i++){
+            $this->actionReplaceBooking($i);
+            echo '<p style="color: red">第'.$i.'</p>';
+        }
+
     }
 
 
