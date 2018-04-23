@@ -525,7 +525,7 @@ class TestController extends Controller
     public function actionDiaoYong(){
         for ($i=1;$i<=4;$i++){
             $this->actionReplaceBooking($i);
-            echo '<p style="color: red">第'.$i.'</p>';
+            echo '<p style="color: red">第'.$i.'页</p>';
         }
 
     }

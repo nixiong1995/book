@@ -8,6 +8,7 @@ use Codeception\Exception\InjectionException;
 use libs\PostRequest;
 use yii\base\InvalidParamException;
 use yii\console\Controller;
+use yii\data\Pagination;
 use yii\db\Exception;
 
 class TaskController extends Controller{
@@ -562,6 +563,74 @@ class TaskController extends Controller{
             }
 
     }
+
+    }
+
+    //替换追书封面
+    public function actionReplaceBooking($page){
+        //查询追书神器图书
+        // $page=\Yii::$app->request->get('page');
+        $query=Book::find()->where(['ascription'=>5])->andWhere(['NOT',['copyright_book_id'=>null]]);
+        $count=ceil($query->count()/50);
+        if($page>$count){
+            $result['msg']='没有更多了';
+            return $result;
+        }
+        $pager=new Pagination([
+            'totalCount'=>$query->count(),//总条数
+            'defaultPageSize'=>50,//每页显示条数
+        ]);
+        $books=$query->limit($pager->limit)->offset($pager->offset)->all();
+        $i=0;
+        foreach ($books as $book) {
+            $get = new PostRequest();
+            $data = $get->send_request('http://api.zhuishushenqi.com/book/' . $book->copyright_book_id,
+
+                [
+                    '_access_version' => 2,
+                    '_versions' => 958,
+                    'access_token' => '',
+                    'app_key' => 2222420362,
+                ]
+            );
+            $datas = (json_decode($data));
+            //var_dump($datas);
+            $img_url = 'http://statics.zhuishushenqi.com' . $datas->cover;
+            $path = $book->image;
+            try {
+                $img = file_get_contents($img_url);
+            } catch (\Exception $exception) {
+                $img = file_get_contents('http://image.voogaa.cn/2018/03/16/default.jpg');
+            }
+
+            $dir = UPLOAD_PATH . date("Y") . '/' . date("m") . '/' . date("d") . '/';
+            $fileName = uniqid() . rand(1, 100000) . '.jpg';
+            $uploadSuccessPath = date("Y") . '/' . date("m") . '/' . date("d") . '/' . $fileName;
+            if (!is_dir($dir)) {
+                mkdir($dir, 0777, true);
+            }
+            file_put_contents($dir . '/' . $fileName, $img);
+            $book->image = $uploadSuccessPath;
+            if ($book->save()) {
+                if ($path) {
+                    $path = UPLOAD_PATH . $path;
+                    unlink($path);
+                }
+                echo ++$i.'替换书' . $book->name . '封面成功'."\n";
+            } else {
+                echo ++$i.'替换失败'."\n";
+            }
+        }
+    }
+
+
+    public function actionDiaoYong(){
+        //设置脚本执行时间(不终止)
+        set_time_limit(0);
+        for ($i=1;$i<=4;$i++){
+            $this->actionReplaceBooking($i);
+            echo '第'.$i.'页'."\n";
+        }
 
     }
 
