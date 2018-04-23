@@ -479,6 +479,7 @@ class TestController extends Controller
             'defaultPageSize'=>50,//每页显示条数
         ]);
         $books=$query->limit($pager->limit)->offset($pager->offset)->all();
+        $i=0;
         foreach ($books as $book) {
             $get = new PostRequest();
             $data = $get->send_request('http://api.zhuishushenqi.com/book/' . $book->copyright_book_id,
@@ -520,11 +521,10 @@ class TestController extends Controller
                 $path = UPLOAD_PATH . $path;
                 unlink($path);
                 }
-                echo '替换书' . $book->name . '封面成功';
+                echo ++$i.'替换书' . $book->name . '封面成功</br>';
             } else {
-                echo '替换失败';
+                echo ++$i.'替换失败</br>';
             }
-
         }
     }
 
