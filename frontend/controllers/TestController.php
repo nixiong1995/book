@@ -496,14 +496,7 @@ class TestController extends Controller
             $img_url = 'http://statics.zhuishushenqi.com' . $datas->cover;
             $path = $book->image;
             try {
-                $opts = array(
-                    'http' => array(
-                        'method' => "GET",
-                        'timeout' => 1,//单位秒
-                    )
-                );
-
-                $img = file_get_contents($img_url, false, stream_context_create($opts));
+                $img = file_get_contents($img_url);
             } catch (\Exception $exception) {
                 $img = file_get_contents('http://image.voogaa.cn/2018/03/16/default.jpg');
             }
