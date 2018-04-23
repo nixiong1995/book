@@ -464,6 +464,38 @@ class TestController extends Controller
         }
     }
 
+    //替换追书封面
+    public function actionReplaceBooking(){
+        //查询追书神器图书
+        $page=\Yii::$app->request->get('page');
+        $query=Book::find()->where(['ascription'=>5])->andWhere(['NOT',['copyright_book_id'=>null]]);
+        $count=ceil($query->count()/50);
+        if($page>$count){
+            $result['msg']='没有更多了';
+            return $result;
+        }
+        $pager=new Pagination([
+            'totalCount'=>$query->count(),//总条数
+            'defaultPageSize'=>50,//每页显示条数
+        ]);
+        $books=$query->limit($pager->limit)->offset($pager->offset)->all();
+        foreach ($books as $book){
+            $get=new PostRequest();
+            $data=$get->send_request('http://api.zhuishushenqi.com/book/'.$book->copyright_book_id,
+
+                [
+                    '_access_version'=>2,
+                    '_versions'=>958,
+                    'access_token'=>'',
+                    'app_key'=>2222420362,
+                ]
+            );
+            $datas=(json_decode($data));
+            var_dump($datas);exit;
+
+        }
+    }
+
 
 
 
