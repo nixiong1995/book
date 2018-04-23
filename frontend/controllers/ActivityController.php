@@ -28,11 +28,17 @@ class ActivityController extends Controller{
             'msg'=>'请求失败',
         ];
         if(\Yii::$app->request->isPost){
-            $wechat=\Yii::$app->request->post('wechat');
-            $phone=\Yii::$app->request->post('phone');
+            $nickName=\Yii::$app->request->post('nickName');
+            $gender=\Yii::$app->request->post('gender');
+            $avatarUrl=\Yii::$app->request->post('avatarUrl');
+            if(empty($nickName) || empty($gender) || empty($avatarUrl)){
+                $relust['msg']='未传入指定参数';
+                return $relust;
+            }
             $member=new Member();
-            $member->wechat=$wechat;
-            $member->phone=$phone;
+            $member->nickName=$nickName;
+            $member->gender=$gender;
+            $member->avatarUrl=$avatarUrl;
             $member->create_time=time();
             if($member->save()){
                 $relust['code']=200;
