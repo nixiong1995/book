@@ -481,9 +481,14 @@ class TestController extends Controller
         $books=$query->limit($pager->limit)->offset($pager->offset)->all();
         $i=0;
         foreach ($books as $book) {
+
             $url='http://api.zhuishushenqi.com/book/' . $book->copyright_book_id;
-            $html = file_get_contents($url);
-            $datas = (json_decode($html));
+            $ch = curl_init();
+            curl_setopt ($ch, CURLOPT_URL, $url);
+            curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT,10);
+            $dxycontent = curl_exec($ch);
+            $datas = (json_decode($dxycontent));
             if($datas->_id){
                 $img_url = 'http://statics.zhuishushenqi.com' .$datas->cover;
                 $path = $book->image;
@@ -521,9 +526,15 @@ class TestController extends Controller
     public function actionDiaoYong(){
         //设置脚本执行时间(不终止)
         set_time_limit(0);
-        for ($i=1;$i<=4;$i++){
-            $this->actionReplaceBooking($i);
-            echo '<p style="color: red">第'.$i.'页</p>';
+        for ($i=12;$i<=14;$i++){
+            $url='http://api.zhuishushenqi.com/book/?page=' .$i;
+            $ch = curl_init();
+            curl_setopt ($ch, CURLOPT_URL, $url);
+            curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT,10);
+            $dxycontent = curl_exec($ch);
+            echo $dxycontent;
+            echo '<p style="color: red">第'.$i.'页完</p>';
         }
 
     }
