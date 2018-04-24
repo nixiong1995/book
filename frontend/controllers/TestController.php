@@ -482,7 +482,7 @@ class TestController extends Controller
         $i=0;
         foreach ($books as $book) {
 
-            $url='http://api.zhuishushenqi.com/book/' . $book->copyright_book_id;
+            $url="http://api.zhuishushenqi.com/book/$book->copyright_book_id";
             $ch = curl_init();
             curl_setopt ($ch, CURLOPT_URL, $url);
             curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -516,7 +516,7 @@ class TestController extends Controller
                     echo ++$i.'替换失败</br>';
                 }
             }else{
-                echo ++$i.'<p style="color: yellow">接口请求失败</p>';
+                echo ++$i.'<p style="color: yellow">'.++$i.$book->name.'</p>';
             }
 
         }
@@ -536,6 +536,18 @@ class TestController extends Controller
             echo $dxycontent;
             echo '<p style="color: red">第'.$i.'页完</p>';
         }
+
+    }
+
+    public function actionZhuishu(){
+        $url='http://api.zhuishushenqi.com/book/5417795baf09b9822d4f09ff';
+        $ch = curl_init();
+        curl_setopt ($ch, CURLOPT_URL, $url);
+        curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT,10);
+        $dxycontent = curl_exec($ch);
+        $datas = (json_decode($dxycontent));
+        var_dump($datas);
 
     }
 
