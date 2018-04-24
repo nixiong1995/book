@@ -553,9 +553,7 @@ ORDER BY id LIMIT 3")->all();
                 }
                 if($authorIds){
                     $authorIds= join(',', $authorIds);
-                    var_dump($authorIds);exit;
-                    $models=Book::findBySql("SELECT * FROM book WHERE author_id in ($authorIds) ORDER BY field ($authorIds)")->all();
-
+                    $models=Book::findBySql("SELECT * FROM book WHERE author_id in ($authorIds) ORDER BY  field(author_id,$authorIds)")->all();
                     foreach ($models as $model){
                         $ImgUrl=$model->image;
                         if($model->is_api==0){
