@@ -542,6 +542,7 @@ class TestController extends Controller
     public function actionZhuishu(){
         $name=\Yii::$app->request->get('name');
         $book=Book::find()->where(['name'=>$name])->one();
+        $path = $book->image;
         $url="http://api.zhuishushenqi.com/book/$book->copyright_book_id";
         $ch = curl_init();
         curl_setopt ($ch, CURLOPT_URL, $url);
@@ -551,7 +552,6 @@ class TestController extends Controller
         $datas = (json_decode($dxycontent));
         if($datas->_id){
             $img_url = 'http://statics.zhuishushenqi.com' .$datas->cover;
-            $path = $book->image;
             try {
                 $img = file_get_contents($img_url);
             } catch (\Exception $exception) {
@@ -576,7 +576,25 @@ class TestController extends Controller
                 echo '替换失败</br>';
             }
         }else{
-            echo'<p style="color: yellow">'.$book->name.'</p>';
+            $img_url = 'http://image.voogaa.cn/2018/03/16/default.jpg';
+            $img = file_get_contents($img_url);
+            $dir = UPLOAD_PATH . date("Y") . '/' . date("m") . '/' . date("d") . '/';
+            $fileName = uniqid() . rand(1, 100000) . '.jpg';
+            $uploadSuccessPath = date("Y") . '/' . date("m") . '/' . date("d") . '/' . $fileName;
+            if (!is_dir($dir)) {
+                mkdir($dir, 0777, true);
+            }
+            file_put_contents($dir . '/' . $fileName, $img);
+            $book->image = $uploadSuccessPath;
+            if ($book->save()) {
+                if ($path) {
+                    $path = UPLOAD_PATH .$path;
+                    unlink($path);
+                }
+                echo $book->name .'</br>';
+            } else {
+                echo '替换失败</br>';
+            }
         }
 
     }
