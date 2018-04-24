@@ -545,7 +545,8 @@ ORDER BY id LIMIT 3")->all();
                 }
 
                 //$authors=Author::findBySql("select * ,(length(name)-length('$keyword')) as rn from author where name like '%$keyword%' order by rn limit 50")->all();
-                $authorIds=Author::findBySql("select id ,(length(name)-length('$keyword')) as rn from author where name like '%$keyword%' order by rn limit 50")->column();
+                $authorIds=Author::findBySql("select * ,(length(name)-length('$keyword')) as rn from author where name like '%$keyword%' order by rn limit 50")->all();
+                var_dump($authorIds);exit;
 
                 $books=Book::findBySql("select * ,(length(name)-length('$keyword')) as rn from book where name like '%$keyword%' order by rn limit 50")->all();
                 if(!$books && !$authorIds){
