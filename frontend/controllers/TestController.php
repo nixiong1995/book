@@ -540,14 +540,44 @@ class TestController extends Controller
     }
 
     public function actionZhuishu(){
-        $url='http://api.zhuishushenqi.com/book/5417795baf09b9822d4f09ff';
+        $name=\Yii::$app->request->get('name');
+        $book=Book::find()->where(['name'=>$name])->one();
+        $url="http://api.zhuishushenqi.com/book/$book->copyright_book_id";
         $ch = curl_init();
         curl_setopt ($ch, CURLOPT_URL, $url);
         curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT,10);
         $dxycontent = curl_exec($ch);
         $datas = (json_decode($dxycontent));
-        var_dump($datas);
+        if($datas->_id){
+            $img_url = 'http://statics.zhuishushenqi.com' .$datas->cover;
+            $path = $book->image;
+            try {
+                $img = file_get_contents($img_url);
+            } catch (\Exception $exception) {
+                $img = file_get_contents('http://image.voogaa.cn/2018/03/16/default.jpg');
+            }
+
+            $dir = UPLOAD_PATH . date("Y") . '/' . date("m") . '/' . date("d") . '/';
+            $fileName = uniqid() . rand(1, 100000) . '.jpg';
+            $uploadSuccessPath = date("Y") . '/' . date("m") . '/' . date("d") . '/' . $fileName;
+            if (!is_dir($dir)) {
+                mkdir($dir, 0777, true);
+            }
+            file_put_contents($dir . '/' . $fileName, $img);
+            $book->image = $uploadSuccessPath;
+            if ($book->save()) {
+                if ($path) {
+                    $path = UPLOAD_PATH .$path;
+                    unlink($path);
+                }
+                echo $book->name .'</br>';
+            } else {
+                echo '替换失败</br>';
+            }
+        }else{
+            echo'<p style="color: yellow">'.$book->name.'</p>';
+        }
 
     }
 
