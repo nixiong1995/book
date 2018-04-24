@@ -669,7 +669,7 @@ class ActivityController extends Controller{
                 $result['msg']='未传入指定参数';
                 return $result;
             }
-            $audio_Ids=Praise::find()->select('audio_id')->where(['member_id'=>$member_id])->scalar();
+            $audio_Ids=Praise::find()->select('audio_id')->where(['member_id'=>$member_id])->column();
             if($audio_Ids){
                 $audios=Audio::find()->where(['id'=>$audio_Ids])->orderBy('praise DESC')->all();
                 if($audios){
