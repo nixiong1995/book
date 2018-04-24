@@ -552,7 +552,7 @@ ORDER BY id LIMIT 3")->all();
                     return $result;
                 }
                 if($authorIds){
-                    $models=Book::find()->where(['author_id'=>$authorIds])->all();
+                    $models=Book::findBySql("SELECT * FROM book WHERE author_id in $authorIds ORDER BY field $authorIds")->all();
 
                     foreach ($models as $model){
                         $ImgUrl=$model->image;
