@@ -552,6 +552,7 @@ ORDER BY id LIMIT 3")->all();
                     return $result;
                 }
                 if($authorIds){
+                    $authorIds= join(',', $authorIds);
                     $models=Book::findBySql("SELECT * FROM book WHERE author_id in ($authorIds) ORDER BY field ($authorIds)")->all();
 
                     foreach ($models as $model){
