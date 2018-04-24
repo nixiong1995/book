@@ -481,43 +481,39 @@ class TestController extends Controller
         $books=$query->limit($pager->limit)->offset($pager->offset)->all();
         $i=0;
         foreach ($books as $book) {
-            $get = new PostRequest();
-            $data = $get->send_request('http://api.zhuishushenqi.com/book/' . $book->copyright_book_id,
-
-                [
-                    '_access_version' => 2,
-                    '_versions' => 958,
-                    'access_token' => '',
-                    'app_key' => 2222420362,
-                ]
-            );
-            $datas = (json_decode($data));
-            //var_dump($datas);
-            $img_url = 'http://statics.zhuishushenqi.com' . $datas->cover;
-            $path = $book->image;
-            try {
-                $img = file_get_contents($img_url);
-            } catch (\Exception $exception) {
-                $img = file_get_contents('http://image.voogaa.cn/2018/03/16/default.jpg');
-            }
-
-            $dir = UPLOAD_PATH . date("Y") . '/' . date("m") . '/' . date("d") . '/';
-            $fileName = uniqid() . rand(1, 100000) . '.jpg';
-            $uploadSuccessPath = date("Y") . '/' . date("m") . '/' . date("d") . '/' . $fileName;
-            if (!is_dir($dir)) {
-                mkdir($dir, 0777, true);
-            }
-            file_put_contents($dir . '/' . $fileName, $img);
-            $book->image = $uploadSuccessPath;
-            if ($book->save()) {
-                if ($path) {
-                $path = UPLOAD_PATH .$path;
-                unlink($path);
+            $url='http://api.zhuishushenqi.com/book/' . $book->copyright_book_id;
+            $html = file_get_contents($url);
+            $datas = (json_decode($html));
+            if($datas){
+                $img_url = 'http://statics.zhuishushenqi.com' .$datas->cover;
+                $path = $book->image;
+                try {
+                    $img = file_get_contents($img_url);
+                } catch (\Exception $exception) {
+                    $img = file_get_contents('http://image.voogaa.cn/2018/03/16/default.jpg');
                 }
-                echo ++$i.$book->name .'</br>';
-            } else {
-                echo ++$i.'替换失败</br>';
+
+                $dir = UPLOAD_PATH . date("Y") . '/' . date("m") . '/' . date("d") . '/';
+                $fileName = uniqid() . rand(1, 100000) . '.jpg';
+                $uploadSuccessPath = date("Y") . '/' . date("m") . '/' . date("d") . '/' . $fileName;
+                if (!is_dir($dir)) {
+                    mkdir($dir, 0777, true);
+                }
+                file_put_contents($dir . '/' . $fileName, $img);
+                $book->image = $uploadSuccessPath;
+                if ($book->save()) {
+                    if ($path) {
+                        $path = UPLOAD_PATH .$path;
+                        unlink($path);
+                    }
+                    echo ++$i.$book->name .'</br>';
+                } else {
+                    echo ++$i.'替换失败</br>';
+                }
+            }else{
+                echo ++$i.'接口请求失败';
             }
+
         }
     }
 
