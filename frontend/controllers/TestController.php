@@ -527,7 +527,7 @@ class TestController extends Controller
         //设置脚本执行时间(不终止)
         set_time_limit(0);
         for ($i=12;$i<=14;$i++){
-            $url='http://api.zhuishushenqi.com/book/?page=' .$i;
+            $url='http://api.voogaa.cn/test/replace-booking?page=' .$i;
             $ch = curl_init();
             curl_setopt ($ch, CURLOPT_URL, $url);
             curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
