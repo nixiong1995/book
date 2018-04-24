@@ -192,6 +192,7 @@ class ActivityController extends Controller{
                 foreach ($audios as $audio){
                     $relust['data'][]=[
                         'id'=>$audio->id,
+                        'member_id'=>$audio->member_id,
                         'material_id'=>$audio->material_id,
                         'material_name'=>$audio->material->book_name,
                         'material_img'=>$audio->material->book_img,
@@ -332,6 +333,7 @@ class ActivityController extends Controller{
                     $relust['msg']='成功返回搜索结果';
                     $relust['data'][]=[
                         'id'=>$audio->id,
+                        'member_id'=>$audio->member_id,
                         'material_id'=>$audio->material_id,
                         'material_name'=>$audio->material->book_name,
                         'material_img'=>$audio->material->book_img,
@@ -356,6 +358,7 @@ class ActivityController extends Controller{
                         foreach ($audios as $audio){
                             $relust['data'][]=[
                                 'id'=>$audio->id,
+                                'member_id'=>$audio->member_id,
                                 'material_id'=>$audio->material_id,
                                 'material_name'=>$audio->material->book_name,
                                 'material_img'=>$audio->material->book_img,
@@ -411,6 +414,7 @@ class ActivityController extends Controller{
                 foreach ($models as $model){
                     $relust['data'][]=[
                         'id'=>$model->id,
+                        'member_id'=>$model->member_id,
                         'material_id'=>$model->material_id,
                         'material_name'=>$model->material->book_name,
                         'material_img'=>$model->material->book_img,
@@ -594,6 +598,106 @@ class ActivityController extends Controller{
                 }
             }
 
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
+    }
+
+    //音频详情
+    public function actionAudioDetails(){
+        $result=[
+            'code'=>400,
+            'msg'=>'请求失败',
+        ];
+        if(\Yii::$app->request->isPost){
+            //接收参数
+            $audio_id=\Yii::$app->request->post('audio_id');
+            $member_id=\Yii::$app->request->post('member_id');
+            if(empty($audio_id) || empty($member_id)){
+                $result['msg']='未传入指定参数';
+                return $result;
+            }
+            $member=Member::find()->where(['id'=>$member_id])->one();
+            $audio=Audio::find()->where(['id'=>$audio_id])->one();
+            if($member_id && $audio){
+                $result['code']=200;
+                $result['msg']='成功返回信息';
+                $result['data']['member']=[
+                    'member_id'=>$member->id,
+                    'nickName'=>$member->nickName,
+                    'gender'=>$member->gender,
+                    'avatarUrl'=>$member->avatarUrl,
+                    'fabulous'=>$member->fabulous,
+                    'create_time'=>$member->create_time,
+                ];
+                $result['data']['audio']=[
+                    'id'=>$audio->id,
+                    'member_id'=>$audio->member_id,
+                    'material_id'=>$audio->material_id,
+                    'material_name'=>$audio->material->book_name,
+                    'material_img'=>$audio->material->book_img,
+                    'material_content'=>$audio->material->book_content,
+                    'path'=>$audio->path,
+                    'praise'=>$audio->praise,
+                    'duration'=>$audio->duration,
+                    'create_time'=>$audio->create_time
+                ];
+
+            }else{
+                $result['code']=404;
+                $result['msg']='未找到用户或者作品';
+            }
+
+        }else{
+            $result['msg']='请求方式错误';
+
+        }
+        return $result;
+    }
+
+    //点赞记录
+    public function actionPraiseRecord(){
+        $result=[
+            'code'=>400,
+            'msg'=>'请求失败',
+        ];
+        if(\Yii::$app->request->isPost){
+            //接收参数
+            $member_id=\Yii::$app->request->post('member_id');
+            if(empty($member_id)){
+                $result['msg']='未传入指定参数';
+                return $result;
+            }
+            $audio_Ids=Praise::find()->select('audio_id')->where(['member_id'=>$member_id])->scalar();
+            if($audio_Ids){
+                $audios=Audio::find()->where(['id'=>$audio_Ids])->orderBy('praise DESC')->all();
+                if($audios){
+                    foreach ($audios as $audio){
+                        $result['data'][]=[
+                            'id'=>$audio->id,
+                            'member_id'=>$audio->member_id,
+                            'material_id'=>$audio->material_id,
+                            'material_name'=>$audio->material->book_name,
+                            'material_img'=>$audio->material->book_img,
+                            'material_content'=>$audio->material->book_content,
+                            'path'=>$audio->path,
+                            'praise'=>$audio->praise,
+                            'duration'=>$audio->duration,
+                            'create_time'=>$audio->create_time,
+                            'nickName'=>$audio->member->nickName,
+                        ];
+                    }
+
+                }else{
+                    $result['code']=201;
+                    $result['msg']='没有音频';
+                }
+
+            }else{
+                $result['code']=404;
+                $result['msg']='你还未给作品点过赞';
+            }
         }else{
             $result['msg']='请求方式错误';
         }

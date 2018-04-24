@@ -93,4 +93,9 @@ class Audio extends ActiveRecord{
         return $this->hasOne(Material::className(),['id'=>'material_id']);
     }
 
+    //关联查询用户昵称
+    public function getMember(){
+        return $this->hasOne(Member::className(),['id'=>'member_id']);
+    }
+
 }
