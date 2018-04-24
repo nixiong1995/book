@@ -565,7 +565,7 @@ ORDER BY id LIMIT 3")->all();
                         $good_type=Category::find()->select('name')->where(['id'=>$category_id])->scalar();
                         $result['data']['author'][]=['author_id'=>$author->id,'author_name'=>$author->name,'author_image'=>HTTP_PATH.$author->image,
                             'author_intro'=>$author->intro,'popularity'=>$author->popularity,'sign'=>$author->sign,'count'=>$count,'good_type'=>$good_type];*/
-                       $result['data']['author'][]=['book_id'=>$model->id,'name'=>$model->name,
+                       $result['data']['book'][]=['book_id'=>$model->id,'name'=>$model->name,
                            'category'=>$model->category->name,'author'=>$model->author->name,
                            'view'=>$model->clicks,'image'=>$ImgUrl,'size'=>$model->size,
                            'score'=>$model->score,'intro'=>$model->intro,'is_end'=>$model->is_end,
