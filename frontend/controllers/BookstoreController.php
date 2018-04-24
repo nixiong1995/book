@@ -543,25 +543,39 @@ ORDER BY id LIMIT 3")->all();
                     $model->count=1;
                     $model->save();
                 }
-                //$authors=Author::find()->where(['like','name',$keyword])->limit(50)->all();
-                $authors=Author::findBySql("select * ,(length(name)-length('$keyword')) as rn from author where name like '%$keyword%' order by rn limit 50")->all();
-                //$books=Book::find()->where(['like','name',$keyword])->limit(50)->all();
+
+                //$authors=Author::findBySql("select * ,(length(name)-length('$keyword')) as rn from author where name like '%$keyword%' order by rn limit 50")->all();
+                $authorIds=Author::findBySql("select id ,(length(name)-length('$keyword')) as rn from author where name like '%$keyword%' order by rn limit 50")->column();
+
                 $books=Book::findBySql("select * ,(length(name)-length('$keyword')) as rn from book where name like '%$keyword%' order by rn limit 50")->all();
-                if(!$books && !$authors){
+                if(!$books && !$authorIds){
                     $result['msg']='未搜索到结果';
                     return $result;
                 }
-                if($authors){
+                if($authorIds){
+                    $models=Book::find()->where(['author_id'=>$authorIds])->all();
 
-                    foreach ($authors as $author){
-                        $count=Book::find()->andWhere(['author_id'=>$author->id])->count('id');
+                    foreach ($models as $model){
+                        $ImgUrl=$model->image;
+                        if($model->is_api==0){
+                            $ImgUrl=HTTP_PATH.$ImgUrl;
+                        }
+                       /* $count=Book::find()->andWhere(['author_id'=>$author->id])->count('id');
                         $category_id=\Yii::$app->db->createCommand("SELECT category_id, count(*) AS count FROM book WHERE author_id=$author->id GROUP BY category_id ORDER BY count DESC")->queryScalar();
                         $good_type=Category::find()->select('name')->where(['id'=>$category_id])->scalar();
-
-
-
                         $result['data']['author'][]=['author_id'=>$author->id,'author_name'=>$author->name,'author_image'=>HTTP_PATH.$author->image,
-                            'author_intro'=>$author->intro,'popularity'=>$author->popularity,'sign'=>$author->sign,'count'=>$count,'good_type'=>$good_type];
+                            'author_intro'=>$author->intro,'popularity'=>$author->popularity,'sign'=>$author->sign,'count'=>$count,'good_type'=>$good_type];*/
+                       $result['data']['author'][]=['book_id'=>$model->id,'name'=>$model->name,
+                           'category'=>$model->category->name,'author'=>$model->author->name,
+                           'view'=>$model->clicks,'image'=>$ImgUrl,'size'=>$model->size,
+                           'score'=>$model->score,'intro'=>$model->intro,'is_end'=>$model->is_end,
+                           'download'=>$model->downloads,'collection'=>$model->collection,'author_id'=>$model->author_id,
+                           'category_id'=>$model->category_id,'no_free'=>$model->no,'type'=>$model->type,
+                           'create_time'=>$model->create_time,'update_time'=>$model->update_time,'from'=>$model->from,
+                           'is_free'=>$model->is_free,'price'=>$model->price,'search'=>$model->search,'sale'=>$model->search,
+                           'ascription_name'=>$model->information->name,'ascription_id'=>$model->ascription,
+                           'copyright_book_id'=>$model->copyright_book_id,'last_update_chapter_id'=>$model->last_update_chapter_id,
+                           'last_update_chapter_name'=>$model->last_update_chapter_name];
                     }
 
                 }
