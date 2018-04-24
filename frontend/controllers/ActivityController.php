@@ -673,6 +673,8 @@ class ActivityController extends Controller{
             if($audio_Ids){
                 $audios=Audio::find()->where(['id'=>$audio_Ids])->orderBy('praise DESC')->all();
                 if($audios){
+                    $result['code']=200;
+                    $result['msg']='成功返回信息';
                     foreach ($audios as $audio){
                         $result['data'][]=[
                             'id'=>$audio->id,
