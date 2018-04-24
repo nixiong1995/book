@@ -484,7 +484,7 @@ class TestController extends Controller
             $url='http://api.zhuishushenqi.com/book/' . $book->copyright_book_id;
             $html = file_get_contents($url);
             $datas = (json_decode($html));
-            if($datas){
+            if($datas->_id){
                 $img_url = 'http://statics.zhuishushenqi.com' .$datas->cover;
                 $path = $book->image;
                 try {
