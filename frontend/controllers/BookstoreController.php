@@ -546,7 +546,6 @@ ORDER BY id LIMIT 3")->all();
 
                 //$authors=Author::findBySql("select * ,(length(name)-length('$keyword')) as rn from author where name like '%$keyword%' order by rn limit 50")->all();
                 $authorIds=Author::findBySql("select id ,(length(name)-length('$keyword')) as rn from author where name like '%$keyword%' order by rn limit 50")->column();
-                var_dump($authorIds);exit;
                 $books=Book::findBySql("select * ,(length(name)-length('$keyword')) as rn from book where name like '%$keyword%' order by rn limit 50")->all();
                 if(!$books && !$authorIds){
                     $result['msg']='未搜索到结果';
@@ -554,6 +553,7 @@ ORDER BY id LIMIT 3")->all();
                 }
                 if($authorIds){
                     $authorIds= join(',', $authorIds);
+                    var_dump($authorIds);exit;
                     $models=Book::findBySql("SELECT * FROM book WHERE author_id in ($authorIds) ORDER BY field ($authorIds)")->all();
 
                     foreach ($models as $model){
