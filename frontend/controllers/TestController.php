@@ -511,7 +511,7 @@ class TestController extends Controller
                     echo ++$i.'替换失败</br>';
                 }
             }else{
-                echo ++$i.'接口请求失败';
+                echo ++$i.'<p style="color: yellow">接口请求失败</p>';
             }
 
         }
