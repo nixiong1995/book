@@ -139,7 +139,7 @@ class ActivityController extends Controller{
                 return $result;
             }
             $count=Photos::find()->where(['member_id'=>$member_id])->count('id');
-            if($count<3){
+            if($count<=3){
                 $name = $photo['name'];
                 $type = strtolower(substr($name,strrpos($name,'.')+1)); //得到文件类型，并且都转化成小写
                 $allow_type = array('jpg','jpeg','gif','png'); //定义允许上传的类型
@@ -752,6 +752,38 @@ class ActivityController extends Controller{
             }
         }
     }
+
+    //我的照片列表
+    public function actionMyPhotos(){
+        $result=[
+            'code'=>400,
+            'msg'=>'请求失败',
+        ];
+        if(\Yii::$app->request->isPost){
+            //接收参数
+            $member_id=\Yii::$app->request->post('member_id');
+            if(empty($member_id)){
+                $result['msg']='未传入指定参数';
+                return $result;
+            }
+            $models=Photos::find()->where(['member_id'=>$member_id])->all();
+            if($models){
+                $result['code']=200;
+                $result['msg']='成功返回信息';
+                $result['data'][]=$models;
+            }else{
+                $result['code']=201;
+                $result['msg']='暂无照片';
+            }
+
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
+    }
+
+
+
 
 
 }
