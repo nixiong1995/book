@@ -165,6 +165,8 @@ class ActivityController extends Controller{
                 $model->create_time=time();
                 if($model->save()){
                     $result['code']=200;
+                    $result['img_url']=$model->img;
+                    $result['limit']=$model->limit;
                     $result['msg']='上传照片成功';
                 }else{
                     $result['msg']='上传照片失败';
