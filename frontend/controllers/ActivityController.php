@@ -708,7 +708,7 @@ class ActivityController extends Controller{
     }
 
     // 获取微信用户信息
-    public function getWxLogin()
+    public function actionGetWxLogin()
     {
         // require_once ROOTPATH . "./PHP/wxBizDataCrypt.php";
         $request=\Yii::$app->request;
