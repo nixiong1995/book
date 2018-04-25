@@ -29,25 +29,36 @@ class ActivityController extends Controller{
             'msg'=>'请求失败',
         ];
         if(\Yii::$app->request->isPost){
+            $openid=\Yii::$app->request->post('openid');
             $nickName=\Yii::$app->request->post('nickName');
             $gender=\Yii::$app->request->post('gender');
             $avatarUrl=\Yii::$app->request->post('avatarUrl');
-            if(empty($nickName) || empty($gender) || empty($avatarUrl)){
+            if(empty($nickName) ||  empty($avatarUrl) || empty($openid)){
                 $relust['msg']='未传入指定参数';
                 return $relust;
             }
-            $member=new Member();
-            $member->nickName=$nickName;
-            $member->gender=$gender;
-            $member->avatarUrl=$avatarUrl;
-            $member->create_time=time();
-            if($member->save()){
+            $model=Member::find()->where(['openid'=>$openid])->one();
+            if($model){
                 $relust['code']=200;
-                $relust['msg']='记录用户成功';
-                $relust['member_id']=$member->id;
+                $relust['msg']='成功返回用户信息';
+                $relust['data']=$model;
+
             }else{
-                $relust['code']='记录用户失败';
+                $member=new Member();
+                $member->openid=$openid;
+                $member->nickName=$nickName;
+                $member->gender=$gender;
+                $member->avatarUrl=$avatarUrl;
+                $member->create_time=time();
+                if($member->save()){
+                    $relust['code']=200;
+                    $relust['msg']='记录用户成功';
+                    $relust['member_id']=$member->id;
+                }else{
+                    $relust['code']='记录用户失败';
+                }
             }
+
 
         }else{
             $relust['msg']='请求方式错误';
