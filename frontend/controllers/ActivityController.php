@@ -133,7 +133,7 @@ class ActivityController extends Controller{
         if(\Yii::$app->request->isPost){
             $member_id=\Yii::$app->request->post('member_id');//用户id
             $limit=\Yii::$app->request->post('limit');//翻盘限制数
-            $photo=isset($_FILES['photo'])?$_FILES['photo']:'';//头像
+            $photo=isset($_FILES['image'])?$_FILES['image']:'';//头像
             if(empty($member_id) || empty($limit) || empty($photo)){
                 $result['msg']='未传入指定参数';
                 return $result;
