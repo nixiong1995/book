@@ -518,7 +518,7 @@ class TestController extends Controller
                 }
             }else{
 
-                $img_url = 'http://image.voogaa.cn/2018/03/16/default.jpg';
+                /*$img_url = 'http://image.voogaa.cn/2018/03/16/default.jpg';
                 $img = file_get_contents($img_url);
 
                 $dir = UPLOAD_PATH . date("Y") . '/' . date("m") . '/' . date("d") . '/';
@@ -533,11 +533,11 @@ class TestController extends Controller
                     if ($path) {
                         $path = UPLOAD_PATH .$path;
                         unlink($path);
-                    }
-                    echo ++$i.'<p style="color: coral">'.++$i.$book->name.'</p>';
-                } else {
-                    echo ++$i.'<p style="color: chocolate">'.++$i.'替换失败</p>';
-                }
+                    }*/
+                    echo '<p style="color: coral">'.++$i.$book->name.'</p>';
+               // } else {
+                   // echo ++$i.'<p style="color: chocolate">'.++$i.'替换失败</p>';
+              //  }
 
             }
 
