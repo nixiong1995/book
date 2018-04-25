@@ -41,7 +41,7 @@ class ActivityController extends Controller{
             if($model){
                 $relust['code']=200;
                 $relust['msg']='成功返回用户信息';
-                $relust['data']=$model;
+                $relust['member_id']=$model->id;
 
             }else{
                 $member=new Member();
