@@ -6,6 +6,7 @@ use frontend\models\Material;
 use frontend\models\Member;
 use frontend\models\Photos;
 use frontend\models\Praise;
+use frontend\wechat_small_program\WXBizDataCrypt;
 use yii\data\Pagination;
 use yii\db\Exception;
 use yii\web\Controller;
@@ -704,6 +705,42 @@ class ActivityController extends Controller{
             $result['msg']='请求方式错误';
         }
         return $result;
+    }
+
+    // 获取微信用户信息
+    public function getWxLogin()
+    {
+        // require_once ROOTPATH . "./PHP/wxBizDataCrypt.php";
+        $request=\Yii::$app->request;
+        $code   =   $request->get('code');
+        $encryptedData   =  $request->get('encryptedData');
+        $iv   =   $request->get('iv');
+        $appid  =  "wx922ebe9f5d8ba438" ;
+        $secret =   "3b46cfaf6fdaa7698f128cb25f33c301";
+
+        $URL = "https://api.weixin.qq.com/sns/jscode2session?appid=$appid&secret=$secret&js_code=$code&grant_type=authorization_code";
+
+        $apiData=file_get_contents($URL);
+        // var_dump($code,'wwwwwwww',$apiData['errscode']);
+        //     $ch = curl_init();
+        // 　　curl_setopt($ch, CURLOPT_URL, $URL);
+        // 　　curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        // 　　curl_setopt($ch, CURLOPT_HEADER, 0);
+        // 　　$output = curl_exec($ch);
+        // 　　curl_close($ch)
+
+        if(!isset($apiData['errcode'])){
+            $sessionKey = json_decode($apiData)->session_key;
+            $userifo = new WXBizDataCrypt($appid, $sessionKey);
+
+            $errCode = $userifo->decryptData($encryptedData, $iv, $data );
+
+            if ($errCode == 0) {
+                return ($data . "\n");
+            } else {
+                return false;
+            }
+        }
     }
 
 
