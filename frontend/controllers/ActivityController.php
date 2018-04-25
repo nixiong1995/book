@@ -6,7 +6,7 @@ use frontend\models\Material;
 use frontend\models\Member;
 use frontend\models\Photos;
 use frontend\models\Praise;
-use frontend\wechat_small_program\WXBizDataCrypt;
+use frontend\wechat_small_program\wxBizDataCrypt;
 use yii\data\Pagination;
 use yii\db\Exception;
 use yii\web\Controller;
