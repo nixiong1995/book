@@ -732,7 +732,6 @@ class ActivityController extends Controller{
         if(!isset($apiData['errcode'])){
             $sessionKey = json_decode($apiData)->session_key;
             $userifo = new wxBizDataCrypt($appid, $sessionKey);
-
             $errCode = $userifo->decryptData($encryptedData, $iv, $data );
 
             if ($errCode == 0) {
