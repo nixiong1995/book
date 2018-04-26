@@ -787,6 +787,37 @@ class ActivityController extends Controller{
         return $result;
     }
 
+    //用户给作品点赞次数
+    public function actionMemberPraise(){
+        $result=[
+            'code'=>400,
+            'msg'=>'请求失败',
+        ];
+        if(\Yii::$app->request->isPost){
+            //接收参数
+            $audio_id=\Yii::$app->request->post('audio_id');
+            $member_id=\Yii::$app->request->post('member_id');
+            if(empty($audio_id) || empty($member_id)){
+                $result['msg']='未传入指定参数';
+                return $result;
+            }
+            $praise_num=Praise::find()->where(['member_id'=>$member_id])->andWhere(['audio_id'=>$audio_id])->count('id');
+            if($praise_num){
+                $result['code']=200;
+                $result['msg']='成功返回信息';
+                $result['praise']=$praise_num;
+            }else{
+                $result['code']=200;
+                $result['msg']='成功返回信息';
+                $result['praise']=0;
+            }
+
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
+    }
+
 
 
 
