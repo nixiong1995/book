@@ -402,6 +402,70 @@ class BookController extends Controller{
         }
     }
 
+    //替换图书封面
+    public function actionReplaceImg(){
+
+        $id=\Yii::$app->request->post('id');
+        $book=Book::findOne(['id'=>$id]);
+        $path = $book->image;
+        $url="http://api.zhuishushenqi.com/book/$book->copyright_book_id";
+        $ch = curl_init();
+        curl_setopt ($ch, CURLOPT_URL, $url);
+        curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT,10);
+        $dxycontent = curl_exec($ch);
+        $datas = (json_decode($dxycontent));
+        if($datas->_id){
+            $img_url = 'http://statics.zhuishushenqi.com' .$datas->cover;
+            try {
+                $img = file_get_contents($img_url);
+            } catch (\Exception $exception) {
+                $img = file_get_contents('http://image.voogaa.cn/2018/03/16/default.jpg');
+            }
+
+            $dir = UPLOAD_PATH . date("Y") . '/' . date("m") . '/' . date("d") . '/';
+            $fileName = uniqid() . rand(1, 100000) . '.jpg';
+            $uploadSuccessPath = date("Y") . '/' . date("m") . '/' . date("d") . '/' . $fileName;
+            if (!is_dir($dir)) {
+                mkdir($dir, 0777, true);
+            }
+            file_put_contents($dir . '/' . $fileName, $img);
+            $book->image = $uploadSuccessPath;
+
+            if ($book->save()){
+
+                if ($path) {
+                    $path = UPLOAD_PATH .$path;
+                    unlink($path);
+                }
+               return 'success';
+            } else {
+                var_dump($book->getErrors());exit;
+            }
+        }else{
+            $img_url = 'http://image.voogaa.cn/2018/03/16/default.jpg';
+            $img = file_get_contents($img_url);
+            $dir = UPLOAD_PATH . date("Y") . '/' . date("m") . '/' . date("d") . '/';
+            $fileName = uniqid() . rand(1, 100000) . '.jpg';
+            $uploadSuccessPath = date("Y") . '/' . date("m") . '/' . date("d") . '/' . $fileName;
+            if (!is_dir($dir)) {
+                mkdir($dir, 0777, true);
+            }
+            file_put_contents($dir . '/' . $fileName, $img);
+            $book->image = $uploadSuccessPath;
+            if ($book->save()) {
+                if ($path) {
+                    $path = UPLOAD_PATH .$path;
+                    unlink($path);
+                }
+                return 'success';
+            } else {
+                return 'error';
+            }
+        }
+
+    }
+
     public function behaviors()
     {
         return [

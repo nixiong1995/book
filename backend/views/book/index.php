@@ -31,6 +31,7 @@
         <thead>
         <tr>
             <th></th>
+            <th></th>
             <th>书名</th>
             <th>作者</th>
             <th>分类</th>
@@ -48,6 +49,7 @@
         <tbody>
         <?php foreach ($models as $model):?>
             <tr data-id="<?=$model->id?>">
+                <td><a href="javascript:;" class="replace"><span class="glyphicon glyphicon-refresh btn btn-info btn-sm"></a></td>
                 <td> <input type="checkbox" name="items" value="<?=$model->id?>"/></td>
                 <td><?=$model->name?></td>
                 <td><?=$model->author->name?></td>
@@ -90,6 +92,7 @@ $this->registerJsFile("@web/datatables/media/js/jquery.dataTables.js",['depends'
 $del_url=\yii\helpers\Url::to(['book/del']);
 $sele_url=\yii\helpers\Url::to(['book/selected']);//加入分类精选url
 $update_url=\yii\helpers\Url::to(['book/update']);//批量修改分类url
+$replace_url=\yii\helpers\Url::to(['book/replace-img']);
 
 $this->registerJs(new \yii\web\JsExpression(
     <<<JS
@@ -121,6 +124,19 @@ $this->registerJs(new \yii\web\JsExpression(
                    }
                }) 
             }
+        });
+        
+        $('.replace').on('click',function() {
+            var tr=$(this).closest('tr');
+            var id=tr.attr('data-id');
+            $.post("$replace_url",{id:id},function(data) {
+                   if(data=='success'){
+                     tr.css("color","#f60");
+                   }else{
+                       alert('替换失败');
+                   }
+               }) 
+          
         });
         
         $(document).ready(function(){
@@ -164,6 +180,8 @@ $this->registerJs(new \yii\web\JsExpression(
          // alert(category_id);
         //alert(chk_value.length==0 ?'你还没有选择任何内容！':chk_value);
          })
+         
+         
         
                 
         
