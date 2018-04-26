@@ -200,6 +200,9 @@ class ActivityController extends Controller{
             }
             //查找作品
             $audios=Audio::find()->where(['member_id'=>$member_id])->all();
+            //统计赞数
+            $total_praise=Audio::find()->where(['member_id'=>$member_id])->sum('praise');
+            $relust['total_praise']=$total_praise?$total_praise:0;
             if($audios){
                 $relust['code']=200;
                 $relust['msg']='获取作品成功';
@@ -214,7 +217,7 @@ class ActivityController extends Controller{
                         'path'=>$audio->path,
                         'praise'=>$audio->praise,
                         'duration'=>$audio->duration,
-                        'create_time'=>$audio->create_time
+                        'create_time'=>$audio->create_time,
                         ];
                 }
             }else{
