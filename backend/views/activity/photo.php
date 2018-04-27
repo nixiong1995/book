@@ -11,7 +11,7 @@
     <?php foreach ($models as $model):?>
         <tr data-id="<?=$model->id?>">
             <td><?=$model->member_id?></td>
-            <td><?=yii\bootstrap\Html::img('http://img.user.com'.$model->img,['class'=>'img-cricle','style'=>'width:100px'])?></td>
+            <td><?=yii\bootstrap\Html::img('http://api.voogaa.cn'.$model->img,['class'=>'img-cricle','style'=>'width:100px'])?></td>
             <td><?=$model->limit?></td>
             <td><?=date("Y-m-d H:i:s",$model->create_time)?></td>
             <td class="button">

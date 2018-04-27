@@ -17,7 +17,7 @@
             <td><?=$model->id?></td>
             <td><?=$model->material_id?></td>
             <td><?=$model->member_id?></td>
-            <td><audio src="http://img.user.com.<?=$model->path?>" controls>
+            <td><audio src="http://api.voogaa.cn.<?=$model->path?>" controls>
                     别试了，是你的浏览器渣渣
                 </audio> </td>
             <td><?=$model->duration?></td>
