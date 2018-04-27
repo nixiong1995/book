@@ -1,5 +1,6 @@
 <?php
 namespace frontend\controllers;
+use backend\models\User;
 use frontend\models\Audio;
 use frontend\models\Gift;
 use frontend\models\Material;
@@ -584,36 +585,68 @@ class ActivityController extends Controller{
                 $result['msg']='未传入指定参数';
                 return $result;
             }
-            $model=Gift::find()->where(['phone'=>$phone])->one();
-            if($model){
-                //已有赠送记录
+            $user=User::find()->where(['tel'=>$phone])->one();
+            //判断是否是阅cool用户:1直接赠送;2记录下载注册成为阅cool赠送
+            if($user){
+                //1是阅cool用户
+                //判断赠送阅票or书券
                 if($ticket){
-                    $model->ticket=$model->ticket+$ticket;
+                    //1赠送阅票
+                    $user->ticket=$user->ticket+$ticket;
+                    if($user->save()){
+                        $result['code']=200;
+                        $result['msg']='阅票赠送成功';
+                    }else{
+                        $result['code']=400;
+                        $result['msg']='书券赠送失败';
+                    }
                 }else{
-                    $model->voucher=$model->voucher+$voucher;
-                }
-                if($model->save()){
-                    $result['code']=200;
-                    $result['msg']='记录成功';
-                }else{
-                    $result['msg']='记录失败';
+                    //2赠送书券
+
+                    $user->voucher=$user->voucher+$voucher;
+                    if($user->save()){
+                        $result['code']=200;
+                        $result['msg']='书券赠送成功';
+                    }else{
+                        $result['code']=400;
+                        $result['msg']='书券赠送失败';
+                    }
                 }
             }else{
-                //未有赠送记录
-                $model=new Gift();
-                $model->phone=$phone;
-                if($ticket){
-                    $model->ticket=$ticket;
+                //2不是阅cool用户
+
+                $model=Gift::find()->where(['phone'=>$phone])->one();
+                if($model){
+                    //已有赠送记录
+                    if($ticket){
+                        $model->ticket=$model->ticket+$ticket;
+                    }else{
+                        $model->voucher=$model->voucher+$voucher;
+                    }
+                    if($model->save()){
+                        $result['code']=200;
+                        $result['msg']='记录成功';
+                    }else{
+                        $result['msg']='记录失败';
+                    }
                 }else{
-                    $model->voucher=$voucher;
-                }
-                if($model->save()){
-                    $result['code']=200;
-                    $result['msg']='记录成功';
-                }else{
-                    $result['msg']='记录失败';
+                    //未有赠送记录
+                    $model=new Gift();
+                    $model->phone=$phone;
+                    if($ticket){
+                        $model->ticket=$ticket;
+                    }else{
+                        $model->voucher=$voucher;
+                    }
+                    if($model->save()){
+                        $result['code']=200;
+                        $result['msg']='记录成功';
+                    }else{
+                        $result['msg']='记录失败';
+                    }
                 }
             }
+
 
         }else{
             $result['msg']='请求方式错误';
