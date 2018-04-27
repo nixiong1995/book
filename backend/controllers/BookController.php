@@ -420,7 +420,7 @@ class BookController extends Controller{
         $ch = curl_init();
         //$url = "http://localhost/target_ip.php";
         $header = array(
-            'CLIENT-IP:58.68.44.61',
+            'CLIENT-IP:45.68.44.61',
             'X-FORWARDED-FOR:58.68.44.61',
         );
         curl_setopt($ch, CURLOPT_URL, $url);

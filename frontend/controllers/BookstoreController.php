@@ -575,7 +575,6 @@ ORDER BY id LIMIT 3")->all();
                     $book->search=$book->search+1;
                     $book->save();
                 }
-
             }
 
 

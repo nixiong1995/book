@@ -465,7 +465,7 @@ class TestController extends Controller
     }
 
     //替换追书封面
-    public function actionReplaceBooking($page){
+   /*public function actionReplaceBooking($page){
         //查询追书神器图书
        // $page=\Yii::$app->request->get('page');
         $query=Book::find()->where(['ascription'=>5])->andWhere(['NOT',['copyright_book_id'=>null]]);
@@ -518,7 +518,7 @@ class TestController extends Controller
                 }
             }else{
 
-                /*$img_url = 'http://image.voogaa.cn/2018/03/16/default.jpg';
+                $img_url = 'http://image.voogaa.cn/2018/03/16/default.jpg';
                 $img = file_get_contents($img_url);
 
                 $dir = UPLOAD_PATH . date("Y") . '/' . date("m") . '/' . date("d") . '/';
@@ -533,7 +533,7 @@ class TestController extends Controller
                     if ($path) {
                         $path = UPLOAD_PATH .$path;
                         unlink($path);
-                    }*/
+                    }
                     echo '<p style="color: coral">'.++$i.$book->name.'</p>';
                // } else {
                    // echo ++$i.'<p style="color: chocolate">'.++$i.'替换失败</p>';
@@ -542,10 +542,10 @@ class TestController extends Controller
             }
 
         }
-    }
+    }*/
 
 
-    public function actionDiaoYong(){
+    /*public function actionDiaoYong(){
         //设置脚本执行时间(不终止)
         set_time_limit(0);
         for ($i=12;$i<=14;$i++){
@@ -559,9 +559,9 @@ class TestController extends Controller
             echo '<p style="color: red">第'.$i.'页完</p>';
         }
 
-    }
+    }*/
 
-    public function actionZhuishu(){
+   /* public function actionZhuishu(){
         $name=\Yii::$app->request->get('name');
         $book=Book::find()->where(['name'=>$name])->one();
         $path = $book->image;
@@ -619,7 +619,7 @@ class TestController extends Controller
             }
         }
 
-    }
+    }*/
 
 
 }
