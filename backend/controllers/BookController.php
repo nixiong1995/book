@@ -409,12 +409,28 @@ class BookController extends Controller{
         $book=Book::findOne(['id'=>$id]);
         $path = $book->image;
         $url="http://api.zhuishushenqi.com/book/$book->copyright_book_id";
-        $ch = curl_init();
+       /* $ch = curl_init();
         curl_setopt ($ch, CURLOPT_URL, $url);
         curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT,10);
         $dxycontent = curl_exec($ch);
-        $datas = (json_decode($dxycontent));
+        $datas =json_decode($dxycontent);
+        var_dump($datas );exit;*/
+
+        $ch = curl_init();
+        //$url = "http://localhost/target_ip.php";
+        $header = array(
+            'CLIENT-IP:58.68.44.61',
+            'X-FORWARDED-FOR:58.68.44.61',
+        );
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
+    /*    $page_content = curl_exec($ch);
+        curl_close($ch);
+        echo $page_content*/
+        $dxycontent = curl_exec($ch);
+        $datas =json_decode($dxycontent);
         if($datas->_id){
             $img_url = 'http://statics.zhuishushenqi.com' .$datas->cover;
             try {
