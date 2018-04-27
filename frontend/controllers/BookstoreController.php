@@ -551,6 +551,34 @@ ORDER BY id LIMIT 3")->all();
                     $result['msg']='未搜索到结果';
                     return $result;
                 }
+
+            if($books){
+                foreach ($books as $book){
+                    //判断是否版权图书,不拼接图片域名
+                    $ImgUrl=$book->image;
+                    if($book->is_api==0){
+                        $ImgUrl=HTTP_PATH.$ImgUrl;
+                    }
+                    $result['data']['book'][]=['book_id'=>$book->id,'name'=>$book->name,
+                        'category'=>$book->category->name,'author'=>$book->author->name,
+                        'view'=>$book->clicks,'image'=>$ImgUrl,'size'=>$book->size,
+                        'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
+                        'download'=>$book->downloads,'collection'=>$book->collection,'author_id'=>$book->author_id,
+                        'category_id'=>$book->category_id,'no_free'=>$book->no,'type'=>$book->type,
+                        'create_time'=>$book->create_time,'update_time'=>$book->update_time,'from'=>$book->from,
+                        'is_free'=>$book->is_free,'price'=>$book->price,'search'=>$book->search,'sale'=>$book->search,
+                        'ascription_name'=>$book->information->name,'ascription_id'=>$book->ascription,
+                        'copyright_book_id'=>$book->copyright_book_id,'last_update_chapter_id'=>$book->last_update_chapter_id,
+                        'last_update_chapter_name'=>$book->last_update_chapter_name];
+
+                    //图书搜索数+1
+                    $book->search=$book->search+1;
+                    $book->save();
+                }
+
+            }
+
+
                 if($authorIds){
                     $authorIds= join(',', $authorIds);
                     $models=Book::findBySql("SELECT * FROM book WHERE author_id in ($authorIds) ORDER BY  field(author_id,$authorIds)")->all();
@@ -579,31 +607,7 @@ ORDER BY id LIMIT 3")->all();
 
                 }
 
-                if($books){
-                    foreach ($books as $book){
-               //判断是否版权图书,不拼接图片域名
-               $ImgUrl=$book->image;
-               if($book->is_api==0){
-                   $ImgUrl=HTTP_PATH.$ImgUrl;
-               }
-                        $result['data']['book'][]=['book_id'=>$book->id,'name'=>$book->name,
-                            'category'=>$book->category->name,'author'=>$book->author->name,
-                            'view'=>$book->clicks,'image'=>$ImgUrl,'size'=>$book->size,
-                            'score'=>$book->score,'intro'=>$book->intro,'is_end'=>$book->is_end,
-                            'download'=>$book->downloads,'collection'=>$book->collection,'author_id'=>$book->author_id,
-                            'category_id'=>$book->category_id,'no_free'=>$book->no,'type'=>$book->type,
-                            'create_time'=>$book->create_time,'update_time'=>$book->update_time,'from'=>$book->from,
-                            'is_free'=>$book->is_free,'price'=>$book->price,'search'=>$book->search,'sale'=>$book->search,
-                            'ascription_name'=>$book->information->name,'ascription_id'=>$book->ascription,
-                            'copyright_book_id'=>$book->copyright_book_id,'last_update_chapter_id'=>$book->last_update_chapter_id,
-                            'last_update_chapter_name'=>$book->last_update_chapter_name];
 
-                        //图书搜索数+1
-                        $book->search=$book->search+1;
-                        $book->save();
-                    }
-
-                }
                     $result['code']=200;
                     $result['msg']='搜索信息如下';
 
