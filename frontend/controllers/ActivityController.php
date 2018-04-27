@@ -422,7 +422,7 @@ class ActivityController extends Controller{
             }
             $pager=new Pagination([
                 'totalCount'=>$query->count(),
-                'defaultPageSize'=>5,
+                'defaultPageSize'=>10,
             ]);
             $models=$query->limit($pager->limit)->offset($pager->offset)->all();
             if($models){
