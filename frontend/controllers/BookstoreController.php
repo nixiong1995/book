@@ -314,6 +314,11 @@ class BookstoreController extends Controller{
                 $category_id=\Yii::$app->request->get('category_id');
                 $page=\Yii::$app->request->get('page');
                 $type=\Yii::$app->request->get('type');
+                $condition=\Yii::$app->request->get('condition');
+                if(empty($category_id) || empty($type)){
+                    $result['msg']='未传入指定参数';
+                    return $result;
+                }
                 $query=Book::find()->where(['category_id'=>$category_id]);
                 $count=ceil($query->count()/10);
                 if($page>$count){
@@ -325,11 +330,52 @@ class BookstoreController extends Controller{
                     'defaultPageSize'=>10,
                 ]);
                 if($type==1){
-                    $models=$query->limit($pager->limit)->offset($pager->offset)->orderBy('clicks DESC')->all();
+                    switch($condition){
+                        case 1:
+                            $models=$query->andWhere(['is_free'=>0])->limit($pager->limit)->offset($pager->offset)->orderBy('clicks DESC')->all();
+                            break;
+                        case 2:
+                            $models=$query->andWhere(['is_end'=>2])->limit($pager->limit)->offset($pager->offset)->orderBy('clicks DESC')->all();
+                            break;
+                        case 3:
+                            $models=$query->andWhere(['is_end'=>1])->limit($pager->limit)->offset($pager->offset)->orderBy('clicks DESC')->all();
+                            break;
+                        default:
+                            $models=$query->limit($pager->limit)->offset($pager->offset)->orderBy('clicks DESC')->all();
+                    }
+
                 }elseif ($type==2){
-                    $models=$query->limit($pager->limit)->offset($pager->offset)->orderBy('create_time DESC')->all();
+
+                    switch($condition){
+                        case 1:
+                            $models=$query->andWhere(['is_free'=>0])->limit($pager->limit)->offset($pager->offset)->orderBy('create_time DESC')->all();
+                            break;
+                        case 2:
+                            $models=$query->andWhere(['is_end'=>2])->limit($pager->limit)->offset($pager->offset)->orderBy('create_time DESC')->all();
+                            break;
+                        case 3:
+                            $models=$query->andWhere(['is_end'=>1])->limit($pager->limit)->offset($pager->offset)->orderBy('create_time DESC')->all();
+                            break;
+                        default:
+                            $models=$query->limit($pager->limit)->offset($pager->offset)->orderBy('create_time DESC')->all();
+                    }
+
+
                 }elseif($type==3){
-                    $models=$query->limit($pager->limit)->offset($pager->offset)->orderBy('score DESC')->all();
+
+                    switch($condition){
+                        case 1:
+                            $models=$query->andWhere(['is_free'=>0])->limit($pager->limit)->offset($pager->offset)->orderBy('score DESC')->all();
+                            break;
+                        case 2:
+                            $models=$query->andWhere(['is_end'=>2])->limit($pager->limit)->offset($pager->offset)->orderBy('score DESC')->all();
+                            break;
+                        case 3:
+                            $models=$query->andWhere(['is_end'=>1])->limit($pager->limit)->offset($pager->offset)->orderBy('score DESC')->all();
+                            break;
+                        default:
+                            $models=$query->limit($pager->limit)->offset($pager->offset)->orderBy('score DESC')->all();
+                    }
                 }
 
             foreach ($models as $model){

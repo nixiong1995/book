@@ -10,6 +10,7 @@ use backend\models\Reading;
 use backend\models\Recharge;
 use backend\models\User;
 use backend\models\UserDetails;
+use frontend\models\Gift;
 use frontend\models\SmsDemo;
 use libs\Check;
 use libs\Verification;
@@ -89,11 +90,19 @@ class UserController extends Controller {
                     return $result;
                 }
                 //验证电话唯一性
-                $res=User::findOne(['tel'=>$tel]);
+                $res=User::findOne(['tel'=>$phone]);
                 if($res){
                     $result['msg']='电话已存在';
                     return $result;
                 }
+                $ticket=0;
+                $voucher=0;
+                $gift=Gift::find()->where(['phone'=>$phone])->one();
+                if($gift){
+                    $ticket=$gift->ticket;
+                    $voucher=$gift->voucher;
+                }
+
 
                 //根据IMEI查询记录的用户信息
                $model1=User::findOne(['imei'=>$imei]);
@@ -115,6 +124,8 @@ class UserController extends Controller {
                         $User->source=$source;
                         $User->created_at=time();
                         $User->imei='';
+                        //$User->ticket=$ticket;
+                        //$User->voucher=$voucher;
                         $User->status=1;
                         $transaction=\Yii::$app->db->beginTransaction();//开启事务
                         try{
@@ -136,8 +147,10 @@ class UserController extends Controller {
                         }
 
                     }else{
-                        //数据库已有用户信息,完成用户信息
+                        //数据库已有用户信息,完善用户信息
                         $model1->tel=$tel;
+                        //$User->ticket=$ticket;
+                        //$User->voucher=$voucher;
                         if($address){
                             $model1->address=$address;
                         }
@@ -170,6 +183,8 @@ class UserController extends Controller {
                     $User->source=$source;
                     $User->created_at=time();
                     $User->imei=$imei;
+                    //$User->ticket=$ticket;
+                    //$User->voucher=$voucher;
                     $User->status=1;
                     $transaction=\Yii::$app->db->beginTransaction();//开启事务
                     try{
