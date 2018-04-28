@@ -43,7 +43,7 @@ class UserController extends Controller{
             //$query->andWhere(['<=','created_at',$end_time]);
         }
         if ($address){
-            $where.=" and address='$address'";
+            $where.=" and address like '%$address%'";
             //$query->andWhere(['like','address',$address]);
        }
        if ($source){
