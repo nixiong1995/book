@@ -5,6 +5,8 @@ use backend\models\Book;
 use backend\models\Chapter;
 use backend\models\Recharge;
 use Codeception\Exception\InjectionException;
+use frontend\models\Member;
+use frontend\models\Praise;
 use libs\PostRequest;
 use yii\base\InvalidParamException;
 use yii\console\Controller;
@@ -48,9 +50,9 @@ class TaskController extends Controller{
     }
 
     //每日0点清空真实阅读数
-    public function actionRealRead(){
-        Book::updateAll(['real_read'=>0]);
-        echo iconv('utf-8', 'gbk',  '清零每日真实阅读数成功'."\n");
+    public function actionUpdatePraise(){
+        Member::updateAll(['fabulous'=>3]);
+        echo iconv('utf-8', 'gbk',  '每日赞数重置成功'."\n");
     }
 
     //爬追书神器存入数据库
