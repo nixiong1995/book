@@ -875,6 +875,113 @@ FROM audio AS a WHERE a.member_id =$member_id ORDER BY praise DESC  limit 1")->q
         return $result;
     }
 
+    //分享记录
+    public function actionShare(){
+        $result=[
+            'code'=>200,
+            'msg'=>'请求失败',
+        ];
+        if(\Yii::$app->request->isPost){
+            //接收参数
+            $share=\Yii::$app->request->post('share');
+            $member_id=\Yii::$app->request->post('member_id');
+            if(empty($share) || empty($member_id)){
+                $result['msg']='未传入指定参数';
+                return $result;
+            }
+            $member=Member::find()->where(['id'=>$member_id])->one();
+            if($member){
+                $member->is_share=$share;
+                if($member->save()){
+                    $result['code']=200;
+                    $result['msg']='记录用户分享成功';
+                }else{
+                    $result['msg']='记录用户分享失败';
+                }
+
+            }else{
+                $result['code']=404;
+                $result['msg']='未找到该用户';
+            }
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
+    }
+
+    //判断用户是否分享
+    public function actionJudgeShare(){
+        $result=[
+            'code'=>400,
+            'msg'=>'请求失败',
+        ];
+        if(\Yii::$app->request->isPost){
+            //接收参数
+            $member_id=\Yii::$app->request->post('member_id');
+            if(empty($member_id)){
+                $result['msg']='未传入指定参数';
+                return $result;
+            }
+            $member=Member::find()->where(['id'=>$member_id])->one();
+            if($member){
+                if($member->is_share==1){
+                    $result['code']=200;
+                    $result['msg']='已分享';
+                }else{
+                    $result['code']=400;
+                    $result['msg']='未分享';
+                }
+
+            }else{
+                $result['msg']='不存在该用户';
+            }
+
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
+    }
+
+    //判断用户是否给作者点赞
+    public function actionJudgePraise(){
+        $result=[
+            'code'=>400,
+            'msg'=>'请求失败',
+        ];
+        if(\Yii::$app->request->isPost){
+            //接收参数
+            $member_id=\Yii::$app->request->post('member_id');
+            $author_id=\Yii::$app->request->post('author_id');
+            if(empty($member_id) || empty($author_id)){
+                $result['msg']='未传入指定参数';
+                return $result;
+            }
+            $author_audio_id=Audio::find()->select('id')->where(['author_id'=>$author_id])->column();
+            if($author_audio_id){
+                $praise=Praise::find()->where(['audio_id'=>$author_audio_id])->andWhere(['member_id'=>$member_id])->one();
+                if($praise){
+                    $result['code']=200;
+                    $result['msg']='可以翻盘';
+                    $result['is_praise']=1;
+                }else{
+                    $result['code']=201;
+                    $result['msg']='不可翻牌';
+                    $result['is_praise']=0;
+                }
+
+            }else{
+                $result['code']=404;
+                $result['msg']='该作者暂无作品';
+                $result['is_praise']=0;
+            }
+
+
+        }else{
+            $result['msg']='请求方式错误';
+        }
+        return $result;
+    }
+
 
 
 
