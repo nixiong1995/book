@@ -465,7 +465,7 @@ FROM audio AS a WHERE a.member_id =$member_id ORDER BY praise DESC  limit 1")->q
             $relust['my_rank']= $my_ranking;
             //相差多少个赞
             $disparity=\Yii::$app->db->createCommand("SELECT
-(SELECT b.praise FROM audio AS b WHERE b.praise>a.praise ORDER BY b.praise desc LIMIT 1)-a.praise AS subtract
+(SELECT b.praise FROM audio AS b WHERE b.praise>a.praise ORDER BY b.praise LIMIT 1)-a.praise AS subtract
 FROM audio AS a WHERE a.member_id =$member_id ORDER BY praise DESC  limit 1")->queryScalar();
             if($disparity){
                 $relust['disparity']=$disparity;
