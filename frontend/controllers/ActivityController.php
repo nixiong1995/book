@@ -405,6 +405,10 @@ class ActivityController extends Controller{
     }
 
     //排行
+    /*
+     * 我的排名
+     * 距离上一名差多少个赞
+     * */
     public function actionRanking(){
         $relust=[
             'code'=>400,
@@ -413,7 +417,12 @@ class ActivityController extends Controller{
         if(\Yii::$app->request->isGet){
             //接收参数
             $page=\Yii::$app->request->get('page');
-            $query=Audio::find()->orderBy('praise DESC')->limit(50);
+            $member_id=\Yii::$app->request->get('member_id');
+            if(empty($member_id)){
+                $relust['msg']='未传入指定参数';
+                return $relust;
+            }
+            $query=Audio::find()->orderBy('praise DESC')->limit(30);
             $count=ceil($query->count()/10);
             if($page>$count){
                 $relust['code']=201;
@@ -448,6 +457,22 @@ class ActivityController extends Controller{
                 $relust['code']=404;
                 $relust['msg']='暂无数据';
             }
+
+            //查询我的排名以及距离上一名赞数
+            $my_ranking=\Yii::$app->db->createCommand("SELECT
+(SELECT count(DISTINCT praise) FROM audio AS b WHERE a.praise<b.praise)+1 AS rank
+FROM audio AS a WHERE a.member_id =$member_id ORDER BY praise DESC  limit 1")->queryScalar();
+            $relust['my_rank']= $my_ranking;
+            //相差多少个赞
+            $disparity=\Yii::$app->db->createCommand("SELECT
+(SELECT b.praise FROM audio AS b WHERE b.praise>a.praise ORDER BY b.praise desc LIMIT 1)-a.praise AS subtract
+FROM audio AS a WHERE a.member_id =3 ORDER BY praise DESC  limit 1")->queryScalar();
+            if($disparity){
+                $relust['disparity']=$disparity;
+            }else{
+                $relust['disparity']=0;
+            }
+
 
 
         }else{

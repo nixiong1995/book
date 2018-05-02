@@ -981,6 +981,10 @@ ORDER BY id LIMIT 3")->all();
            //  $result['msg']= $res;
            // }else{
                 $author_id=\Yii::$app->request->post('author_id');
+                if(empty($author_id)){
+                    $result['msg']='未传入指定参数';
+                    return $result;
+                }
                 $books=Book::find()->where(['author_id'=>$author_id])->orderBy('score DESC')->all();
                 foreach ($books as $book){
                     //判断是否版权图书,不拼接图片域名
