@@ -956,7 +956,7 @@ FROM audio AS a WHERE a.member_id =$member_id ORDER BY praise DESC  limit 1")->q
                 $result['msg']='未传入指定参数';
                 return $result;
             }
-            $author_audio_id=Audio::find()->select('id')->where(['author_id'=>$author_id])->column();
+            $author_audio_id=Audio::find()->select('id')->where(['member_id'=>$author_id])->column();
             if($author_audio_id){
                 $praise=Praise::find()->where(['audio_id'=>$author_audio_id])->andWhere(['member_id'=>$member_id])->one();
                 if($praise){
