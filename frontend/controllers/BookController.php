@@ -240,9 +240,13 @@ class BookController extends Controller{
             $content=\Yii::$app->request->post('content');
             $status=\Yii::$app->request->post('status');
             //判断是否传入指定参数
-            if(empty($book_id) || empty($sort_id) || empty($chapter_name) || empty($word_count) || empty($content)){
+            if(empty($book_id) || empty($sort_id) ||  empty($word_count) || empty($content)){
                 $relust['msg']='未传入指定参数';
                 return $relust;
+            }
+
+            if(empty($chapter_name)){
+                $chapter_name='第'.$sort_id.'章';
             }
 
             //判断数据库是否有该图书
