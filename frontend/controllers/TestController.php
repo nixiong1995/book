@@ -270,7 +270,7 @@ class TestController extends Controller
         //设置脚本执行时间(不终止)
         set_time_limit(0);
         ///////////////获取分类图书列表/////////////////
-        for($i=1;$i<=100;$i++){
+        for($i=1;$i<=2;$i++){
 
             $get = new PostRequest();
             ////////////////////请求追书神器基本信息接口///////////////////////////////////////
@@ -279,9 +279,9 @@ class TestController extends Controller
                     '_access_version' => 2,
                     '_versions' => 958,
                     'app_key' => 2222420362,
-                    'book_free' => 1,
+                    'book_free' => 2,
                     'book_status' => 0,
-                    'category_1' => 21,
+                    'category_1' =>24,
                     'num' => 20,
                     'page' => $i,
                     'site' => 2,
@@ -293,109 +293,27 @@ class TestController extends Controller
             ////////////////////////////请求追书神器图书基本信息接口结束////////////////////
             //遍历返回图书基本信息
             foreach ($datas->data as $data) {
+
                 //查找数据库是否存在该书
-                $book = Book::findOne(['name' => $data->book_name]);
-                //var_dump($data);exit;
-                //判断是否有该书
-                if (!$book) {
-                    //抓取图片
-                    //$img_url = urldecode($data->cover);
-                    //var_dump(11);exit;
-                    //$img_url = str_replace('/agent/', '', $img_url);
-
-                    //  $res = strpos($img_url, 'http:');
-                    //判断该书url是否正确
-                    // if ($res === false) {
-                    //url不正确抓取没有没封面图片
-                    //$img = file_get_contents('http://image.voogaa.cn/2017/12/26/5a421e67933d55955.jpg');
-                    //  } else {
-                    //url正确抓取该图片
-                    //$img = file_get_contents($data->cover);
-                    //}
-
-                    //图片存放路径
-                   /* $uplaods_path = str_replace('\\', '/', realpath(dirname(__FILE__) . '/../../')) . '/uploads/';
-                    $dir = $uplaods_path . date("Y") . '/' . date("m") . '/' . date("d") . '/';
-                    $fileName = uniqid() . rand(1, 100000) . '.jpg';
-                    $uploadSuccessPath = date("Y") . '/' . date("m") . '/' . date("d") . '/' . $fileName;
-                    if (!is_dir($dir)) {
-                        mkdir($dir, 0777, true);
-                    }
-                    //保存图片
-                    file_put_contents($dir . '/' . $fileName, $img);*/
-
-                    ////////////////////////存入数据库///////////////////////////////
-
-                    if($data->word_count>1000000){
-                        //判断是否有该作者
-                        $author = Author::findOne(['name' => $data->author_name]);
-                        //$author_id='';
-                        if ($author) {
-                            $author_id = $author->id;
-                        } else {
-                            $author2 = new Author();
-                            $author2->name = $data->author_name;
-                            $author2->create_time = time();
-                            $author2->save(false);
-                            $author_id = $author2->id;
+                $book = Book::find()->where(['name' => $data->book_name])->andWhere(['ascription'=>4])->one();
+                if($book){
+                    $author_id=$book->author_id;//作者id
+                    //删除书
+                    $book->delete();
+                    //删除作者(判断该作者是否还有其他书籍)
+                    $relust=Book::findOne(['author_id'=>$author_id]);
+                    if(!$relust){
+                        $author=Author::findOne(['id'=>$author_id]);
+                        //作者照片
+                        $path3=$author->image;
+                        $author->delete();
+                        if($path3){
+                            $path3=UPLOAD_PATH.$path3;
+                            unlink($path3);
                         }
-
-                        \Yii::$app->db->createCommand()->batchInsert(Book::tableName(),
-                            [
-                                'copyright_book_id',
-                                'name',
-                                'author_id',
-                                'category_id',
-                                'from',
-                                'ascription',
-                                'image',
-                                'intro',
-                                'is_free',
-                                'no',
-                                'size',
-                                'type',
-                                'is_end',
-                                'clicks',
-                                'score',
-                                'collection',
-                                'downloads',
-                                'price',
-                                'last_update_chapter_id',
-                                'last_update_chapter_name',
-                                'status',
-                                'create_time'
-                            ],
-                            [
-                                [
-                                    $data->book_id,
-                                    $data->book_name,
-                                    $author_id,
-                                    16,
-                                    4,
-                                    3,
-                                    $data->cover,
-                                    $data->intro,
-                                    0,
-                                    0,
-                                    $data->word_count*2,
-                                    'txt',
-                                    1,
-                                    rand(5000, 10000),
-                                    rand(7, 10),
-                                    rand(5000, 10000),
-                                    rand(5000, 10000),
-                                    0,
-                                    $data->last_update_chapter_id,
-                                    $data->last_update_chapter_name,
-                                    1,
-                                    time()
-                                ],
-                            ])->execute();
-                        //echo '存入图书:' . $data->title;
-                        echo iconv('utf-8', 'gbk', '存入图书' . $data->book_name . "\n");
                     }
-
                 }
+                echo $book->name."\n";
 
             }
         }
